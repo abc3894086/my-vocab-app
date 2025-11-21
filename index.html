@@ -568,6 +568,24 @@
             /* 因為父容器 .card-front 已經設定 align-items: center */
             /* 所以按鈕會自動置中，不需要 margin: auto */
         }   
+/* 修正手機上翻牌時正反面重疊問題 */
+.flip-card {
+    -webkit-perspective: 1000px;
+}
+
+.flip-card-inner {
+    -webkit-transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+    -webkit-transform: rotateY(180deg);
+}
+
+.card-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
  </style>
 </head>
 <body>
@@ -9965,6 +9983,7 @@ function loadQuestion(isGrammar = false) {
     function exportData() {}
 
     window.onload = loadGameData;
+
 </script>
 </body>
 </html>
