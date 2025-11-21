@@ -43,13 +43,17 @@
             transition: all 0.5s ease;
         }
 
-        .app-container {
+.app-container {
             width: 100%; max-width: 420px; 
-            height: 100vh; /* 在手機模式下佔滿視窗高度 */
+            height: 100vh; /* 佔滿視窗高度 */
             background: transparent;
-            position: relative; display: flex; flex-direction: column;
             
-            /* 關鍵：只有內頁的內容可以滾動，容器本身不滾動 */
+            /* 關鍵修正：設為 relative，作為所有 .page 元素的定位基準 */
+            position: relative; 
+            
+            display: flex; flex-direction: column;
+            
+            /* 徹底隱藏 App 容器內部的溢出內容，防止系統捲軸出現 */
             overflow: hidden; 
         }
 
@@ -76,20 +80,39 @@
         }
 
 .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* 關鍵修正：將頁面設為 absolute，但嚴格限制其尺寸 */
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column;
+            
+            /* 設置過渡和內距 */
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             padding: 20px; box-sizing: border-box;
             background: var(--bg-gradient);
 
-            /* 關鍵修正：確保頁面內容超出時可以垂直滾動 */
+            /* 確保頁面內容可以垂直滾動 */
             overflow-y: auto; 
             overflow-x: hidden;
+            
+            /* 修正疊加問題的關鍵：預設狀態下，頁面是隱藏的，並且不可互動 */
+            visibility: hidden;
+            pointer-events: none;
+            z-index: 0;
+            transform: translateX(100%);
         }
-        .page.hidden { transform: translateX(100%); pointer-events: none; z-index: 0; opacity: 0; }
-        .page.active { transform: translateX(0); z-index: 10; opacity: 1; }
 
-        /* === 首頁標題對齊與字體 === */
+        .page.active { 
+            transform: translateX(0); 
+            z-index: 10; 
+            opacity: 1; 
+            visibility: visible; /* 啟用時可見 */
+            pointer-events: auto; /* 啟用時可互動 */
+            
+            /* 移除 .page.hidden 的設定，因為 .page 已經是隱藏的基準 */
+        }
+
+        /* 備註：.page.hidden 類別現在多餘，但為防止舊 JS 影響，可保留或刪除，其效果已被 .page 自身覆蓋。 */    
+/* === 首頁標題對齊與字體 === */
         .landing-header { 
             text-align: center; margin-top: 40px; margin-bottom: 30px;
             display: flex; flex-direction: column; align-items: center; 
@@ -391,9 +414,32 @@
         .option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .result-popup { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; background: white; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s; text-align: center; color: #333; }
-        .result-popup.show { transform: translateY(0); }
-        .next-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+/* 測驗結果彈窗 (Result Popup) - 修正定位與寬度 */
+.result-popup { 
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 100%);
+    width: calc(100% - 40px);  /* 跟左右 padding 對齊 */
+    
+    padding: 20px; 
+    background: var(--card-bg); 
+    border-top-left-radius: 25px; 
+    border-top-right-radius: 25px; 
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); 
+    text-align: center; 
+    color: var(--text-main);
+    transition: transform 0.3s;
+    display: none;
+}
+
+.result-popup.show {
+    display: block;
+    transform: translate(-50%, 0);
+}
+
+
+.next-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
         .progress-bar { height: 5px; background: #eee; width: 100%; margin-top: 10px; border-radius: 3px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
@@ -9784,7 +9830,7 @@
         loadQuestion(isGrammar);
     }
 
-    function loadQuestion(isGrammar = false) {
+function loadQuestion(isGrammar = false) {
         if (currentIndex >= currentList.length) {
             document.getElementById('quiz-bar').style.width = '100%';
             alert(`🎉 測驗完成！得分：${score}/${quizTotal}。獲得經驗值 ${score * 3} XP!`);
@@ -9795,6 +9841,8 @@
 
         const optionsContainer = document.getElementById('options-container');
         optionsContainer.innerHTML = '';
+        
+        // 【關鍵修正】：載入新問題時，隱藏結果彈窗
         document.getElementById('result-popup').classList.remove('show');
         
         document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
