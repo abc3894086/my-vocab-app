@@ -9788,7 +9788,44 @@
     function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
     function nextCard() { if(currentIndex < currentList.length-1) { currentIndex++; addXP(1); loadCard(); } else alert("卷軸已閱畢！"); }
     function prevCard() { if(currentIndex>0) { currentIndex--; loadCard(); } }
-    function speakWord() { /* ...發音邏輯待補... */ }
+   function speakWord() {
+    const wordEl = document.getElementById('fc-en');
+    if (!wordEl) return;
+    const word = (wordEl.innerText || wordEl.textContent || "").trim();
+    if (!word) return;
+
+    // 先試 Dictionary API 真人發音
+    const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word);
+
+    fetch(url)
+        .then(res => res.ok ? res.json() : Promise.reject())
+        .then(data => {
+            let audioUrl = null;
+            if (Array.isArray(data) && data[0] && Array.isArray(data[0].phonetics)) {
+                const ph = data[0].phonetics.find(p => p.audio);
+                if (ph) audioUrl = ph.audio;
+            }
+            if (audioUrl) {
+                const audio = new Audio(audioUrl);
+                audio.play();
+            } else {
+                throw new Error("no audio");
+            }
+        })
+        .catch(() => {
+            // 若沒拿到真人發音，改用 Web Speech API 機器人發音
+            if ('speechSynthesis' in window) {
+                const utter = new SpeechSynthesisUtterance(word);
+                utter.lang = 'en-US';
+                utter.rate = 0.9;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+            } else {
+                alert("目前瀏覽器不支援發音功能");
+            }
+        });
+}
+
     function exitPractice() { showPage('page-category'); }
     
     // === 測驗啟動與執行核心 ===
