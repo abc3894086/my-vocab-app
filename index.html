@@ -3,175 +3,524 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VocabPro Ultimate - 英文全能通</title>
+    <title>VocabPro RPG</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* === CSS 樣式區域 (維持不變) === */
+        /* === 1. RPG 主題變數定義 === */
         :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --accent: #00b894;
-            --bg: #dfe6e9;
-            --text-main: #2d3436;
-            --wrong: #d63031;
+            /* 預設：流浪者 (羊皮紙與皮革) */
+            --bg-gradient: linear-gradient(135deg, #fdfbf7 0%, #e6d5b8 100%);
+            --card-bg: #fffcf5;
+            --text-main: #4a3b2a;
+            --primary: #8b5e3c;
+            --secondary: #d4c5a9;
+            --accent: #27ae60;
+            --wrong: #c0392b;
+            --border-color: #8b5e3c;
+            --btn-shadow: 0 4px 0 #5d4037;
             --star-color: #f1c40f;
         }
+
+        /* 主題樣式 */
+        body.theme-ocean { --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%); --card-bg: #f0faff; --text-main: #2c3e50; --primary: #2980b9; --secondary: #a9cce3; --border-color: #3498db; --btn-shadow: 0 4px 0 #1a5276; }
+        body.theme-forest { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --card-bg: #f1f8e9; --text-main: #1b5e20; --primary: #2ecc71; --secondary: #a5d6a7; --border-color: #27ae60; --btn-shadow: 0 4px 0 #145a32; }
+        body.theme-sakura { --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); --card-bg: #fff0f5; --text-main: #4a148c; --primary: #9b59b6; --secondary: #e1bee7; --border-color: #8e44ad; --btn-shadow: 0 4px 0 #4a235a; }
+        body.theme-dark { --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%); --card-bg: #34495e; --text-main: #ecf0f1; --primary: #e74c3c; --secondary: #7f8c8d; --border-color: #c0392b; --btn-shadow: 0 4px 0 #641e16; --accent: #f1c40f; }
+
+        /* === 全局樣式 === */
+/* === 全局樣式 - 確保內容可滾動和適配高度 === */
+/* === 全局樣式 - 最終修正版：確保內容可滾動和適配高度 === */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0; display: flex; justify-content: center; align-items: center;
+            
+            /* 讓 Body 內容居中，且不顯示任何捲軸 */
+            min-height: 100vh; 
+            overflow: hidden; /* 關鍵：確保 Body 本身不滾動，所有滾動由 App-Container 處理 */
+            width: 100vw;     /* 關鍵：避免水平捲軸 */
+            transition: all 0.5s ease;
         }
+
         .app-container {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            background: #f5f6fa;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            width: 100%; max-width: 420px; 
+            height: 100vh; /* 在手機模式下佔滿視窗高度 */
+            background: transparent;
+            position: relative; display: flex; flex-direction: column;
+            
+            /* 關鍵：只有內頁的內容可以滾動，容器本身不滾動 */
+            overflow: hidden; 
         }
+
         @media (min-width: 450px) {
-            .app-container { height: 90vh; border-radius: 30px; }
+            .app-container { 
+                /* 桌面版/平板版: 設定固定高度 */
+                height: 90vh; 
+                max-height: 800px; 
+                border-radius: 30px; 
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+                background: rgba(255,255,255,0.1); 
+                backdrop-filter: blur(10px); 
+                border: 2px solid var(--border-color); 
+            }
+            /* 桌面模式下，Body 負責讓 App 居中，自身不滾動 */
+            body { 
+                height: 100vh; 
+                overflow: hidden; 
+            }
         }
-        .page {
+
+        @media (min-width: 450px) {
+            .app-container { height: 90vh; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid var(--border-color); }
+        }
+
+.page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #f5f6fa;
             display: flex; flex-direction: column;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             padding: 20px; box-sizing: border-box;
+            background: var(--bg-gradient);
+
+            /* 關鍵修正：確保頁面內容超出時可以垂直滾動 */
+            overflow-y: auto; 
+            overflow-x: hidden;
         }
-        .page.hidden { transform: translateX(100%); pointer-events: none; z-index: 0;}
-        .page.active { transform: translateX(0); z-index: 10; }
-        .bg-gradient { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: white; }
-        h1, h2 { margin: 0; }
+        .page.hidden { transform: translateX(100%); pointer-events: none; z-index: 0; opacity: 0; }
+        .page.active { transform: translateX(0); z-index: 10; opacity: 1; }
+
+        /* === 首頁標題對齊與字體 === */
+        .landing-header { 
+            text-align: center; margin-top: 40px; margin-bottom: 30px;
+            display: flex; flex-direction: column; align-items: center; 
+        }
+        .landing-header h1 { 
+            font-size: 2.5rem; margin: 0; 
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.4);
+            color: var(--primary);
+        }
+/* === 修正：副標題風格 (Palatino + 粗體) === */
+/* === 最終建議：箴言風格 (主題色 + 斜體 + 不加粗) === */
+        .landing-header p { 
+            margin-top: 10px; 
+            
+            /* 字體：保持 Palatino 的古典感 */
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; 
+            
+            /* 恢復斜體：增添箴言/標語的風格 */
+            font-style: italic; 
+            
+            /* 尺寸：保持放大的尺寸 */
+            font-size: 1.4rem; 
+            
+            /* 關鍵修正：不加粗 */
+            font-weight: normal; 
+            
+            /* 關鍵修正：回歸主題的基礎文字色 (深褐色) */
+            color: var(--text-main); 
+            opacity: 1; /* 確保顏色實心 */
+            
+            letter-spacing: 1.5px; /* 適中間距 */
+        }
+
+        /* === UI 元件 === */
         .navbar { display: flex; align-items: center; padding: 10px 0; min-height: 50px; }
         .back-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 10px; }
-        .page-title { font-size: 1.2rem; font-weight: bold; margin-left: 10px; }
-        .landing-header { text-align: center; margin-top: 60px; margin-bottom: 40px; }
-        .landing-header h1 { font-size: 2.8rem; text-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+        .page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); }
+
         .mode-card {
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 30px;
-            margin-bottom: 20px; cursor: pointer; display: flex; align-items: center; transition: transform 0.2s;
+            background: rgba(255,255,255,0.4); border: 2px solid var(--border-color);
+            border-radius: 15px; padding: 25px; margin-bottom: 20px;
+            cursor: pointer; display: flex; align-items: center;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: 0.1s;
         }
-        .mode-card:active { transform: scale(0.96); background: rgba(255,255,255,0.3); }
-        .mode-icon { font-size: 2.5rem; margin-right: 20px; width: 60px; text-align: center; }
-        .menu-section { display: none; }
+        .mode-card:active { transform: translateY(4px); box-shadow: none; }
+        .mode-icon { font-size: 2.5rem; margin-right: 20px; width: 50px; text-align: center; }
+        .mode-info h2 { font-size: 1.4rem; margin: 0 0 5px 0; color: var(--primary); }
+        .mode-info p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+
+        /* === 選單列表 === */
+        .menu-section { display: none; width: 100%; } 
         .menu-section.show { display: block; animation: fadeIn 0.3s; }
+        
         .menu-btn {
-            background: white; color: var(--text-main); padding: 20px; margin-bottom: 15px;
-            border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee;
+            background: var(--card-bg); color: var(--text-main); padding: 20px; margin-bottom: 15px;
+            border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: bold; 
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--btn-shadow); transition: 0.1s;
         }
-        .menu-btn:active { transform: scale(0.98); background: #f1f2f6; }
-        .menu-btn.fav-menu-btn { border-left: 5px solid var(--star-color); }
+        .menu-btn:active { transform: translateY(4px); box-shadow: none; }
+        .mistake-btn { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
+        
         .backup-controls { display: flex; gap: 10px; margin-bottom: 15px; }
-        .backup-btn { flex: 1; padding: 10px; border: 1px solid #ccc; background: #fff; border-radius: 10px; font-size: 0.9rem; cursor: pointer; text-align: center; color: #666; }
-        .flip-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
-        .flip-card.flipped { transform: rotateY(180deg); }
-        .card-face { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            backface-visibility: hidden; border-radius: 20px; background: white; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            display: flex; flex-direction: column; 
-            box-sizing: border-box; overflow-y: auto;
+        .backup-btn { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-weight:bold; cursor: pointer; background: var(--card-bg); color: var(--text-main); }
+
+/* === 修改：等級區塊 (RPG 風格字體 + 長條版) === */
+        .level-container {
+            background: var(--card-bg); 
+            border: 2px solid var(--border-color);
+            padding: 15px 20px; /* 左右寬一點 */
+            border-radius: 15px; 
+            margin: 20px 0;
+            
+            /* 橫向排列：左邊圓圈，右邊長條 */
+            display: flex; 
+            align-items: center; 
+            gap: 15px; /* 圓圈跟條的距離 */
+            
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
         }
-        .card-front { justify-content: center; align-items: center; padding: 20px; text-align: center; }
-        .card-back { transform: rotateY(180deg); background: #fffcf5; border: 2px solid #ffeaa7; padding: 20px; justify-content: flex-start; text-align: left; }
-        .q-tag { background: var(--secondary); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; display: inline-block; margin-bottom: 15px; }
-        .word-en { font-size: 2.8rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; line-height: 1.2; }
-        .word-phonetic { font-family: "Lucida Sans Unicode", "Arial Unicode MS", sans-serif; font-size: 1.2rem; color: #636e72; margin-bottom: 20px; font-weight: normal; }
-        .front-info-box { width: 100%; margin-bottom: 20px; }
-        .summary-item {
-            display: flex;
-            flex-direction: column; /* 改成垂直排列 */
-            align-items: center;    /* 水平置中 */
-            margin: 15px 0;         /* 增加一點上下距離 */
-            width: 100%;
-        }
-        .summary-row {
-            display: flex;
-            flex-direction: row;    /* 詞性跟中文要並排 */
-            align-items: center;
-            justify-content: center;
-            gap: 10px;              /* 詞性跟中文的間距 */
-            flex-wrap: wrap;        /* 如果中文太長，允許換行 */
-        }
-        .pos-badge {
-            background: var(--primary);
+
+        .level-badge {
+            /* 固定圓圈大小 */
+            width: 60px; 
+            height: 60px; 
+            background: var(--primary); 
             color: white;
-            padding: 4px 10px;      /* 稍微大一點點 */
-            border-radius: 6px;
-            font-size: 0.9rem;
+            border-radius: 50%; 
+            border: 3px solid white;
+            
+            /* 內容置中 */
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0; /* 確保圓圈不會被壓扁 */
+        }
+
+        .level-num { 
+            font-family: "Georgia", serif; /* RPG 風格數字 */
+            font-size: 1.8rem; 
+            font-weight: 900;
+            line-height: 0.9; 
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        
+        .level-label { 
+            font-size: 0.55rem; 
             font-weight: bold;
-            text-transform: uppercase;
-            flex-shrink: 0;         /* 防止標籤被擠壓 */
+            text-transform: uppercase; 
+            opacity: 0.9;
         }
-        .cn-text {
-            font-size: 1.4rem;      /* 中文字體加大 */
-            font-weight: bold;
-            color: #2d3436;
-            line-height: 1.4;
+        
+        /* 關鍵：讓右邊這個容器自動填滿剩下的空間 -> 經驗條就會變長 */
+        .xp-bar-container { 
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .forms-text {
-            color: #e17055;         /* 橘紅色 */
-            font-size: 0.95rem;
-            font-style: italic;
-            margin-top: 6px;        /* 跟上面拉開距離 */
-            display: block;
+        
+        .xp-info { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 6px; 
+            
+            /* RPG 風格字體設定 */
+            font-family: "Georgia", "Microsoft JhengHei", serif; 
+            font-size: 1.1rem; /* 字體加大 */
+            font-weight: 900;  /* 極粗 */
+            color: #000000;    /* 純黑，最清晰 */
+            letter-spacing: 0.5px;
         }
+        
+        .xp-track { 
+            width: 100%; 
+            height: 14px; /* 條變粗一點 */
+            background: rgba(0,0,0,0.1); 
+            border-radius: 7px; 
+            overflow: hidden; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .xp-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, #f1c40f, #e67e22); 
+            width: 0%; 
+            transition: width 0.5s; 
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); /* 讓條發光 */
+        }
+
+        /* === 字卡與測驗 === */
+        .scroll-list { flex: 1; overflow-y: auto; padding-bottom: 80px; width: 100%; scrollbar-width: none; }
+        .scroll-list::-webkit-scrollbar { display: none; }
+        
+        /* 每日獎勵 Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .bonus-box { background: var(--card-bg); width: 85%; max-width: 350px; border-radius: 20px; padding: 20px; text-align: center; border: 3px solid var(--border-color); transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay.show .bonus-box { transform: scale(1); }
+        .chest-container { display: flex; justify-content: space-around; margin-top: 20px; }
+        .chest-btn { font-size: 3.5rem; background: none; border: none; cursor: pointer; transition: 0.2s; position: relative; }
+        .chest-btn:active { transform: scale(0.9); }
+        .chest-reward { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--star-color); color: #333; padding: 2px 8px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; opacity: 0; transition: 0.5s; pointer-events: none; white-space: nowrap; }
+        .chest-btn.opened .chest-reward { opacity: 1; top: -30px; }
+        .chest-btn.opened { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
+
+        /* 字卡 */
+        .flip-card { width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 10px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; overflow-y: auto; padding: 20px; }
+.card-front { 
+            display: flex;
+            flex-direction: column;
+            /* 讓內容垂直置中 */
+            justify-content: center; 
+            align-items: center; 
+            /* 關鍵：設定元素之間的間距為 20px，把它們撐開 */
+            gap: 20px; 
+            
+            padding: 30px 20px; /* 增加上下內距 */
+            height: 100%; 
+            text-align: center; 
+        }
+.card-back { transform: rotateY(180deg); align-items: flex-start; text-align: left; }
+/* === 修改：分類橫幅 (絕對定位置頂 + 對齊星星) === */
+        .q-tag { 
+            background: var(--secondary); 
+            color: white; 
+            padding: 5px 15px; 
+            border-radius: 15px; 
+            font-size: 0.8rem; 
+            
+            /* 關鍵修改：使用絕對定位，讓它脫離中間的排版流 */
+            position: absolute;
+            
+            /* 高度設定：星星是 top:18px，這裡設 20px 視覺上會置中對齊 */
+            top: 20px; 
+            
+            /* 水平置中技巧 */
+            left: 50%;
+            transform: translateX(-50%);
+            
+            /* 寬度與防撞設定 */
+            width: fit-content;
+            max-width: 60%; /* 避免太長撞到右邊的星星 */
+            
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0; /* 清除原本的 margin */
+            z-index: 5;
+        }
+        .word-en { 
+            font-size: 2.5rem;      /* 恢復原本的大尺寸 */
+            font-weight: 800;       /* 極粗體 */
+            color: var(--primary);  /* 使用主題的主色調 (原本的褐色) */
+            margin-bottom: 5px;     /* 保持一點下方距離 */
+            margin-top: 0;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif; /* 確保字體一致 */
+            line-height: 1.2;       /* 避免行高過大 */
+        }
+        .word-phonetic { font-family: "Lucida Sans Unicode", sans-serif; font-size: 1.1rem; color: #636e72; margin-bottom: 20px; }
+        .summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
+        .summary-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .pos-badge { background: var(--primary); color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; }
+        .cn-text { font-size: 1.4rem; font-weight: bold; }
+        .forms-text { color: #e17055; font-size: 0.9rem; font-style: italic; margin-top: 5px; }
         .back-header { font-size: 0.9rem; color: #b2bec3; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
-        .detail-block { margin-bottom: 20px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 15px; }
+        .detail-block { margin-bottom: 20px; border-bottom: 1px dashed #ccc; padding-bottom: 15px; }
         .detail-block:last-child { border: none; }
         .block-title { font-weight: bold; color: var(--primary); margin-bottom: 8px; font-size: 1rem; }
-        .ex-item { font-size: 1rem; color: #636e72; margin-bottom: 10px; padding-left: 10px; border-left: 3px solid var(--accent); line-height: 1.4; }
-        .controls { display: flex; gap: 15px; margin-top: 20px; }
-        .ctrl-btn { flex: 1; padding: 15px; border: none; border-radius: 12px; font-size: 1rem; background: #dfe6e9; cursor: pointer; }
+        .ex-item { font-size: 0.95rem; color: #444; margin-bottom: 10px; padding-left: 10px; border-left: 3px solid var(--accent); line-height: 1.5; }
+        .ex-cn { display: block; color: #7f8c8d; font-size: 0.9rem; margin-top: 3px; font-weight: normal; }
+        .controls { display: flex; gap: 10px; margin-top: 10px; }
+        .ctrl-btn { flex: 1; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background: var(--card-bg); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
         .ctrl-btn.main { background: var(--primary); color: white; }
-        .star-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.6rem; color: #dfe6e9; cursor: pointer; z-index: 20; transition: 0.2s; }
-        .star-btn.active { color: var(--star-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
-        .speak-btn-large { width: 60px; height: 60px; border-radius: 50%; background: rgba(108, 92, 231, 0.1); color: var(--primary); border: none; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; margin-top: 10px; }
-        .speak-btn-large:hover { background: var(--primary); color: white; transform: scale(1.1); }
+/* === 修改：星星按鈕 (垂直置中對齊橫幅) === */
+        .star-btn { 
+            position: absolute; 
+            
+            /* 修改這裡：從 25px 改成 18px，讓它往上跑，跟橫幅置中 */
+            top: 18px;  
+            
+            right: 20px; 
+            background: none; 
+            border: none; 
+            font-size: 1.8rem; 
+            color: #dfe6e9; 
+            cursor: pointer; 
+            z-index: 20; 
+            transition: 0.2s; 
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+            
+            /* 新增：確保星星圖示本身在按鈕框框內也是置中的 */
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }        /* 這是星星被選中時的顏色 (黃色) */
+        .star-btn.active { 
+            color: var(--star-color); 
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); 
+        }
+       .speak-btn-large { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            background: rgba(108, 92, 231, 0.1); 
+            color: var(--primary); 
+            border: none; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            /* 關鍵修正：使用 margin auto 來置中 */
+            margin: 15px auto 0 auto; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            transition: 0.2s; 
+        }
+        .speak-btn-large:hover { 
+            background: var(--primary); 
+            color: white; 
+            transform: scale(1.1); 
+        }
+        
+        /* 測驗 */
         .quiz-box { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; }
-        .question-card { background: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin-bottom: 30px; }
-        .q-text { font-size: 2rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .question-card { background: var(--card-bg); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 8px 0 rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .q-text { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
         .q-sub { font-size: 1rem; color: #636e72; }
         .options-grid { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn { background: white; border: 2px solid #dfe6e9; padding: 15px; border-radius: 12px; font-size: 0.95rem; text-align: left; cursor: pointer; color: var(--text-main); line-height: 1.4; }
-        .option-btn.correct { background: var(--accent); color: white; border-color: var(--accent); }
-        .option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); }
-        .result-popup { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; background: white; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s; text-align: center; }
+        .option-btn { background: var(--card-bg); border: 2px solid #dfe6e9; padding: 15px; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer; color: var(--text-main); line-height: 1.4; transition: 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+        .option-btn.correct { background: var(--accent); color: white; border-color: var(--accent); animation: pop 0.3s; }
+        .option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .result-popup { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; background: white; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s; text-align: center; color: #333; }
         .result-popup.show { transform: translateY(0); }
         .next-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
         .progress-bar { height: 5px; background: #eee; width: 100%; margin-top: 10px; border-radius: 3px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-.ex-cn {
-            display: block;       /* 換行顯示 */
-            color: #95a5a6;       /* 淺灰色 */
-            font-size: 0.9rem;    /* 字體稍微小一點 */
-            margin-top: 2px;      /* 跟英文拉開一點距離 */
-            font-weight: normal;
-        }
-.scroll-list {
-            flex: 1;              /* 自動填滿剩餘高度 */
-            overflow-y: auto;     /* 內容太多時出現捲軸 */
-            padding-bottom: 80px; /* 底部多留空間，確保最後一個按鈕不被切掉 */
-            width: 100%;
-            /* 下面這三行是為了隱藏捲軸條，讓畫面比較漂亮 */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+/* === 主題切換 (圓形 + 置中 + 選中特效) === */
+/* === 主題切換 (圓形 + 置中 + 選中特效) - 修正穩定性 === */
+        .theme-selector { 
+            display: flex; 
+            gap: 15px;            
+            overflow-x: auto; 
+            padding: 20px 0;      
             scrollbar-width: none; 
-            -ms-overflow-style: none;
+            justify-content: center; 
+            align-items: flex-start; /* 確保按鈕不會被垂直拉伸 */
+            width: 100%; /* 確保容器寬度正確 */
         }
-        .scroll-list::-webkit-scrollbar { 
-            display: none; 
+
+        .theme-btn { 
+            width: 55px;          
+            height: 55px; 
+            border-radius: 50%;   
+            border: 3px solid #fff; 
+            cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
+            flex-shrink: 0; 
+            transition: all 0.2s ease; 
+            position: relative;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;    
+            padding: 0;
+            /* 讓按鈕內容（Emoji）在鎖定時被鎖頭覆蓋 */
+            color: transparent; 
+        }
+
+        .theme-btn:hover { transform: translateY(-2px); }
+        .theme-btn:active { transform: scale(0.95); }
+
+        /* 鎖定按鈕樣式 - 最終修正版 */
+        .theme-btn.locked { 
+            /* 使用濾鏡實現鎖定效果 */
+            filter: grayscale(100%) brightness(80%); 
+            cursor: not-allowed; 
+            background-color: #f0f0f0 !important; 
+            color: transparent; /* 鎖定時 Emoji 變透明，只顯示鎖頭和標籤 */
+            pointer-events: none; /* 鎖定時無法點擊 */
+        }
+
+        /* 鎖頭圖示樣式 */
+        .theme-btn.locked::after { 
+            content: "🔒"; 
+            position: absolute; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-size: 2rem;       
+            color: #4a4a4a; /* 鎖頭使用固定的深灰色 */
+            z-index: 5;            
+            opacity: 0.8;          
+            text-shadow: 0 0 5px rgba(0,0,0,0.2); 
+        }
+
+        /* 等級標籤樣式 (::before) */
+        .theme-btn.locked::before { 
+            content: attr(data-level); 
+            position: absolute;
+            top: -18px;            
+            left: 50%;
+            transform: translateX(-50%);
+            
+            background: var(--primary); 
+            color: white;
+            font-family: "Georgia", serif; 
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 5px;
+            z-index: 6; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+        }
+
+        /* 被選中的狀態 */
+        .theme-btn.active {
+            transform: scale(1.15); 
+            border-color: var(--primary); 
+            box-shadow: 0 0 15px var(--primary); 
+            z-index: 10;
+            color: var(--text-main); /* 確保解鎖且選中的 Emoji/內容是可見的 */
+        }
+        
+        /* 確保解鎖後的按鈕（非 locked）能看到內容 */
+        .theme-btn:not(.locked) {
+            filter: none;
+            color: var(--text-main); /* 恢復主題顏色給 Emoji */
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+/* === 修改 2：移除舊邊距 (貼在 CSS 最下方即可覆蓋舊設定) === */
+        
+        /* 標籤：上下歸零，左右 Auto (維持置中) */
+        .q-tag { 
+            margin: 0 auto; /* 上下0，左右自動置中 */
+        }
+
+        /* 單字：移除所有外距 */
+        .word-en { 
+            margin: 0;
+        }
+
+        /* 音標：移除所有外距 */
+        .word-phonetic { 
+            margin: 0; 
+        }
+
+        /* 中文資訊區塊：移除所有外距 */
+        .front-info-box { 
+            margin: 0;
+        }
+
+        /* 發音按鈕：移除所有外距 */
+        .speak-btn-large { 
+            margin: 0;
+            /* 因為父容器 .card-front 已經設定 align-items: center */
+            /* 所以按鈕會自動置中，不需要 margin: auto */
         }   
  </style>
 </head>
@@ -179,23 +528,76 @@
 
 <div class="app-container">
     
-    <div id="page-landing" class="page active bg-gradient">
-        <div class="landing-header">
-            <h1>VocabPro+</h1>
-            <p>你的專業英文教練</p>
+    <div id="daily-modal" class="modal-overlay">
+        <div class="bonus-box">
+            <h2>🎁 每日寶箱</h2>
+            <p>連續登入: <span id="streak-days" style="color:var(--primary); font-weight:bold;">1</span> 天</p>
+            <p id="streak-bonus-text" style="color:#e74c3c; display:none; font-weight:bold;">🔥 第7天雙倍獎勵！</p>
+            <div class="chest-container">
+                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
+                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
+                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
+            </div>
         </div>
+    </div>
+
+    <div id="page-landing" class="page active">
+        <div class="landing-header">
+            <h1>VocabPro RPG</h1>
+            <p>流浪者的試煉</p>
+        </div>
+
+        <div class="level-container">
+            <div class="level-badge">
+                <span class="level-num" id="lvl-num">1</span>
+                <span style="font-size:0.6rem">LV</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-info">
+                    <span id="lvl-title">流浪者</span>
+                    <span id="xp-text">0/100</span>
+                </div>
+                <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+            </div>
+        </div>
+
+<div style="width:100%; margin-bottom: 15px;">
+<div class="theme-selector">
+    <button id="btn-theme-default" class="theme-btn active" style="background:#fdfbf7;" onclick="setTheme('default', 0)">
+        📜
+    </button>
+    
+    <button id="btn-theme-ocean" class="theme-btn locked" data-level="Lv.20" style="background:#e0f7fa;" onclick="setTheme('theme-ocean', 20)">
+        🌊
+    </button>
+    
+    <button id="btn-theme-forest" class="theme-btn locked" data-level="Lv.40" style="background:#d4fc79;" onclick="setTheme('theme-forest', 40)">
+        🌲
+    </button>
+    
+    <button id="btn-theme-sakura" class="theme-btn locked" data-level="Lv.60" style="background:#f3e5f5;" onclick="setTheme('theme-sakura', 60)">
+        🌸
+    </button>
+    
+    <button id="btn-theme-dark" class="theme-btn locked" data-level="Lv.80" style="background:#2c3e50;" onclick="setTheme('theme-dark', 80)">
+        🌑
+    </button>
+</div>
+        </div>
+
         <div class="mode-card" onclick="selectMode('learn')">
             <div class="mode-icon">📖</div>
             <div class="mode-info">
-                <h2>單字記憶卡</h2>
-                <p>Flashcards Mode</p>
+                <h2>單字卷軸</h2>
+                <p>瀏覽字卡積累知識</p>
             </div>
         </div>
+        
         <div class="mode-card" onclick="selectMode('quiz')">
-            <div class="mode-icon">📝</div>
+            <div class="mode-icon">⚔️</div>
             <div class="mode-info">
-                <h2>刷題測驗</h2>
-                <p>Quiz Mode</p>
+                <h2>戰鬥測驗</h2>
+                <p>挑戰題目獲取經驗</p>
             </div>
         </div>
     </div>
@@ -203,19 +605,22 @@
     <div id="page-category" class="page">
         <div class="navbar">
             <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
-            <span class="page-title" id="cat-title">選擇分類</span>
+            <span class="page-title" id="cat-title">選擇戰場</span>
         </div>
         
         <div id="menu-quiz-type" class="menu-section">
+            <div class="menu-btn mistake-btn" onclick="startMistakeQuiz()">
+                <span><i class="fas fa-dungeon"></i> 錯題地牢 (Mistakes)</span> <span id="mistake-count">0</span>
+            </div>
             <div class="menu-btn" onclick="showQuizVocabSelection()">
-                <span><i class="fas fa-font"></i> 單字測驗 (Vocabulary)</span> <i class="fas fa-chevron-right"></i>
+                <span><i class="fas fa-font"></i> 單字試煉 (Vocabulary)</span> <i class="fas fa-chevron-right"></i>
             </div>
             <div class="menu-btn" onclick="startQuizSetup('grammar')">
-                <span><i class="fas fa-pen-nib"></i> 文法測驗 (Grammar)</span> <i class="fas fa-chevron-right"></i>
+                <span><i class="fas fa-pen-nib"></i> 文法試煉 (Grammar)</span> <i class="fas fa-chevron-right"></i>
             </div>
         </div>
 
-        <div id="menu-vocab-scope" class="menu-section">
+        <div id="menu-learn-scope" class="menu-section">
             <div class="backup-controls">
                 <button class="backup-btn" onclick="exportData()"><i class="fas fa-download"></i> 備份</button>
                 <button class="backup-btn" onclick="triggerImport()"><i class="fas fa-upload"></i> 還原</button>
@@ -223,7 +628,7 @@
             </div>
 
             <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
-                <span><i class="fas fa-star" style="color: #f1c40f;"></i> 我的最愛</span> <i class="fas fa-chevron-right"></i>
+                <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i class="fas fa-chevron-right"></i>
             </div>
             
             <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
@@ -233,22 +638,29 @@
                 <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
             </div>
         </div>
+
+        <div id="menu-quiz-scope" class="menu-section">
+            <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
+                <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="menu-btn" onclick="goToSubMenu()">
+                <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+            </div>
+        </div>
     </div>
 
-<div id="page-submenu" class="page">
+    <div id="page-submenu" class="page">
         <div class="navbar">
             <button class="back-btn" onclick="goBack('category')"><i class="fas fa-arrow-left"></i></button>
-            <span class="page-title">選擇托福領域</span>
+            <span class="page-title">托福領域</span>
         </div>
-        
         <div class="scroll-list" style="margin-top: 20px;">
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Astronomy')"><span>🌌 天文 (Astronomy)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Biology')"><span>🧬 生物 (Biology)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geography')"><span>🌍 地理 (Geography)</span></div>
-            
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Psychology')"><span>🧠 心理學 (Psychology)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'History')"><span>🏺 歷史考古 (History)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Art')"><span>🎨 藝術音樂 (Art & Music)</span></div>
+            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Art')"><span>🎨 藝術音樂 (Art)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geology')"><span>🪨 地質學 (Geology)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Business')"><span>💼 商業經濟 (Business)</span></div>
             <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'LifeScience')"><span>🦠 生命科學 (Life Science)</span></div>
@@ -258,20 +670,22 @@
     <div id="page-flashcard" class="page">
         <div class="navbar">
             <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
-            <span class="page-title" id="fc-title">多益單字</span>
+            <span class="page-title" id="fc-title">單字卡</span>
         </div>
-        <div style="flex:1; display:flex; justify-content:center; align-items:center; padding:20px 0; position: relative;">
+        <div style="flex:1; display:flex; justify-content:center; align-items:center; padding:10px 0;">
             <div class="flip-card" id="flashcard" onclick="flipCard()">
-                <button class="star-btn" id="star-btn" onclick="event.stopPropagation(); toggleFavorite()"><i class="fas fa-star"></i></button>
-                <div class="card-face card-front">
-                    <div class="q-tag" id="fc-tag">Tag</div>
-                    <div class="word-en" id="fc-en">Word</div>
-                    <div class="word-phonetic" id="fc-phonetic">[phonetic]</div>
-                    <div class="front-info-box" id="fc-front-info"></div>
-                    <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
-                    <p style="color:#aaa; font-size:0.8rem; margin-top:15px;">(點擊翻面看例句)</p>
+                <div class="flip-card-inner">
+                    <div class="card-face card-front">
+                        <button class="star-btn" id="star-btn" onclick="event.stopPropagation(); toggleFavorite()"><i class="fas fa-star"></i></button>
+                        <div class="q-tag" id="fc-tag">Tag</div>
+                        <div class="word-en" id="fc-en">Word</div>
+                        <div class="word-phonetic" id="fc-phonetic">[]</div>
+                        <div class="front-info-box" id="fc-front-info"></div>
+                        <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
+                        <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">(點擊翻面)</p>
+                    </div>
+                    <div class="card-face card-back" id="fc-back-content"></div>
                 </div>
-                <div class="card-face card-back" id="fc-back-content"></div>
             </div>
         </div>
         <div class="controls">
@@ -284,7 +698,7 @@
         <div class="navbar">
             <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
             <div style="flex:1; margin-left:10px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#666;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; opacity:0.8;">
                     <span>Score: <b id="quiz-score">0</b></span> <span id="quiz-progress">1/10</span>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="quiz-bar"></div></div>
@@ -292,24 +706,27 @@
         </div>
         <div class="quiz-box">
             <div class="question-card">
-                <div class="q-tag" id="q-tag">Vocabulary</div>
-                <div class="q-text" id="q-text">Apple</div>
-                <div class="q-sub" id="q-sub">請選擇正確的意思</div>
+                <div class="q-tag" id="q-tag">Quiz</div>
+                <div class="q-text" id="q-text">Question</div>
+                <div class="q-sub" id="q-sub">Choose the correct answer</div>
             </div>
             <div class="options-grid" id="options-container"></div>
         </div>
         <div class="result-popup" id="result-popup">
-            <h2 id="res-title" style="margin-bottom:10px;">Correct! 🎉</h2>
-            <p id="res-detail" style="margin-bottom:20px; color:#666;">Answer detail here</p>
-            <button class="next-btn" onclick="nextQuestion()">Next Question <i class="fas fa-arrow-right"></i></button>
+            <h2 id="res-title">Result</h2>
+            <p id="res-detail">Detail</p>
+            <button class="next-btn" onclick="nextQuestion()">Next <i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
 </div>
+<canvas id="confetti-canvas"></canvas>
 
 <script>
-    // === 資料庫 (已加入首批 10 個單字) ===
-    const vocabDB = {
+    // ==========================================
+    // 1. 資料庫區域 (小心符號！)
+    // ==========================================
+ const vocabDB = {
         "TOEIC": [
             {
                 en: "Abide",
@@ -9067,363 +9484,402 @@
     }; // 
 
     const grammarDB = [
-        { q: "She _____ to the gym every morning.", ans: "goes", options: ["go", "goes", "going", "gone"], tag: "Present Tense" },
-        { q: "If I _____ you, I would accept the offer.", ans: "were", options: ["was", "am", "were", "be"], tag: "Conditionals" }
+        { q: "She _____ to the gym.", ans: "goes", options: ["go", "goes", "going", "gone"], tag: "Grammar" }
     ];
 
-    let currentMode = ''; 
-    let quizType = '';    
-    let currentList = [];
-    let currentIndex = 0;
-    let score = 0;
-    let currentCategoryLabel = "";
-
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.classList.add('hidden'); });
-        document.getElementById(id).classList.remove('hidden');
-        setTimeout(() => document.getElementById(id).classList.add('active'), 10);
-    }
-
-    function selectMode(mode) {
-        currentMode = mode;
-        document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show'));
-        if (mode === 'learn') {
-            document.getElementById('menu-vocab-scope').classList.add('show');
-            document.getElementById('cat-title').innerText = "選擇字卡分類";
-        } else {
-            document.getElementById('menu-quiz-type').classList.add('show');
-            document.getElementById('cat-title').innerText = "選擇測驗類型";
-        }
-        showPage('page-category');
-    }
-
-    function showQuizVocabSelection() {
-        quizType = 'vocab';
-        document.getElementById('menu-quiz-type').classList.remove('show');
-        document.getElementById('menu-vocab-scope').classList.add('show');
-        document.getElementById('cat-title').innerText = "選擇測驗範圍";
-    }
-
-    function startQuizSetup(type) {
-        quizType = type;
-        if (type === 'grammar') startGrammarQuiz();
-    }
+    // ==========================================
+    // 2. 核心變數與設定 (已修正並新增測驗變數)
+    // ==========================================
+    let userLevel = 1, userXP = 0, xpPerLevel = 100;
+    let dailyStreak = 0, lastLoginDate = "", unlockedThemes = ['default'];
+    let mistakeDB = []; 
+    const ranks = ["流浪者", "村民", "士兵", "騎士", "男爵", "子爵", "伯爵", "公爵", "親王", "國王"];
     
-    function goToSubMenu() { showPage('page-submenu'); }
+    // 導航與測驗變數 (新增 quizTotal 和 currentQuizData)
+    let currentMode = ''; let quizType = ''; let currentList = []; let currentIndex = 0; 
+    let score = 0; let currentCategoryLabel = "";
+    let quizTotal = 0; 
+    let currentQuizData = null; // 用來儲存當前問題的答案和選項
 
-    function handleBackFromCategory() {
-        if (document.getElementById('menu-vocab-scope').classList.contains('show') && currentMode === 'quiz') {
-            document.getElementById('menu-vocab-scope').classList.remove('show');
-            document.getElementById('menu-quiz-type').classList.add('show');
-            document.getElementById('cat-title').innerText = "選擇測驗類型";
-            return;
-        }
-        showPage('page-landing');
+    // ==========================================
+    // 3. 核心功能與邏輯 (已修復 Quiz 相關邏輯)
+    // ==========================================
+    function getFavorites() { 
+        return JSON.parse(localStorage.getItem('vocabPro_favorites')) || []; 
     }
 
-    function goBack(target) {
-        if (target === 'category') {
-            document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show'));
-            document.getElementById('menu-vocab-scope').classList.add('show');
-            document.getElementById('cat-title').innerText = currentMode === 'learn' ? "選擇字卡分類" : "選擇測驗範圍";
-            showPage('page-category');
-        }
-    }
-
-    function exitPractice() {
-        score = 0;
-        document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show'));
-        document.getElementById('menu-vocab-scope').classList.add('show');
-        if (currentMode === 'learn') {
-            document.getElementById('cat-title').innerText = "選擇字卡分類";
-        } else {
-            if (quizType === 'grammar') {
-                document.getElementById('menu-vocab-scope').classList.remove('show');
-                document.getElementById('menu-quiz-type').classList.add('show');
-                document.getElementById('cat-title').innerText = "選擇測驗類型";
-            } else {
-                document.getElementById('cat-title').innerText = "選擇測驗範圍";
-            }
-        }
-        showPage('page-category');
-    }
-
-    function getFavorites() { return JSON.parse(localStorage.getItem('vocabPro_favorites')) || []; }
-    function saveFavorites(favList) { localStorage.setItem('vocabPro_favorites', JSON.stringify(favList)); }
-
-    function exportData() {
-        const data = localStorage.getItem('vocabPro_favorites');
-        if (!data || data === '[]') { alert("沒有資料可備份！"); return; }
-        const blob = new Blob([data], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); a.download = 'vocab_backup.json';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        alert("✅ 備份下載成功！");
-    }
-
-    function triggerImport() { document.getElementById('file-input').click(); }
-    function importData(input) {
-        const file = input.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const parsed = JSON.parse(e.target.result);
-                if (Array.isArray(parsed)) {
-                    localStorage.setItem('vocabPro_favorites', e.target.result);
-                    alert("✅ 資料還原成功！"); location.reload();
-                } else { alert("❌ 格式錯誤！"); }
-            } catch (err) { alert("❌ 讀取失敗！"); }
-        };
-        reader.readAsText(file); input.value = '';
+    function saveFavorites(favList) { 
+        localStorage.setItem('vocabPro_favorites', JSON.stringify(favList)); 
     }
 
     function toggleFavorite() {
-        const currentWord = currentList[currentIndex];
+        if (!currentList || !currentList[currentIndex]) return;
+        const currentWord = currentList[currentIndex]; 
         let favList = getFavorites();
         const index = favList.findIndex(item => item.en === currentWord.en);
-        if (index > -1) { favList.splice(index, 1); } 
-        else { favList.push(currentWord); }
-        saveFavorites(favList);
-        updateStarStatus();
+        if (index > -1) { favList.splice(index, 1); } else { favList.push(currentWord); }
+        saveFavorites(favList); updateStarStatus();
     }
 
     function updateStarStatus() {
-        const currentWord = currentList[currentIndex];
+        if (!currentList || !currentList[currentIndex]) return;
+        const currentWord = currentList[currentIndex]; 
         let favList = getFavorites();
         const isFav = favList.some(item => item.en === currentWord.en);
-        const btn = document.getElementById('star-btn');
-        if (isFav) btn.classList.add('active'); else btn.classList.remove('active');
+        const btn = document.getElementById('star-btn'); 
+        if (btn) { 
+            if (isFav) btn.classList.add('active'); 
+            else btn.classList.remove('active'); 
+        }
     }
 
     function loadFavorites() {
-        const favList = getFavorites();
+        const favList = getFavorites(); 
         if (favList.length === 0) { alert("還沒有最愛單字！"); return; }
-        // 隨機洗牌
-        if (currentMode === 'learn') {
-             currentList = [...favList].sort(() => 0.5 - Math.random());
-        } else {
-             currentList = favList;
-        }
+        if (currentMode === 'learn') { currentList = [...favList].sort(() => 0.5 - Math.random()); } else { currentList = favList; }
         currentCategoryLabel = "我的最愛";
-        currentMode === 'learn' ? startFlashcardMode() : startVocabQuiz();
+        if (currentMode === 'learn') { startFlashcardMode(); } else { startGenericQuiz(false, currentCategoryLabel, favList.length); }
     }
 
-    function handleCategorySelect(main, sub = null) {
-        let rawList = [];
-        if (main === 'TOEIC') {
-            rawList = vocabDB['TOEIC'];
-            currentCategoryLabel = "TOEIC";
-        } else {
-            rawList = vocabDB['TOEFL'][sub] || [];
-            currentCategoryLabel = `TOEFL - ${sub}`;
+    // === 字卡核心功能 (LoadCard) ===
+    function loadCard() {
+        // 防呆：如果沒有資料
+        if (!currentList || currentList.length === 0) {
+            return;
         }
-        if (rawList.length === 0) { alert("此分類目前沒有單字"); return; }
-
-        // 學習模式下，每次都打亂順序
-        if (currentMode === 'learn') {
-            currentList = [...rawList].sort(() => 0.5 - Math.random());
-        } else {
-            currentList = rawList;
-        }
-
-        if (currentMode === 'learn') startFlashcardMode();
-        else startVocabQuiz();
-    }
-
-    function startFlashcardMode() {
-        currentIndex = 0; setupFlashcardUI(); showPage('page-flashcard'); loadCard();
-    }
-    function setupFlashcardUI() { document.getElementById('fc-title').innerText = currentCategoryLabel; }
-
-// === 字卡顯示核心 (升級版：支援同義詞與字根) ===
-function loadCard() {
-        const data = currentList[currentIndex];
+        
+        const data = currentList[currentIndex]; 
         const card = document.getElementById('flashcard');
-        card.classList.remove('flipped');
+        if(!card) return; 
+
+        card.classList.remove('flipped'); 
+        updateStarStatus(); 
+
+        // 渲染正面
+        const frontHTML = `
+            <div class="card-face card-front">
+                <button class="star-btn" id="star-btn" onclick="event.stopPropagation(); toggleFavorite()">
+                    <i class="fas fa-star"></i>
+                </button>
+                <div class="q-tag" id="fc-tag">${currentCategoryLabel}</div>
+                <div class="word-en" id="fc-en">${data.en}</div>
+                <div class="word-phonetic" id="fc-phonetic">${data.phonetic || ""}</div>
+                <div class="front-info-box" id="fc-front-info"></div>
+                <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
+                <p style="color:#aaa; font-size:0.8rem; margin-top:15px;">(點擊翻面)</p>
+            </div>
+        `;
+        
+        const backHTML = `<div class="card-face card-back" id="fc-back-content"></div>`;
+        
+        const inner = document.querySelector('.flip-card-inner');
+        if(inner) inner.innerHTML = frontHTML + backHTML;
+        
         updateStarStatus();
 
-        // === 正面內容 ===
-        document.getElementById('fc-tag').innerText = currentCategoryLabel;
-        document.getElementById('fc-en').innerText = data.en;
-        document.getElementById('fc-phonetic').innerText = data.phonetic || "";
+        // 填充正面詳細資訊
+        const frontInfo = document.getElementById('fc-front-info'); 
+        if (data.details && frontInfo) {
+            data.details.forEach(d => {
+                const item = document.createElement('div'); item.className = 'summary-item';
+                let mainRowHtml = `<div class="summary-row"><span class="pos-badge">${d.pos}</span><span class="cn-text">${d.cn}</span></div>`;
+                let formsHtml = d.forms ? `<div class="forms-text">(${d.forms})</div>` : '';
+                item.innerHTML = mainRowHtml + formsHtml; 
+                frontInfo.appendChild(item);
+            });
+        }
 
-        const frontInfo = document.getElementById('fc-front-info');
-        frontInfo.innerHTML = '';
+        // 填充背面詳細資訊
+        const backContent = document.getElementById('fc-back-content'); 
+        if (data.details && backContent) {
+            data.details.forEach(d => {
+                const block = document.createElement('div'); block.className = 'detail-block';
+                const title = document.createElement('div'); title.className = 'block-title';
+                title.innerHTML = `<span class="pos-badge">${d.pos}</span> ${d.cn}`; block.appendChild(title);
+                
+                if (data.root) block.innerHTML += `<div style="background:#f0f8ff;padding:5px 10px;border-radius:5px;font-size:0.9rem;color:#2980b9;margin-bottom:10px;"><i class="fas fa-lightbulb"></i> <b>記憶：</b>${data.root}</div>`;
+                if (d.synonyms) block.innerHTML += `<div style="font-size:0.9rem;color:#888;margin-bottom:10px;"><b>Synonyms:</b> ${d.synonyms}</div>`;
+                
+                if (d.examples && d.examples.length > 0) {
+                    block.innerHTML += '<div class="back-header" style="text-align:left;margin-top:10px;">EXAMPLES</div>';
+                    d.examples.forEach(ex => {
+                        const exDiv = document.createElement('div'); exDiv.className = 'ex-item';
+                        if (typeof ex === 'string') { exDiv.innerText = ex; } else { exDiv.innerHTML = `${ex.en}<span class="ex-cn">${ex.cn}</span>`; }
+                        block.appendChild(exDiv);
+                    });
+                }
+                backContent.appendChild(block);
+            });
+        }
+    }
+
+    // ==========================================
+    // 4. 其他必要功能 (音效、導航、遊戲化)
+    // ==========================================
+    
+    // 音效
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        if(type==='correct') {
+            osc.type='triangle'; osc.frequency.setValueAtTime(600, now); 
+            osc.frequency.exponentialRampToValueAtTime(1000, now+0.1);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.3);
+            osc.start(); osc.stop(now+0.3);
+        } else if(type==='wrong') {
+            osc.type='sawtooth'; osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(100, now+0.3);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.3);
+            osc.start(); osc.stop(now+0.3);
+        }
+    }
+
+    // 遊戲化存取
+    function loadGameData() {
+        const saved = JSON.parse(localStorage.getItem('vocabPro_rpg')) || {};
+        userLevel = saved.level || 1; userXP = saved.xp || 0;
+        dailyStreak = saved.streak || 0; lastLoginDate = saved.lastLogin || "";
+        unlockedThemes = saved.themes || ['default'];
+        mistakeDB = saved.mistakes || [];
         
-        // 產生正面資訊
-        data.details.forEach(d => {
-            const item = document.createElement('div');
-            item.className = 'summary-item'; // 這是外層容器 (垂直排列)
+        const currentTheme = saved.currentTheme || 'default';
+        document.body.className = (currentTheme === 'default' ? '' : currentTheme);
+        updateActiveThemeBtn(currentTheme); 
 
-            // 1. 第一行：詞性 + 中文
-            let mainRowHtml = `
-                <div class="summary-row">
-                    <span class="pos-badge">${d.pos}</span>
-                    <span class="cn-text">${d.cn}</span>
-                </div>
-            `;
+        updateLevelUI(); updateMistakeCount(); checkDailyLogin(); updateThemeLocks();
+    }
 
-            // 2. 第二行：三態變化 (如果有)
-            let formsHtml = '';
-            if (d.forms) {
-                formsHtml = `<div class="forms-text">(${d.forms})</div>`;
-            }
+    function saveGameData() {
+        const data = {
+            level: userLevel, xp: userXP, streak: dailyStreak,
+            lastLogin: lastLoginDate, themes: unlockedThemes,
+            mistakes: mistakeDB, currentTheme: document.body.className
+        };
+        localStorage.setItem('vocabPro_rpg', JSON.stringify(data));
+        updateLevelUI(); updateMistakeCount();
+    }
+    
+    // === 輔助函數：經驗、等級與主題 ===
+    function addXP(amount) { userXP += amount; if(userXP >= xpPerLevel) { userXP -= xpPerLevel; userLevel++; playSound('correct'); alert(`🎉 升級了！Lv.${userLevel}`); } saveGameData(); }
+    function updateLevelUI() { document.getElementById('lvl-num').innerText = userLevel; document.getElementById('lvl-title').innerText = ranks[Math.min(Math.floor((userLevel-1)/10), ranks.length-1)]; document.getElementById('xp-text').innerText = `${userXP}/${xpPerLevel}`; document.getElementById('xp-fill').style.width = `${(userXP/xpPerLevel)*100}%`; }
+    function checkDailyLogin() { /* ...每日登入邏輯待補... */ }
+    function openChest(btn) { /* ...開寶箱邏輯待補... */ }
+    function setTheme(theme, reqLv) {
+        if(theme !== 'default' && !unlockedThemes.includes(theme)) { 
+            alert(`🔒 需達到 Lv.${reqLv} 才能解鎖此風格！`); 
+            return; 
+        }
+        
+        document.body.className = (theme === 'default' ? '' : theme);
+        updateActiveThemeBtn(theme);
+        saveGameData();
+    }
+    function updateActiveThemeBtn(themeName) {
+        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+        
+        let targetId = 'btn-theme-default';
+        if (themeName.includes('ocean')) targetId = 'btn-theme-ocean';
+        if (themeName.includes('forest')) targetId = 'btn-theme-forest';
+        if (themeName.includes('sakura')) targetId = 'btn-theme-sakura';
+        if (themeName.includes('dark')) targetId = 'btn-theme-dark';
+        
+        const btn = document.getElementById(targetId);
+        if (btn) btn.classList.add('active');
+    }
+    function updateThemeLocks() { /* ...主題鎖定狀態邏輯待補... */ }
+    function updateMistakeCount() { document.getElementById('mistake-count').innerText = mistakeDB.length; }
+    function startMistakeQuiz() { /* ...錯題地牢邏輯待補... */ alert("錯題地牢功能開發中..."); }
+    
+    // === 輔助函數：產生錯誤選項 (Distractors) ===
+    function generateDistractors(wordList, excludeWord, count) {
+        const potentialDistractors = wordList.filter(word => word.en !== excludeWord).map(word => word.en);
+        const shuffled = potentialDistractors.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
 
-            item.innerHTML = mainRowHtml + formsHtml;
-            frontInfo.appendChild(item);
-        });
-
-        // === 背面內容 ===
-        const backContent = document.getElementById('fc-back-content');
-        backContent.innerHTML = ''; // 清空
-
-        data.details.forEach(d => {
-            const block = document.createElement('div');
-            block.className = 'detail-block';
+    // === 導航與功能啟動 (已修正 Quiz 邏輯) ===
+    function showPage(id) { document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.classList.add('hidden'); }); document.getElementById(id).classList.remove('hidden'); setTimeout(() => document.getElementById(id).classList.add('active'), 10); }
+    function selectMode(mode) { currentMode = mode; document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show')); if (mode === 'learn') { document.getElementById('menu-learn-scope').classList.add('show'); document.getElementById('cat-title').innerText = "選擇卷軸"; } else { document.getElementById('menu-quiz-type').classList.add('show'); document.getElementById('cat-title').innerText = "選擇試煉"; } showPage('page-category'); }
+    function goBack(target) { if(target==='category') { document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show')); if(currentMode==='learn') { document.getElementById('menu-learn-scope').classList.add('show'); } else { document.getElementById('menu-quiz-scope').classList.add('show'); } showPage('page-category'); } }
+    function handleBackFromCategory() { if (currentMode === 'quiz' && document.getElementById('menu-quiz-scope').classList.contains('show')) { document.getElementById('menu-quiz-scope').classList.remove('show'); document.getElementById('menu-quiz-type').classList.add('show'); document.getElementById('cat-title').innerText = "選擇試煉"; return; } showPage('page-landing'); }
+    function goToSubMenu() { showPage('page-submenu'); }
+    
+    function handleCategorySelect(main, sub = null) {
+        let raw = (main === 'TOEIC') ? vocabDB['TOEIC'] : vocabDB['TOEFL'][sub];
+        currentCategoryLabel = sub ? `${sub} (TOEFL)` : main;
+        
+        if(!raw || raw.length === 0) { 
+            alert(`此卷軸[${currentCategoryLabel}]空白！請先擴充單字。`); 
+            return; 
+        }
+        
+        if(currentMode === 'learn') { 
+            currentList = [...raw].sort(()=>0.5-Math.random()); 
+            currentIndex = 0; 
+            document.getElementById('fc-title').innerText = `卷軸：${currentCategoryLabel}`;
+            showPage('page-flashcard'); 
+            loadCard(); 
+        } else { 
+            let allWords = [...raw];
+            const maxCount = Math.min(allWords.length, 50); 
+            let defaultCount = Math.min(10, maxCount);
             
-            // 背面標題
-            const title = document.createElement('div');
-            title.className = 'block-title';
-            title.innerHTML = `<span class="pos-badge">${d.pos}</span> ${d.cn}`;
-            block.appendChild(title);
+            let countInput = prompt(`請輸入測驗題數 (10-${maxCount} 題，以 10 為單位):`, defaultCount);
+            let quizSize = parseInt(countInput);
 
-            // 字根
-            if (data.root) {
-                const rootDiv = document.createElement('div');
-                rootDiv.style.cssText = "background:#f0f8ff; padding:5px 10px; border-radius:5px; font-size:0.9rem; color:#2980b9; margin-bottom:10px;";
-                rootDiv.innerHTML = `<i class="fas fa-lightbulb"></i> <b>記憶：</b>${data.root}`;
-                block.appendChild(rootDiv);
+            if (isNaN(quizSize) || quizSize < 10 || quizSize > maxCount || quizSize % 10 !== 0) {
+                alert(`輸入無效。本次測驗將使用 ${defaultCount} 題。`);
+                quizSize = defaultCount;
             }
-
-            // 同義詞
-            if (d.synonyms) {
-                const synDiv = document.createElement('div');
-                synDiv.style.cssText = "font-size:0.9rem; color:#888; margin-bottom:10px;";
-                synDiv.innerHTML = `<b>Synonyms:</b> ${d.synonyms}`;
-                block.appendChild(synDiv);
-            }
-
-            // 例句區域
-            if (d.examples && d.examples.length > 0) {
-                const exHeader = document.createElement('div');
-                exHeader.className = 'back-header';
-                exHeader.style.textAlign = 'left';
-                exHeader.style.marginTop = '10px';
-                exHeader.innerText = 'EXAMPLES';
-                block.appendChild(exHeader);
-
-                d.examples.forEach(ex => {
-                    const exDiv = document.createElement('div');
-                    exDiv.className = 'ex-item';
-                    
-                    if (typeof ex === 'string') {
-                        exDiv.innerText = ex;
-                    } else {
-                        exDiv.innerHTML = `${ex.en}<span class="ex-cn">${ex.cn}</span>`;
-                    }
-                    block.appendChild(exDiv);
-                });
-            }
-            backContent.appendChild(block);
-        });
+            
+            currentList = allWords.sort(()=>0.5-Math.random()).slice(0, quizSize); 
+            startGenericQuiz(false, currentCategoryLabel, quizSize); 
+        }
     }
-
     function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
-    function nextCard() { if (currentIndex < currentList.length - 1) { currentIndex++; loadCard(); } else alert("看完了！"); }
-    function prevCard() { if (currentIndex > 0) { currentIndex--; loadCard(); } }
-    function speakWord() {
-        const utterance = new SpeechSynthesisUtterance(currentList[currentIndex].en);
-        utterance.lang = 'en-US'; window.speechSynthesis.speak(utterance);
+    function nextCard() { if(currentIndex < currentList.length-1) { currentIndex++; addXP(1); loadCard(); } else alert("卷軸已閱畢！"); }
+    function prevCard() { if(currentIndex>0) { currentIndex--; loadCard(); } }
+    function speakWord() { /* ...發音邏輯待補... */ }
+    function exitPractice() { showPage('page-category'); }
+    
+    // === 測驗啟動與執行核心 ===
+    function startQuizSetup(type) {
+        quizType = type; 
+        if (quizType === 'grammar') {
+            const maxCount = Math.min(grammarDB.length, 50);
+            let defaultCount = Math.min(10, maxCount);
+            
+            let countInput = prompt(`文法測驗題數 (10-${maxCount} 題，以 10 為單位):`, defaultCount);
+            let quizSize = parseInt(countInput);
+            
+            if (isNaN(quizSize) || quizSize < 10 || quizSize > maxCount || quizSize % 10 !== 0) {
+                alert(`輸入無效。本次測驗將使用 ${defaultCount} 題。`);
+                quizSize = defaultCount;
+            }
+
+            currentList = grammarDB.sort(()=>0.5-Math.random()).slice(0, quizSize);
+            startGenericQuiz(true, "文法試煉", quizSize); 
+        } 
     }
 
-    let quizQuestions = [];
-    function startGrammarQuiz() {
-        quizQuestions = [...grammarDB].sort(() => 0.5 - Math.random()).slice(0, 10);
-        currentCategoryLabel = "Grammar Quiz"; initQuiz();
-    }
-
-    function startVocabQuiz() {
-        quizQuestions = [];
-        const totalQ = Math.min(10, currentList.length);
-        // 測驗模式本來就有打亂，不需要改
-        const shuffledList = [...currentList].sort(() => 0.5 - Math.random());
-
-        for (let i = 0; i < totalQ; i++) {
-            const target = shuffledList[i];
-            const targetAnswer = target.details.map(d => `${d.pos} ${d.cn}`).join(' ; ');
-            let distractors = currentList.filter(item => item.en !== target.en);
-            distractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
-            let options = [targetAnswer];
-            distractors.forEach(d => {
-                options.push(d.details.map(det => `${det.pos} ${det.cn}`).join(' ; '));
-            });
-            options.sort(() => 0.5 - Math.random());
-            quizQuestions.push({
-                q: target.en,
-                ans: targetAnswer,
-                options: options,
-                tag: "Vocabulary",
-                detail: `${target.en}<br>${target.phonetic || ''}<br>${targetAnswer}`
-            });
+    function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) {
+        if (currentList.length === 0) {
+            alert(`本次測驗無題目！請選擇內容更豐富的分類。`);
+            exitPractice();
+            return;
         }
-        initQuiz();
-    }
 
-    function initQuiz() {
-        currentIndex = 0; score = 0; showPage('page-quiz'); updateScoreUI(); loadQuestion();
-    }
-
-    function loadQuestion() {
-        const qData = quizQuestions[currentIndex];
-        document.getElementById('q-tag').innerText = qData.tag;
-        document.getElementById('q-text').innerText = qData.q;
-        document.getElementById('q-sub').innerText = (quizType === 'grammar') ? "請填入正確答案" : "請選擇正確意思";
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        document.getElementById('result-popup').classList.remove('show');
-
-        qData.options.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(btn, opt, qData.ans, qData.detail);
-            container.appendChild(btn);
-        });
-        updateScoreUI();
-    }
-
-    function checkAnswer(btn, userChoice, correctAns, detail) {
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.style.pointerEvents = 'none');
-        const popup = document.getElementById('result-popup');
+        quizTotal = totalCount;
+        currentIndex = 0;
+        score = 0;
         
-        if (userChoice === correctAns) {
-            btn.classList.add('correct'); score += 10;
-            document.getElementById('res-title').innerText = "Correct! 🎉";
-            document.getElementById('res-title').style.color = "var(--accent)";
-        } else {
-            btn.classList.add('wrong');
-            allBtns.forEach(b => { if (b.innerText === correctAns) b.classList.add('correct'); });
-            document.getElementById('res-title').innerText = "Oops! Wrong.";
-            document.getElementById('res-title').style.color = "var(--wrong)";
+        document.getElementById('quiz-score').innerText = score;
+        document.getElementById('quiz-bar').style.width = '0%';
+        document.getElementById('q-tag').innerText = title;
+
+        showPage('page-quiz');
+        loadQuestion(isGrammar);
+    }
+
+    function loadQuestion(isGrammar = false) {
+        if (currentIndex >= currentList.length) {
+            document.getElementById('quiz-bar').style.width = '100%';
+            alert(`🎉 測驗完成！得分：${score}/${quizTotal}。獲得經驗值 ${score * 3} XP!`);
+            addXP(score * 3);
+            exitPractice(); 
+            return;
         }
-        document.getElementById('res-detail').innerHTML = detail;
-        popup.classList.add('show');
-        updateScoreUI();
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        document.getElementById('result-popup').classList.remove('show');
+        
+        document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
+        document.getElementById('quiz-bar').style.width = `${(currentIndex / quizTotal) * 100}%`;
+
+        const questionData = currentList[currentIndex];
+        let correctAnswer;
+        let allOptions;
+
+        if (isGrammar) {
+            correctAnswer = questionData.ans;
+            allOptions = questionData.options.sort(() => 0.5 - Math.random());
+            document.getElementById('q-text').innerText = questionData.q;
+            document.getElementById('q-sub').innerText = "選擇正確的詞彙填入空格";
+        } else {
+            correctAnswer = questionData.en;
+            document.getElementById('q-text').innerText = questionData.details[0].cn;
+            document.getElementById('q-sub').innerText = "選擇對應的英文單字";
+
+            const distractors = generateDistractors(currentList, correctAnswer, 3);
+            allOptions = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+        }
+
+        currentQuizData = { correct: correctAnswer, options: allOptions };
+
+        allOptions.forEach((optionText, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `${String.fromCharCode(65 + index)}. ${optionText}`;
+            
+            btn.onclick = () => checkAnswer(btn, optionText === correctAnswer);
+            
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedButton, isCorrect) {
+        document.getElementById('options-container').querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
+
+        const resultTitle = document.getElementById('res-title');
+        const resultDetail = document.getElementById('res-detail');
+        const nextBtn = document.getElementById('result-popup').querySelector('.next-btn');
+
+        if (isCorrect) {
+            playSound('correct');
+            selectedButton.classList.add('correct');
+            score++;
+            addXP(2);
+            
+            resultTitle.innerText = "✅ 恭喜答對！";
+            resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
+        } else {
+            playSound('wrong');
+            selectedButton.classList.add('wrong');
+            
+            const optionsContainer = document.getElementById('options-container');
+            Array.from(optionsContainer.children).forEach(btn => {
+                if (btn.innerText.includes(currentQuizData.correct)) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            resultTitle.innerText = "❌ 答錯了！";
+            resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
+        }
+
+        document.getElementById('quiz-score').innerText = score;
+        document.getElementById('result-popup').classList.add('show');
+        
+        nextBtn.onclick = () => {
+            currentIndex++;
+            loadQuestion(quizType === 'grammar');
+        };
     }
 
     function nextQuestion() {
-        if (currentIndex < quizQuestions.length - 1) { currentIndex++; loadQuestion(); }
-        else { alert(`測驗結束！你的得分是：${score} 分`); exitPractice(); }
+        currentIndex++;
+        loadQuestion(quizType === 'grammar');
     }
+    
+    function showQuizVocabSelection() { quizType = 'vocab'; document.getElementById('menu-quiz-type').classList.remove('show'); document.getElementById('menu-quiz-scope').classList.add('show'); document.getElementById('cat-title').innerText = "選擇領域"; }
+    function triggerImport() {}
+    function exportData() {}
 
-    function updateScoreUI() {
-        document.getElementById('quiz-score').innerText = score;
-        document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizQuestions.length}`;
-        document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizQuestions.length) * 100}%`;
-    }
+    window.onload = loadGameData;
 </script>
-
 </body>
 </html>
