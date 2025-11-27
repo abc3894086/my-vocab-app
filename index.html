@@ -588,6 +588,76 @@
 .flip-card.flipped .card-front {
     visibility: hidden;
 }
+/* === 新增：測驗結果彈窗按鈕佈局 === */
+.popup-btn-row {
+    display: flex;
+    gap: 10px; /* 按鈕之間的間距 */
+    margin-top: 15px;
+}
+
+/* 回顧按鈕 (淺色風格) */
+.review-btn {
+    flex: 1;
+    background: #ffffff;
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+.review-btn:active { transform: translateY(4px); box-shadow: none; }
+
+/* 下一題按鈕 (原本的樣式微調，確保高度一致) */
+.next-btn {
+    flex: 2; /* 讓下一題按鈕寬一點，強調主要動作 */
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary); /* 為了跟回顧按鈕高度對齊 */
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+.next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+/* === 新增：懸浮的下一題按鈕 (Floating Action Button) === */
+/* 當使用者點擊「回顧」把視窗關掉後，這個按鈕會出現在右下角 */
+.float-next-btn {
+    position: absolute;
+    bottom: 25px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 90; /* 確保在最上層 */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 預設隱藏，答題後透過 JS 加上 .show 顯示 */
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.float-next-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+.float-next-btn:active { transform: scale(0.9); }
  </style>
 </head>
 <body>
@@ -760,7 +830,7 @@
         </div>
     </div>
 
-    <div id="page-quiz" class="page">
+<div id="page-quiz" class="page">
         <div class="navbar">
             <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
             <div style="flex:1; margin-left:10px;">
@@ -778,10 +848,19 @@
             </div>
             <div class="options-grid" id="options-container"></div>
         </div>
+        
+        <button id="float-next-btn" class="float-next-btn" onclick="nextQuestion()">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+
         <div class="result-popup" id="result-popup">
             <h2 id="res-title">Result</h2>
             <p id="res-detail">Detail</p>
-            <button class="next-btn" onclick="nextQuestion()">Next <i class="fas fa-arrow-right"></i></button>
+            
+            <div class="popup-btn-row">
+                <button class="review-btn" onclick="hideResultPopup()">👀 回顧</button>
+                <button class="next-btn" onclick="nextQuestion()">下一題 <i class="fas fa-arrow-right"></i></button>
+            </div>
         </div>
     </div>
 
@@ -9936,49 +10015,57 @@ function loadQuestion(isGrammar = false) {
         });
     }
 
-    function checkAnswer(selectedButton, isCorrect) {
-        document.getElementById('options-container').querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
+function checkAnswer(selectedButton, isCorrect) {
+    // 鎖定所有按鈕不能再按
+    document.getElementById('options-container').querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
 
-        const resultTitle = document.getElementById('res-title');
-        const resultDetail = document.getElementById('res-detail');
-        const nextBtn = document.getElementById('result-popup').querySelector('.next-btn');
+    const resultTitle = document.getElementById('res-title');
+    const resultDetail = document.getElementById('res-detail');
 
-        if (isCorrect) {
-            playSound('correct');
-            selectedButton.classList.add('correct');
-            score++;
-            addXP(2);
-            
-            resultTitle.innerText = "✅ 恭喜答對！";
-            resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
-        } else {
-            playSound('wrong');
-            selectedButton.classList.add('wrong');
-            
-            const optionsContainer = document.getElementById('options-container');
-            Array.from(optionsContainer.children).forEach(btn => {
-                if (btn.innerText.includes(currentQuizData.correct)) {
-                    btn.classList.add('correct');
-                }
-            });
-            
-            resultTitle.innerText = "❌ 答錯了！";
-            resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
-        }
-
-        document.getElementById('quiz-score').innerText = score;
-        document.getElementById('result-popup').classList.add('show');
+    if (isCorrect) {
+        playSound('correct');
+        selectedButton.classList.add('correct');
+        score++;
+        addXP(2);
         
-        nextBtn.onclick = () => {
-            currentIndex++;
-            loadQuestion(quizType === 'grammar');
-        };
+        resultTitle.innerText = "✅ 恭喜答對！";
+        resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
+    } else {
+        playSound('wrong');
+        selectedButton.classList.add('wrong');
+        
+        // 標示出正確答案
+        const optionsContainer = document.getElementById('options-container');
+        Array.from(optionsContainer.children).forEach(btn => {
+            if (btn.innerText.includes(currentQuizData.correct)) {
+                btn.classList.add('correct');
+            }
+        });
+        
+        resultTitle.innerText = "❌ 答錯了！";
+        resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
     }
 
-    function nextQuestion() {
-        currentIndex++;
-        loadQuestion(quizType === 'grammar');
-    }
+    document.getElementById('quiz-score').innerText = score;
+    
+    // 顯示結果彈窗
+    document.getElementById('result-popup').classList.add('show');
+    
+    // 【修正】：原本這裡有一行 document.getElementById('float-next-btn').classList.add('show');
+    // 我已經把它刪掉了。現在按鈕只會在你點擊「回顧」時，透過 hideResultPopup 函式顯示出來。
+}
+
+function nextQuestion() {
+    currentIndex++;
+    
+    // 【新增這行】進入下一題時，把懸浮按鈕隱藏起來
+    document.getElementById('float-next-btn').classList.remove('show');
+    
+    // 確保彈窗也是關閉的
+    document.getElementById('result-popup').classList.remove('show');
+    
+    loadQuestion(quizType === 'grammar');
+}
     
     function showQuizVocabSelection() { quizType = 'vocab'; document.getElementById('menu-quiz-type').classList.remove('show'); document.getElementById('menu-quiz-scope').classList.add('show'); document.getElementById('cat-title').innerText = "選擇領域"; }
     function triggerImport() {}
@@ -9986,6 +10073,13 @@ function loadQuestion(isGrammar = false) {
 
     window.onload = loadGameData;
 
+// === 新增這個函式 ===
+function hideResultPopup() {
+    // 移除 .show 讓彈窗縮下去
+    document.getElementById('result-popup').classList.remove('show');
+    // 確保懸浮按鈕是顯示的，這樣使用者看完還可以按下一題
+    document.getElementById('float-next-btn').classList.add('show');
+}
 </script>
 </body>
 </html>
