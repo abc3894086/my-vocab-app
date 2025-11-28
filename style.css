@@ -1,729 +1,285 @@
-         /* === 1. RPG 主題變數定義 === */
-        :root {
-            /* 預設：流浪者 (羊皮紙與皮革) */
-            --bg-gradient: linear-gradient(135deg, #fdfbf7 0%, #e6d5b8 100%);
-            --card-bg: #fffcf5;
-            --text-main: #4a3b2a;
-            --primary: #8b5e3c;
-            --secondary: #d4c5a9;
-            --accent: #27ae60;
-            --wrong: #c0392b;
-            --border-color: #8b5e3c;
-            --btn-shadow: 0 4px 0 #5d4037;
-            --star-color: #f1c40f;
-        }
+/* ========================================= */
+/* 1. RPG 主題變數定義 */
+/* ========================================= */
+:root {
+    /* 預設：流浪者 */
+    --bg-gradient: linear-gradient(135deg, #fdfbf7 0%, #e6d5b8 100%);
+    --card-bg: #fffcf5;
+    --text-main: #4a3b2a;
+    --primary: #8b5e3c;
+    --secondary: #d4c5a9;
+    --accent: #27ae60;
+    --wrong: #c0392b;
+    --border-color: #8b5e3c;
+    --btn-shadow: 0 4px 0 #5d4037;
+    --star-color: #f1c40f;
+}
 
-        /* 主題樣式 */
-        body.theme-ocean { --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%); --card-bg: #f0faff; --text-main: #2c3e50; --primary: #2980b9; --secondary: #a9cce3; --border-color: #3498db; --btn-shadow: 0 4px 0 #1a5276; }
-        body.theme-forest { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --card-bg: #f1f8e9; --text-main: #1b5e20; --primary: #2ecc71; --secondary: #a5d6a7; --border-color: #27ae60; --btn-shadow: 0 4px 0 #145a32; }
-        body.theme-sakura { --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); --card-bg: #fff0f5; --text-main: #4a148c; --primary: #9b59b6; --secondary: #e1bee7; --border-color: #8e44ad; --btn-shadow: 0 4px 0 #4a235a; }
-        body.theme-dark { --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%); --card-bg: #34495e; --text-main: #ecf0f1; --primary: #e74c3c; --secondary: #7f8c8d; --border-color: #c0392b; --btn-shadow: 0 4px 0 #641e16; --accent: #f1c40f; }
+/* 主題變數設定 */
+body.theme-ocean { --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%); --card-bg: #f0faff; --text-main: #2c3e50; --primary: #2980b9; --secondary: #a9cce3; --border-color: #3498db; --btn-shadow: 0 4px 0 #1a5276; }
+body.theme-forest { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --card-bg: #f1f8e9; --text-main: #1b5e20; --primary: #2ecc71; --secondary: #a5d6a7; --border-color: #27ae60; --btn-shadow: 0 4px 0 #145a32; }
+body.theme-sakura { --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); --card-bg: #fff0f5; --text-main: #4a148c; --primary: #9b59b6; --secondary: #e1bee7; --border-color: #8e44ad; --btn-shadow: 0 4px 0 #4a235a; }
+body.theme-dark { --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%); --card-bg: #34495e; --text-main: #ecf0f1; --primary: #e74c3c; --secondary: #7f8c8d; --border-color: #c0392b; --btn-shadow: 0 4px 0 #641e16; --accent: #f1c40f; }
 
-        /* === 全局樣式 === */
-/* === 全局樣式 - 確保內容可滾動和適配高度 === */
-/* === 全局樣式 - 最終修正版：確保內容可滾動和適配高度 === */
-        body {
-            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            margin: 0; display: flex; justify-content: center; align-items: center;
-            
-            /* 讓 Body 內容居中，且不顯示任何捲軸 */
-            min-height: 100vh; 
-            overflow: hidden; /* 關鍵：確保 Body 本身不滾動，所有滾動由 App-Container 處理 */
-            width: 100vw;     /* 關鍵：避免水平捲軸 */
-            transition: all 0.5s ease;
-        }
-
-.app-container {
-            width: 100%; max-width: 420px; 
-            height: 100vh; /* 佔滿視窗高度 */
-            background: transparent;
-            
-            /* 關鍵修正：設為 relative，作為所有 .page 元素的定位基準 */
-            position: relative; 
-            
-            display: flex; flex-direction: column;
-            
-            /* 徹底隱藏 App 容器內部的溢出內容，防止系統捲軸出現 */
-            overflow: hidden; 
-        }
-
-        @media (min-width: 450px) {
-            .app-container { 
-                /* 桌面版/平板版: 設定固定高度 */
-                height: 90vh; 
-                max-height: 800px; 
-                border-radius: 30px; 
-                box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
-                background: rgba(255,255,255,0.1); 
-                backdrop-filter: blur(10px); 
-                border: 2px solid var(--border-color); 
-            }
-            /* 桌面模式下，Body 負責讓 App 居中，自身不滾動 */
-            body { 
-                height: 100vh; 
-                overflow: hidden; 
-            }
-        }
-
-        @media (min-width: 450px) {
-            .app-container { height: 90vh; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid var(--border-color); }
-        }
-
-.page {
-            /* 關鍵修正：將頁面設為 absolute，但嚴格限制其尺寸 */
-            position: absolute; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            
-            /* 設置過渡和內距 */
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            padding: 20px; box-sizing: border-box;
-            background: var(--bg-gradient);
-
-            /* 確保頁面內容可以垂直滾動 */
-            overflow-y: auto; 
-            overflow-x: hidden;
-            
-            /* 修正疊加問題的關鍵：預設狀態下，頁面是隱藏的，並且不可互動 */
-            visibility: hidden;
-            pointer-events: none;
-            z-index: 0;
-            transform: translateX(100%);
-        }
-
-        .page.active { 
-            transform: translateX(0); 
-            z-index: 10; 
-            opacity: 1; 
-            visibility: visible; /* 啟用時可見 */
-            pointer-events: auto; /* 啟用時可互動 */
-            
-            /* 移除 .page.hidden 的設定，因為 .page 已經是隱藏的基準 */
-        }
-
-        /* 備註：.page.hidden 類別現在多餘，但為防止舊 JS 影響，可保留或刪除，其效果已被 .page 自身覆蓋。 */    
-/* === 首頁標題對齊與字體 === */
-        .landing-header { 
-            text-align: center; margin-top: 40px; margin-bottom: 30px;
-            display: flex; flex-direction: column; align-items: center; 
-        }
-        .landing-header h1 { 
-            font-size: 2.5rem; margin: 0; 
-            text-shadow: 2px 2px 0px rgba(255,255,255,0.4);
-            color: var(--primary);
-        }
-/* === 修正：副標題風格 (Palatino + 粗體) === */
-/* === 最終建議：箴言風格 (主題色 + 斜體 + 不加粗) === */
-        .landing-header p { 
-            margin-top: 10px; 
-            
-            /* 字體：保持 Palatino 的古典感 */
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; 
-            
-            /* 恢復斜體：增添箴言/標語的風格 */
-            font-style: italic; 
-            
-            /* 尺寸：保持放大的尺寸 */
-            font-size: 1.4rem; 
-            
-            /* 關鍵修正：不加粗 */
-            font-weight: normal; 
-            
-            /* 關鍵修正：回歸主題的基礎文字色 (深褐色) */
-            color: var(--text-main); 
-            opacity: 1; /* 確保顏色實心 */
-            
-            letter-spacing: 1.5px; /* 適中間距 */
-        }
-
-        /* === UI 元件 === */
-        .navbar { display: flex; align-items: center; padding: 10px 0; min-height: 50px; }
-        .back-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 10px; }
-        .page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); }
-
-        .mode-card {
-            background: rgba(255,255,255,0.4); border: 2px solid var(--border-color);
-            border-radius: 15px; padding: 25px; margin-bottom: 20px;
-            cursor: pointer; display: flex; align-items: center;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: 0.1s;
-        }
-        .mode-card:active { transform: translateY(4px); box-shadow: none; }
-        .mode-icon { font-size: 2.5rem; margin-right: 20px; width: 50px; text-align: center; }
-        .mode-info h2 { font-size: 1.4rem; margin: 0 0 5px 0; color: var(--primary); }
-        .mode-info p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
-
-        /* === 選單列表 === */
-        .menu-section { display: none; width: 100%; } 
-        .menu-section.show { display: block; animation: fadeIn 0.3s; }
-        
-        .menu-btn {
-            background: var(--card-bg); color: var(--text-main); padding: 20px; margin-bottom: 15px;
-            border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: bold; 
-            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: var(--btn-shadow); transition: 0.1s;
-        }
-        .menu-btn:active { transform: translateY(4px); box-shadow: none; }
-        .mistake-btn { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
-        
-        .backup-controls { display: flex; gap: 10px; margin-bottom: 15px; }
-        .backup-btn { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-weight:bold; cursor: pointer; background: var(--card-bg); color: var(--text-main); }
-
-/* === 修改：等級區塊 (RPG 風格字體 + 長條版) === */
-        .level-container {
-            background: var(--card-bg); 
-            border: 2px solid var(--border-color);
-            padding: 15px 20px; /* 左右寬一點 */
-            border-radius: 15px; 
-            margin: 20px 0;
-            
-            /* 橫向排列：左邊圓圈，右邊長條 */
-            display: flex; 
-            align-items: center; 
-            gap: 15px; /* 圓圈跟條的距離 */
-            
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
-        }
-
-        .level-badge {
-            /* 固定圓圈大小 */
-            width: 60px; 
-            height: 60px; 
-            background: var(--primary); 
-            color: white;
-            border-radius: 50%; 
-            border: 3px solid white;
-            
-            /* 內容置中 */
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
-            
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            flex-shrink: 0; /* 確保圓圈不會被壓扁 */
-        }
-
-        .level-num { 
-            font-family: "Georgia", serif; /* RPG 風格數字 */
-            font-size: 1.8rem; 
-            font-weight: 900;
-            line-height: 0.9; 
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
-        
-        .level-label { 
-            font-size: 0.55rem; 
-            font-weight: bold;
-            text-transform: uppercase; 
-            opacity: 0.9;
-        }
-        
-        /* 關鍵：讓右邊這個容器自動填滿剩下的空間 -> 經驗條就會變長 */
-        .xp-bar-container { 
-            flex: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .xp-info { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 6px; 
-            
-            /* RPG 風格字體設定 */
-            font-family: "Georgia", "Microsoft JhengHei", serif; 
-            font-size: 1.1rem; /* 字體加大 */
-            font-weight: 900;  /* 極粗 */
-            color: #000000;    /* 純黑，最清晰 */
-            letter-spacing: 0.5px;
-        }
-        
-        .xp-track { 
-            width: 100%; 
-            height: 14px; /* 條變粗一點 */
-            background: rgba(0,0,0,0.1); 
-            border-radius: 7px; 
-            overflow: hidden; 
-            border: 1px solid var(--border-color); 
-        }
-        
-        .xp-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, #f1c40f, #e67e22); 
-            width: 0%; 
-            transition: width 0.5s; 
-            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); /* 讓條發光 */
-        }
-
-        /* === 字卡與測驗 === */
-        .scroll-list { flex: 1; overflow-y: auto; padding-bottom: 80px; width: 100%; scrollbar-width: none; }
-        .scroll-list::-webkit-scrollbar { display: none; }
-        
-        /* 每日獎勵 Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .bonus-box { background: var(--card-bg); width: 85%; max-width: 350px; border-radius: 20px; padding: 20px; text-align: center; border: 3px solid var(--border-color); transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-overlay.show .bonus-box { transform: scale(1); }
-        .chest-container { display: flex; justify-content: space-around; margin-top: 20px; }
-        .chest-btn { font-size: 3.5rem; background: none; border: none; cursor: pointer; transition: 0.2s; position: relative; }
-        .chest-btn:active { transform: scale(0.9); }
-        .chest-reward { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--star-color); color: #333; padding: 2px 8px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; opacity: 0; transition: 0.5s; pointer-events: none; white-space: nowrap; }
-        .chest-btn.opened .chest-reward { opacity: 1; top: -30px; }
-        .chest-btn.opened { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
-
-        /* 字卡 */
-        .flip-card { width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 10px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; overflow-y: auto; padding: 20px; }
-.card-front { 
-            display: flex;
-            flex-direction: column;
-            /* 讓內容垂直置中 */
-            justify-content: center; 
-            align-items: center; 
-            /* 關鍵：設定元素之間的間距為 20px，把它們撐開 */
-            gap: 20px; 
-            
-            padding: 30px 20px; /* 增加上下內距 */
-            height: 100%; 
-            text-align: center; 
-        }
-.card-back { 
-    transform: rotateY(180deg); 
-    
-    /* === 關鍵修改：垂直排版設定 === */
-    display: flex;
-    flex-direction: column;
-    
-    /* 1. 讓內容垂直置中 (這是你要的效果) */
+/* ========================================= */
+/* 2. 全局基礎樣式 */
+/* ========================================= */
+body {
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    color: var(--text-main);
+    margin: 0; 
+    display: flex; 
     justify-content: center; 
+    align-items: center;
+    min-height: 100vh; 
+    overflow: hidden;
+    width: 100vw;
+    transition: all 0.5s ease;
     
-    /* 2. 水平方向改為 stretch (確保那個褐色框框寬度正常)，或者用 center */
-    align-items: stretch;
-    
-    text-align: left;
-    
-    /* === 空間微調 === */
-    /* 因為上方有 "TOEIC" 標籤，我們多加一點上方內距，
-       這樣就算內容置中，視覺重心也會稍微偏下，不會撞到標籤 */
-    padding-top: 50px; 
-    padding-bottom: 20px;
-    padding-left: 20px;  /* 確保左右有呼吸空間 */
-    padding-right: 20px;
+    /* 網頁最底層背景 (深灰色，凸顯 APP) */
+    background-color: #2d3436; 
+}
 
-    /* 字體設定 (保留你原本的) */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
-    -webkit-font-smoothing: antialiased;
-}/* === 修改：分類橫幅 (絕對定位置頂 + 對齊星星) === */
-        .q-tag { 
-            background: var(--secondary); 
-            color: white; 
-            padding: 5px 15px; 
-            border-radius: 15px; 
-            font-size: 0.8rem; 
-            
-            /* 關鍵修改：使用絕對定位，讓它脫離中間的排版流 */
-            position: absolute;
-            
-            /* 高度設定：星星是 top:18px，這裡設 20px 視覺上會置中對齊 */
-            top: 20px; 
-            
-            /* 水平置中技巧 */
-            left: 50%;
-            transform: translateX(-50%);
-            
-            /* 寬度與防撞設定 */
-            width: fit-content;
-            max-width: 60%; /* 避免太長撞到右邊的星星 */
-            
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin: 0; /* 清除原本的 margin */
-            z-index: 5;
-        }
-        .word-en { 
-    font-size: 2.6rem;      /*稍微再大一點點 (原 2.5) */
-    font-weight: 700;       /* 原本 800 有點太粗，700 比較剛好 */
-    color: var(--primary); 
-    margin-bottom: 5px; 
-    margin-top: 0;
-    line-height: 1.1;       /* 標題行高可以緊一點 */
-    letter-spacing: -0.5px; /* 字母稍微緊湊一點點，看起來比較時尚 */
-}
-        .word-phonetic { font-family: "Lucida Sans Unicode", sans-serif; font-size: 1.1rem; color: #636e72; margin-bottom: 20px; }
-        .summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
-        .summary-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
-       .pos-badge { 
-    background: var(--primary); 
-    color: white; 
-    padding: 4px 10px; /* 稍微胖一點 */
-    border-radius: 6px; 
-    font-size: 1rem;   /* 原 0.9rem -> 1rem */
-    font-weight: bold; 
-    vertical-align: middle;
-}
-        .cn-text { font-size: 1.4rem; font-weight: bold; }
-        .forms-text { color: #e17055; font-size: 0.9rem; font-style: italic; margin-top: 5px; }
-        .back-header { font-size: 0.9rem; color: #b2bec3; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
-        .detail-block {
-    /* 修改：增加區塊與區塊間的距離 */
-    margin-bottom: 25px; 
+/* ========================================= */
+/* 3. APP 容器設定 (含背景圖案) */
+/* ========================================= */
+/* === 1. APP 容器設定 (RPG 地圖版) === */
+.app-container {
+    width: 100%; 
+    max-width: 420px; 
+    height: 100vh; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column;
+    overflow: hidden; 
+
+    /* ★★★ 修正重點 ★★★ */
+    background-color: #fdfbf7 !important; /* 圖片載入前的底色 */
     
-    border-bottom: 1px dashed #eee; /* 改淡一點的線條顏色，減少視覺雜訊 */
-    padding-bottom: 15px;
-}
-        .detail-block:last-child { border: none; }
-        .block-title {
-    font-weight: bold;
-    color: var(--primary);
-    
-    /* 修改：增加下方距離，不要壓著第一句例句 */
-    margin-bottom: 12px; 
-    
-    /* 新增：增加上方距離，跟上面的定義區分開來 */
-    margin-top: 5px;
-    
-    font-size: 0.9rem; /*稍微縮小一點讓它像標籤 */
-    letter-spacing: 1px; /* 增加字距讓標題看起來更精緻 */
-    text-transform: uppercase; /* 強制大寫 (如果 HTML 沒寫) */
-}
-.ex-item {
-    /* 修改：字體顯著加大 (原 0.95rem -> 1.1rem) */
-    font-size: 1.15rem; 
-    
-    color: #2d3436; /* 改成深灰色，比純黑柔和，但比 #444 對比度高一點 */
-    
-    margin-bottom: 20px; /* 下方距離再拉開一點 */
-    padding-left: 18px;  /* 左邊距離加大 */
-    
-    border-left: 4px solid var(--accent); /* 左邊那條線稍微加粗一點，配合大字體 */
-    
-    /* 修改：字變大了，行高也要夠大才舒服 */
-    line-height: 1.6; 
-}
-       .ex-cn {
-    display: block;
-    color: #7f8c8d; /* 灰色 */
-    
-    /* 修改：加大字體 (原 0.9rem -> 1rem) */
-    font-size: 1rem; 
-    
-    margin-top: 8px; /* 跟英文分開一點 */
-    font-weight: normal;
-    
-    /* 中文行高 */
-    line-height: 1.5; 
-}
-        .controls { display: flex; gap: 10px; margin-top: 10px; }
-        .ctrl-btn { flex: 1; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background: var(--card-bg); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
-        .ctrl-btn.main { background: var(--primary); color: white; }
-/* === 修改：星星按鈕 (垂直置中對齊橫幅) === */
-        .star-btn { 
-            position: absolute; 
-            
-            /* 修改這裡：從 25px 改成 18px，讓它往上跑，跟橫幅置中 */
-            top: 18px;  
-            
-            right: 20px; 
-            background: none; 
-            border: none; 
-            font-size: 1.8rem; 
-            color: #dfe6e9; 
-            cursor: pointer; 
-            z-index: 20; 
-            transition: 0.2s; 
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
-            
-            /* 新增：確保星星圖示本身在按鈕框框內也是置中的 */
-            height: 30px;
-            display: flex;
-            align-items: center;
-        }        /* 這是星星被選中時的顏色 (黃色) */
-        .star-btn.active { 
-            color: var(--star-color); 
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); 
-        }
-       .speak-btn-large { 
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%; 
-            background: rgba(108, 92, 231, 0.1); 
-            color: var(--primary); 
-            border: none; 
-            font-size: 1.5rem; 
-            cursor: pointer; 
-            /* 關鍵修正：使用 margin auto 來置中 */
-            margin: 15px auto 0 auto; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            transition: 0.2s; 
-        }
-        .speak-btn-large:hover { 
-            background: var(--primary); 
-            color: white; 
-            transform: scale(1.1); 
-        }
+    background-image: 
+        /* 第1層：遮罩變薄了 (0.85 -> 0.4)，像是一層薄薄的霧，讓底圖清楚浮現 */
+        linear-gradient(rgba(253, 251, 247, 0.4), rgba(253, 251, 247, 0.4)),
         
-        /* 測驗 */
-        .quiz-box { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; }
-        .question-card { background: var(--card-bg); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 8px 0 rgba(0,0,0,0.1); margin-bottom: 30px; }
-        .q-text { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
-        .q-sub { font-size: 1rem; color: #636e72; }
-        .options-grid { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn { background: var(--card-bg); border: 2px solid #dfe6e9; padding: 15px; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer; color: var(--text-main); line-height: 1.4; transition: 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .option-btn:active { transform: translateY(4px); box-shadow: none; }
-        .option-btn.correct { background: var(--accent); color: white; border-color: var(--accent); animation: pop 0.3s; }
-        .option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-/* 測驗結果彈窗 (Result Popup) - 修正定位與寬度 */
-.result-popup { 
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translate(-50%, 100%);
-    width: calc(100% - 40px);  /* 跟左右 padding 對齊 */
+        /* 第2層：一張對比強烈的古老航海地圖 */
+        url('https://images.unsplash.com/photo-1524666643752-b381eb00effb?q=80&w=1000&auto=format&fit=crop') !important;
     
-    padding: 20px; 
-    background: var(--card-bg); 
-    border-top-left-radius: 25px; 
-    border-top-right-radius: 25px; 
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); 
-    text-align: center; 
-    color: var(--text-main);
-    transition: transform 0.3s;
-    display: none;
+    background-size: cover !important; 
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
-.result-popup.show {
-    display: block;
-    transform: translate(-50%, 0);
+/* ★★★ 2. 海洋 (深海氣泡) ★★★ */
+body.theme-ocean .app-container {
+    background-color: #e0f7fa !important;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 15%),
+        linear-gradient(to bottom, #e0f7fa 0%, #81d4fa 100%) !important;
+    background-size: 100% 100% !important; 
 }
 
-
-.next-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-        .progress-bar { height: 5px; background: #eee; width: 100%; margin-top: 10px; border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
-/* === 主題切換 (圓形 + 置中 + 選中特效) === */
-/* === 主題切換 (圓形 + 置中 + 選中特效) - 修正穩定性 === */
-        .theme-selector { 
-            display: flex; 
-            gap: 15px;            
-            overflow-x: auto; 
-            padding: 20px 0;      
-            scrollbar-width: none; 
-            justify-content: center; 
-            align-items: flex-start; /* 確保按鈕不會被垂直拉伸 */
-            width: 100%; /* 確保容器寬度正確 */
-        }
-
-        .theme-btn { 
-            width: 55px;          
-            height: 55px; 
-            border-radius: 50%;   
-            border: 3px solid #fff; 
-            cursor: pointer; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
-            flex-shrink: 0; 
-            transition: all 0.2s ease; 
-            position: relative;
-            
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;    
-            padding: 0;
-            /* 讓按鈕內容（Emoji）在鎖定時被鎖頭覆蓋 */
-            color: transparent; 
-        }
-
-        .theme-btn:hover { transform: translateY(-2px); }
-        .theme-btn:active { transform: scale(0.95); }
-
-        /* 鎖定按鈕樣式 - 最終修正版 */
-        .theme-btn.locked { 
-            /* 使用濾鏡實現鎖定效果 */
-            filter: grayscale(100%) brightness(80%); 
-            cursor: not-allowed; 
-            background-color: #f0f0f0 !important; 
-            color: transparent; /* 鎖定時 Emoji 變透明，只顯示鎖頭和標籤 */
-            pointer-events: none; /* 鎖定時無法點擊 */
-        }
-
-        /* 鎖頭圖示樣式 */
-        .theme-btn.locked::after { 
-            content: "🔒"; 
-            position: absolute; 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            font-size: 2rem;       
-            color: #4a4a4a; /* 鎖頭使用固定的深灰色 */
-            z-index: 5;            
-            opacity: 0.8;          
-            text-shadow: 0 0 5px rgba(0,0,0,0.2); 
-        }
-
-        /* 等級標籤樣式 (::before) */
-        .theme-btn.locked::before { 
-            content: attr(data-level); 
-            position: absolute;
-            top: -18px;            
-            left: 50%;
-            transform: translateX(-50%);
-            
-            background: var(--primary); 
-            color: white;
-            font-family: "Georgia", serif; 
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 2px 6px;
-            border-radius: 5px;
-            z-index: 6; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
-        }
-
-        /* 被選中的狀態 */
-        .theme-btn.active {
-            transform: scale(1.15); 
-            border-color: var(--primary); 
-            box-shadow: 0 0 15px var(--primary); 
-            z-index: 10;
-            color: var(--text-main); /* 確保解鎖且選中的 Emoji/內容是可見的 */
-        }
-        
-        /* 確保解鎖後的按鈕（非 locked）能看到內容 */
-        .theme-btn:not(.locked) {
-            filter: none;
-            color: var(--text-main); /* 恢復主題顏色給 Emoji */
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-/* === 修改 2：移除舊邊距 (貼在 CSS 最下方即可覆蓋舊設定) === */
-        
-        /* 標籤：上下歸零，左右 Auto (維持置中) */
-        .q-tag { 
-            margin: 0 auto; /* 上下0，左右自動置中 */
-        }
-
-        /* 單字：移除所有外距 */
-        .word-en { 
-            margin: 0;
-        }
-
-        /* 音標：移除所有外距 */
-        .word-phonetic { 
-            margin: 0; 
-        }
-
-        /* 中文資訊區塊：移除所有外距 */
-        .front-info-box { 
-            margin: 0;
-        }
-
-        /* 發音按鈕：移除所有外距 */
-        .speak-btn-large { 
-            margin: 0;
-            /* 因為父容器 .card-front 已經設定 align-items: center */
-            /* 所以按鈕會自動置中，不需要 margin: auto */
-        }   
-/* 修正手機上翻牌時正反面重疊問題 */
-.flip-card {
-    -webkit-perspective: 1000px;
+/* ★★★ 3. 森林 (耶穌光) ★★★ */
+body.theme-forest .app-container {
+    background-color: #f1f8e9 !important;
+    background-image: 
+        linear-gradient(45deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.4) 100%),
+        linear-gradient(to bottom, #d4fc79 0%, #96e6a1 100%) !important;
+    background-size: 100% 100% !important;
 }
 
-.flip-card-inner {
-    -webkit-transform-style: preserve-3d;
+/* ★★★ 4. 櫻花 (柔焦光暈) ★★★ */
+body.theme-sakura .app-container {
+    background-color: #fff0f5 !important;
+    background-image: 
+        radial-gradient(circle at 50% 30%, rgba(255, 192, 203, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(221, 160, 221, 0.5) 0%, transparent 40%),
+        linear-gradient(to bottom, #fff0f5 0%, #e1bee7 100%) !important;
+    background-size: 100% 100% !important;
 }
 
-.flip-card.flipped .flip-card-inner {
-    -webkit-transform: rotateY(180deg);
+/* ★★★ 5. 暗黑 (神秘星雲) ★★★ */
+body.theme-dark .app-container {
+    background-color: #34495e !important;
+    background-image: 
+        radial-gradient(circle at 80% 20%, rgba(155, 89, 182, 0.3) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(52, 152, 219, 0.3) 0%, transparent 40%),
+        linear-gradient(to bottom, #2c3e50 0%, #000000 100%) !important;
+    background-size: 100% 100% !important;
 }
 
-.card-face {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-.flip-card.flipped .card-front {
-    visibility: hidden;
-}
-/* === 新增：測驗結果彈窗按鈕佈局 === */
-.popup-btn-row {
-    display: flex;
-    gap: 10px; /* 按鈕之間的間距 */
-    margin-top: 15px;
+/* ========================================= */
+/* 4. 桌面/平板模式 (修正版) */
+/* ========================================= */
+@media (min-width: 450px) {
+    .app-container { 
+        height: 90vh; 
+        max-height: 800px; 
+        border-radius: 30px; 
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        backdrop-filter: blur(5px);
+        border: 2px solid var(--border-color); 
+        background-clip: padding-box;
+    }
+    body { 
+        height: 100vh; 
+        overflow: hidden; 
+    }
 }
 
-/* 回顧按鈕 (淺色風格) */
-.review-btn {
-    flex: 1;
-    background: #ffffff;
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+/* ========================================= */
+/* 5. 頁面與組件樣式 */
+/* ========================================= */
+.page {
+    position: absolute; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    padding: 20px; box-sizing: border-box;
+    background: transparent; 
+    overflow-y: auto; overflow-x: hidden;
+    visibility: hidden; pointer-events: none; z-index: 0;
+    transform: translateX(100%);
 }
+.page.active { 
+    transform: translateX(0); z-index: 10; opacity: 1; visibility: visible; pointer-events: auto; 
+}
+
+/* === RPG 標題卷軸風格 === */
+.landing-header { 
+    text-align: center; margin-top: 30px; margin-bottom: 30px;
+    display: flex; flex-direction: column; align-items: center; 
+    background-color: #fdfbf7; border: 3px double #8b5e3c; border-radius: 10px;
+    padding: 15px 40px;
+    box-shadow: 0 0 0 4px #fdfbf7, 0 0 0 6px #8b5e3c, 0 10px 20px rgba(0,0,0,0.2); 
+    width: fit-content; margin-left: auto; margin-right: auto; position: relative;
+}
+.landing-header::before {
+    content: "⚔️"; font-size: 2.5rem; position: absolute; top: -38px; 
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index: 1;
+}
+.landing-header h1 { 
+    font-size: 2.2rem; margin: 0; text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
+    color: var(--primary); text-transform: uppercase; letter-spacing: 2px;
+    border-bottom: 2px solid var(--secondary); padding-bottom: 5px; margin-bottom: 5px;
+}
+.landing-header p { 
+    margin-top: 10px; font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; 
+    font-style: italic; font-size: 1.4rem; font-weight: normal; color: var(--text-main); 
+    opacity: 1; letter-spacing: 1.5px; 
+}
+
+/* 元件 */
+.navbar { display: flex; align-items: center; padding: 10px 0; min-height: 50px; }
+.back-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 10px; }
+.page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); }
+
+.mode-card { background: rgba(255,255,255,0.4); border: 2px solid var(--border-color); border-radius: 15px; padding: 25px; margin-bottom: 20px; cursor: pointer; display: flex; align-items: center; box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: 0.1s; }
+.mode-card:active { transform: translateY(4px); box-shadow: none; }
+.mode-icon { font-size: 2.5rem; margin-right: 20px; width: 50px; text-align: center; }
+.mode-info h2 { font-size: 1.4rem; margin: 0 0 5px 0; color: var(--primary); }
+.mode-info p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+
+/* 選單與按鈕 */
+.menu-section { display: none; width: 100%; } 
+.menu-section.show { display: block; animation: fadeIn 0.3s; }
+.menu-btn { background: var(--card-bg); color: var(--text-main); padding: 20px; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--btn-shadow); transition: 0.1s; }
+.menu-btn:active { transform: translateY(4px); box-shadow: none; }
+.mistake-btn { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
+.backup-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+.backup-btn { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-weight:bold; cursor: pointer; background: var(--card-bg); color: var(--text-main); }
+
+/* 等級系統 */
+.level-container { background: var(--card-bg); border: 2px solid var(--border-color); padding: 15px 20px; border-radius: 15px; margin: 20px 0; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 0 rgba(0,0,0,0.1); }
+.level-badge { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; border: 3px solid white; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0; }
+.level-num { font-family: "Georgia", serif; font-size: 1.8rem; font-weight: 900; line-height: 0.9; text-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
+.xp-bar-container { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.xp-info { display: flex; justify-content: space-between; margin-bottom: 6px; font-family: "Georgia", serif; font-size: 1.1rem; font-weight: 900; color: #000000; letter-spacing: 0.5px; }
+.xp-track { width: 100%; height: 14px; background: rgba(0,0,0,0.1); border-radius: 7px; overflow: hidden; border: 1px solid var(--border-color); }
+.xp-fill { height: 100%; background: linear-gradient(90deg, #f1c40f, #e67e22); width: 0%; transition: width 0.5s; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+
+/* 字卡與測驗 */
+.scroll-list { flex: 1; overflow-y: auto; padding-bottom: 80px; width: 100%; scrollbar-width: none; }
+.scroll-list::-webkit-scrollbar { display: none; }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.bonus-box { background: var(--card-bg); width: 85%; max-width: 350px; border-radius: 20px; padding: 20px; text-align: center; border: 3px solid var(--border-color); transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.modal-overlay.show .bonus-box { transform: scale(1); }
+.chest-container { display: flex; justify-content: space-around; margin-top: 20px; }
+.chest-btn { font-size: 3.5rem; background: none; border: none; cursor: pointer; transition: 0.2s; position: relative; }
+.chest-btn:active { transform: scale(0.9); }
+.chest-reward { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--star-color); color: #333; padding: 2px 8px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; opacity: 0; transition: 0.5s; pointer-events: none; white-space: nowrap; }
+.chest-btn.opened .chest-reward { opacity: 1; top: -30px; }
+.chest-btn.opened { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
+
+.flip-card { width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
+.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 10px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; overflow-y: auto; padding: 20px; }
+.card-front { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; padding: 30px 20px; height: 100%; text-align: center; }
+.card-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: stretch; text-align: left; padding-top: 50px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif; -webkit-font-smoothing: antialiased; }
+.flip-card.flipped .card-front { visibility: hidden; }
+
+.q-tag { background: var(--secondary); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: fit-content; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 auto; z-index: 5; }
+.word-en { font-size: 2.6rem; font-weight: 700; color: var(--primary); margin: 0; margin-bottom: 5px; line-height: 1.1; letter-spacing: -0.5px; }
+.word-phonetic { font-family: "Lucida Sans Unicode", sans-serif; font-size: 1.1rem; color: #636e72; margin: 0; margin-bottom: 20px; }
+.summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
+.summary-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.pos-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 1rem; font-weight: bold; vertical-align: middle; }
+.cn-text { font-size: 1.4rem; font-weight: bold; }
+.forms-text { color: #e17055; font-size: 0.9rem; font-style: italic; margin-top: 5px; }
+.back-header { font-size: 0.9rem; color: #b2bec3; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
+.detail-block { margin-bottom: 25px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
+.detail-block:last-child { border: none; }
+.block-title { font-weight: bold; color: var(--primary); margin-bottom: 12px; margin-top: 5px; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
+.ex-item { font-size: 1.15rem; color: #2d3436; margin-bottom: 20px; padding-left: 18px; border-left: 4px solid var(--accent); line-height: 1.6; }
+.ex-cn { display: block; color: #7f8c8d; font-size: 1rem; margin-top: 8px; font-weight: normal; line-height: 1.5; }
+.controls { display: flex; gap: 10px; margin-top: 10px; }
+.ctrl-btn { flex: 1; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background: var(--card-bg); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+.ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
+.ctrl-btn.main { background: var(--primary); color: white; }
+
+.star-btn { position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 1.8rem; color: #dfe6e9; cursor: pointer; z-index: 20; transition: 0.2s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); height: 30px; display: flex; align-items: center; }
+.star-btn.active { color: var(--star-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+.speak-btn-large { width: 60px; height: 60px; border-radius: 50%; background: rgba(108, 92, 231, 0.1); color: var(--primary); border: none; font-size: 1.5rem; cursor: pointer; margin: 0; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+.speak-btn-large:hover { background: var(--primary); color: white; transform: scale(1.1); }
+
+/* 測驗系統 */
+.quiz-box { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; }
+.question-card { background: var(--card-bg); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 8px 0 rgba(0,0,0,0.1); margin-bottom: 30px; }
+.q-text { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+.q-sub { font-size: 1rem; color: #636e72; }
+.options-grid { display: flex; flex-direction: column; gap: 10px; }
+.option-btn { background: var(--card-bg); border: 2px solid #dfe6e9; padding: 15px; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer; color: var(--text-main); line-height: 1.4; transition: 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+.option-btn:active { transform: translateY(4px); box-shadow: none; }
+.option-btn.correct { background: var(--accent); color: white; border-color: var(--accent); animation: pop 0.3s; }
+.option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); animation: shake 0.4s; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+.result-popup { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 100%); width: calc(100% - 40px); padding: 20px; background: var(--card-bg); border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); text-align: center; color: var(--text-main); transition: transform 0.3s; display: none; }
+.result-popup.show { display: block; transform: translate(-50%, 0); }
+.popup-btn-row { display: flex; gap: 10px; margin-top: 15px; }
+.review-btn { flex: 1; background: #ffffff; color: var(--text-main); border: 2px solid var(--border-color); padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
 .review-btn:active { transform: translateY(4px); box-shadow: none; }
-
-/* 下一題按鈕 (原本的樣式微調，確保高度一致) */
-.next-btn {
-    flex: 2; /* 讓下一題按鈕寬一點，強調主要動作 */
-    background: var(--primary);
-    color: white;
-    border: 2px solid var(--primary); /* 為了跟回顧按鈕高度對齊 */
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-}
+.next-btn { flex: 2; background: var(--primary); color: white; border: 2px solid var(--primary); padding: 12px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
 .next-btn:active { transform: translateY(4px); box-shadow: none; }
 
-/* === 新增：懸浮的下一題按鈕 (Floating Action Button) === */
-/* 當使用者點擊「回顧」把視窗關掉後，這個按鈕會出現在右下角 */
-.float-next-btn {
-    position: absolute;
-    bottom: 25px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    font-size: 1.5rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    cursor: pointer;
-    z-index: 90; /* 確保在最上層 */
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    /* 預設隱藏，答題後透過 JS 加上 .show 顯示 */
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.5);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.float-next-btn.show {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
+.float-next-btn { position: absolute; bottom: 25px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 90; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transform: scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.float-next-btn.show { opacity: 1; pointer-events: auto; transform: scale(1); }
 .float-next-btn:active { transform: scale(0.9); }
+
+.progress-bar { height: 5px; background: #eee; width: 100%; margin-top: 10px; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+#confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
+/* 主題按鈕與鎖定狀態 */
+.theme-selector { display: flex; gap: 15px; overflow-x: auto; padding: 20px 0; scrollbar-width: none; justify-content: center; align-items: flex-start; width: 100%; }
+.theme-btn { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #fff; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); flex-shrink: 0; transition: all 0.2s ease; position: relative; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; padding: 0; color: transparent; }
+.theme-btn:hover { transform: translateY(-2px); }
+.theme-btn:active { transform: scale(0.95); }
+.theme-btn.locked { filter: grayscale(100%) brightness(80%); cursor: not-allowed; background-color: #f0f0f0 !important; color: transparent; pointer-events: none; }
+.theme-btn.locked::after { content: "🔒"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; color: #4a4a4a; z-index: 5; opacity: 0.8; text-shadow: 0 0 5px rgba(0,0,0,0.2); }
+.theme-btn.locked::before { content: attr(data-level); position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; font-family: "Georgia", serif; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; z-index: 6; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.theme-btn.active { transform: scale(1.15); border-color: var(--primary); box-shadow: 0 0 15px var(--primary); z-index: 10; color: var(--text-main); }
+.theme-btn:not(.locked) { filter: none; color: var(--text-main); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
