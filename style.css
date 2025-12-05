@@ -44,6 +44,7 @@ body {
 /* 3. APP 容器設定 (含背景圖案) */
 /* ========================================= */
 /* === 1. APP 容器設定 (RPG 地圖版) === */
+/* === 1. 預設：流浪者 (無遮罩，背景清晰版) === */
 .app-container {
     width: 100%; 
     max-width: 420px; 
@@ -53,19 +54,13 @@ body {
     flex-direction: column;
     overflow: hidden; 
 
-    /* ★★★ 修正重點 ★★★ */
-    background-color: #fdfbf7 !important; /* 圖片載入前的底色 */
-    
-    background-image: 
-        /* 第1層：遮罩變薄了 (0.85 -> 0.4)，像是一層薄薄的霧，讓底圖清楚浮現 */
-        linear-gradient(rgba(253, 251, 247, 0.4), rgba(253, 251, 247, 0.4)),
-        
-        /* 第2層：一張對比強烈的古老航海地圖 */
-        url('https://images.unsplash.com/photo-1524666643752-b381eb00effb?q=80&w=1000&auto=format&fit=crop') !important;
+    /* ★★★ 修改重點：移除 linear-gradient，只留 url ★★★ */
+    /* 你之後找到喜歡的圖，只要把下面括號裡的網址換掉就好 */
+    background-image: url('https://images.unsplash.com/photo-1567910640027-4029c4d8e9e0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') !important;
     
     background-size: cover !important; 
     background-position: center !important;
-    background-repeat: no-repeat !important;
+    background-color: #fdfbf7 !important; /* 圖片載入失敗時的底色 */
 }
 
 /* ★★★ 2. 海洋 (深海氣泡) ★★★ */
@@ -133,14 +128,16 @@ body.theme-dark .app-container {
     position: absolute; 
     top: 0; left: 0; width: 100%; height: 100%;
     display: flex; flex-direction: column;
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* ★★★ 修改這裡：將 0.3s 改成 0.6s (想要更慢可以改 0.8s) ★★★ */
+    transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
     padding: 20px; box-sizing: border-box;
     background: transparent; 
     overflow-y: auto; overflow-x: hidden;
     visibility: hidden; pointer-events: none; z-index: 0;
     transform: translateX(100%);
-}
-.page.active { 
+}.page.active { 
     transform: translateX(0); z-index: 10; opacity: 1; visibility: visible; pointer-events: auto; 
 }
 
@@ -170,18 +167,32 @@ body.theme-dark .app-container {
 
 /* 元件 */
 .navbar { display: flex; align-items: center; padding: 10px 0; min-height: 50px; }
-.back-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 10px; }
-.page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); }
+.back-btn { background: none; border: none; font-size: 1.5rem; color: #000000; cursor: pointer; padding: 10px; }
+.page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); color: #000000;}
 
-.mode-card { background: rgba(255,255,255,0.4); border: 2px solid var(--border-color); border-radius: 15px; padding: 25px; margin-bottom: 20px; cursor: pointer; display: flex; align-items: center; box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: 0.1s; }
-.mode-card:active { transform: translateY(4px); box-shadow: none; }
+.mode-card {
+    /* ★★★ 修改重點：原本是 rgba(255,255,255,0.4)，改成不透明的 #fdfbf7 或 white ★★★ */
+    background: #fdfbf7; 
+    
+    border: 2px solid var(--border-color);
+    border-radius: 15px; 
+    padding: 25px; 
+    margin-bottom: 20px;
+    cursor: pointer; 
+    display: flex; 
+    align-items: center;
+    
+    /* 加強陰影，讓它更有立體感浮在背景上 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+    transition: 0.1s;
+}.mode-card:active { transform: translateY(4px); box-shadow: none; }
 .mode-icon { font-size: 2.5rem; margin-right: 20px; width: 50px; text-align: center; }
 .mode-info h2 { font-size: 1.4rem; margin: 0 0 5px 0; color: var(--primary); }
 .mode-info p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
 
 /* 選單與按鈕 */
 .menu-section { display: none; width: 100%; } 
-.menu-section.show { display: block; animation: fadeIn 0.3s; }
+.menu-section.show { display: block; animation: fadeIn 0.6s; }
 .menu-btn { background: var(--card-bg); color: var(--text-main); padding: 20px; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--btn-shadow); transition: 0.1s; }
 .menu-btn:active { transform: translateY(4px); box-shadow: none; }
 .mistake-btn { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
@@ -215,14 +226,36 @@ body.theme-dark .app-container {
 .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
 .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
 .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 10px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; overflow-y: auto; padding: 20px; }
-.card-front { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; padding: 30px 20px; height: 100%; text-align: center; }
+.card-front {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* ★ 讓內容垂直置中 */
+    align-items: center;
+    position: absolute;      /* ★ 設定為定位點，讓按鈕可以參照它 */
+    padding: 20px;
+    padding-bottom: 100px;   /* ★ 底部留白 100px，避免文字被按鈕擋住 */
+    height: 100%;
+    box-sizing: border-box;  /* 確保 padding 不會撐大盒子 */
+}
 .card-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: stretch; text-align: left; padding-top: 50px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif; -webkit-font-smoothing: antialiased; }
 .flip-card.flipped .card-front { visibility: hidden; }
 
 .q-tag { background: var(--secondary); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: fit-content; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 auto; z-index: 5; }
-.word-en { font-size: 2.6rem; font-weight: 700; color: var(--primary); margin: 0; margin-bottom: 5px; line-height: 1.1; letter-spacing: -0.5px; }
-.word-phonetic { font-family: "Lucida Sans Unicode", sans-serif; font-size: 1.1rem; color: #636e72; margin: 0; margin-bottom: 20px; }
-.summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
+.word-en {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+    margin-bottom: 5px; /* ★ 只留 5px，讓它跟音標很近 */
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}.word-phonetic { 
+    font-family: "Lucida Sans Unicode", sans-serif; 
+    font-size: 1.1rem; 
+    color: #7f8c8d; /* 稍微改深一點的灰色比較好讀 */
+    margin: 0; 
+    margin-bottom: 5px; /* ★★★ 縮小與下方解釋的距離 (原本是20px+gap) ★★★ */
+}.summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
 .summary-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .pos-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 1rem; font-weight: bold; vertical-align: middle; }
 .cn-text { font-size: 1.4rem; font-weight: bold; }
@@ -230,8 +263,28 @@ body.theme-dark .app-container {
 .back-header { font-size: 0.9rem; color: #b2bec3; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
 .detail-block { margin-bottom: 25px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
 .detail-block:last-child { border: none; }
-.block-title { font-weight: bold; color: var(--primary); margin-bottom: 12px; margin-top: 5px; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
-.ex-item { font-size: 1.15rem; color: #2d3436; margin-bottom: 20px; padding-left: 18px; border-left: 4px solid var(--accent); line-height: 1.6; }
+.block-title { 
+    font-weight: bold; 
+    color: var(--primary); 
+    font-size: 1.5rem; 
+    line-height: 1.2;
+    margin-bottom: 12px; 
+    margin-top: 5px; 
+    letter-spacing: 1px; 
+    display: flex;
+    align-items: center;
+    
+    gap: 10px;        /* 標籤跟文字的距離 */
+    flex-wrap: wrap;  /* 如果字太長，自動換行 */
+}
+.block-title .pos-badge {
+    position: relative;
+    top: -1px; /* 負數往上提，正數往下壓 */
+    
+    /* 確保標籤自己不要被行高撐大 */
+    line-height: normal; 
+    padding: 4px 8px; /* 可以稍微把標籤縮小一點點看起來更精緻 */
+}.ex-item { font-size: 1.15rem; color: #2d3436; margin-bottom: 20px; padding-left: 18px; border-left: 4px solid var(--accent); line-height: 1.6; }
 .ex-cn { display: block; color: #7f8c8d; font-size: 1rem; margin-top: 8px; font-weight: normal; line-height: 1.5; }
 .controls { display: flex; gap: 10px; margin-top: 10px; }
 .ctrl-btn { flex: 1; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background: var(--card-bg); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
@@ -240,7 +293,38 @@ body.theme-dark .app-container {
 
 .star-btn { position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 1.8rem; color: #dfe6e9; cursor: pointer; z-index: 20; transition: 0.2s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); height: 30px; display: flex; align-items: center; }
 .star-btn.active { color: var(--star-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
-.speak-btn-large { width: 60px; height: 60px; border-radius: 50%; background: rgba(108, 92, 231, 0.1); color: var(--primary); border: none; font-size: 1.5rem; cursor: pointer; margin: 0; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+.speak-btn-large {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(108, 92, 231, 0.1);
+    color: var(--primary);
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    
+    /* ★★★ 絕對定位設定 ★★★ */
+    position: absolute;
+    bottom: 50px;           /* 距離底部 50px */
+    left: 50%;              /* 水平置中 */
+    transform: translateX(-50%); 
+    
+    margin: 0;
+    transition: 0.2s;
+    z-index: 10;
+}
+.card-front p {
+    color: #aaa;
+    font-size: 0.8rem;
+    
+    /* ★★★ 絕對定位設定 ★★★ */
+    position: absolute;
+    bottom: 20px;           /* 放在按鈕下方 */
+    left: 0;
+    width: 100%;            /* 確保文字水平置中 */
+    text-align: center;
+    margin: 0;
+}
 .speak-btn-large:hover { background: var(--primary); color: white; transform: scale(1.1); }
 
 /* 測驗系統 */
@@ -283,3 +367,43 @@ body.theme-dark .app-container {
 .theme-btn.active { transform: scale(1.15); border-color: var(--primary); box-shadow: 0 0 15px var(--primary); z-index: 10; color: var(--text-main); }
 .theme-btn:not(.locked) { filter: none; color: var(--text-main); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* style.css 最下方 */
+
+/* === 字卡切換特效 (經典左右滑動) === */
+
+/* 1. 下一張：舊的往左滑走，新的從右邊滑入 */
+.anim-slide-out-left {
+    animation: slideOutLeft 0.3s forwards ease-in;
+}
+.anim-slide-in-right {
+    animation: slideInRight 0.3s forwards ease-out;
+}
+
+/* 2. 上一張：舊的往右滑走，新的從左邊滑入 */
+.anim-slide-out-right {
+    animation: slideOutRight 0.3s forwards ease-in;
+}
+.anim-slide-in-left {
+    animation: slideInLeft 0.3s forwards ease-out;
+}
+
+/* --- 動畫關鍵影格 --- */
+
+@keyframes slideOutLeft {
+    to { transform: translateX(-120%); opacity: 0; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    to { transform: translateX(120%); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
