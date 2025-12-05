@@ -115,14 +115,18 @@
             </div>
         </div>
 
-        <div id="menu-quiz-scope" class="menu-section">
-            <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
-                <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="menu-btn" onclick="goToSubMenu()">
-                <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-        </div>
+<div id="menu-quiz-scope" class="menu-section">
+    <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
+        <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
+        <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
+    </div>
+    <div class="menu-btn" onclick="goToSubMenu()">
+        <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+    </div>
+</div>
     </div>
 
     <div id="page-submenu" class="page">

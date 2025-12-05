@@ -12,7 +12,7 @@
     let score = 0; let currentCategoryLabel = "";
     let quizTotal = 0; 
     let currentQuizData = null; // 用來儲存當前問題的答案和選項
-    let cachedAudioUrl = null;
+    let cachedAudioObj = null;
     let isSpeaking = false;
 
     // ==========================================
@@ -47,28 +47,47 @@
         }
     }
 
-    function loadFavorites() {
-        const favList = getFavorites(); 
-        if (favList.length === 0) { alert("還沒有最愛單字！"); return; }
-        if (currentMode === 'learn') { currentList = [...favList].sort(() => 0.5 - Math.random()); } else { currentList = favList; }
-        currentCategoryLabel = "我的最愛";
-        if (currentMode === 'learn') { startFlashcardMode(); } else { startGenericQuiz(false, currentCategoryLabel, favList.length); }
+function loadFavorites() {
+    const favList = getFavorites(); 
+    
+    // 1. 如果沒收藏，提示並退出
+    if (favList.length === 0) { 
+        alert("還沒有最愛單字！請先在字卡點擊星星收藏。"); 
+        return; 
     }
+
+    // 2. 設定目前的列表
+    // 如果是學習模式就洗牌，測驗模式則保持原樣(或也洗牌，看你喜好)
+    if (currentMode === 'learn') { 
+        currentList = [...favList].sort(() => 0.5 - Math.random()); 
+    } else { 
+        currentList = favList; 
+    }
+    
+    currentCategoryLabel = "我的最愛";
+
+    // 3. 判斷模式並啟動
+    if (currentMode === 'learn') { 
+        // ★★★ 修正重點：手動執行開啟字卡的步驟，而不是呼叫不存在的函式 ★★★
+        currentIndex = 0;
+        document.getElementById('fc-title').innerText = `卷軸：${currentCategoryLabel}`;
+        showPage('page-flashcard'); 
+        loadCard(); // 載入第一張卡
+    } else { 
+        // 進入測驗模式
+        startGenericQuiz(false, currentCategoryLabel, favList.length); 
+    }
+}
 
     // === 字卡核心功能 (LoadCard) ===
 // === 字卡核心功能 (修正後的完整版) ===
 function loadCard() {
-    // 1. 防呆：如果沒有資料，直接結束
-    if (!currentList || currentList.length === 0) {
-        return;
-    }
+    if (!currentList || currentList.length === 0) return;
     
-    // 2. 音效預載與重置 (新功能)
-    cachedAudioUrl = null; // 清空上一張的紀錄
-    isSpeaking = false;    // 重置發音狀態
-    
-    const data = currentList[currentIndex]; // 取得當前單字資料
-    preloadAudio(data.en); // 呼叫預載函式
+
+    isSpeaking = false;    
+    const data = currentList[currentIndex]; 
+    preloadAudio(data.en);
 
     // 3. 取得 DOM 元素
     const card = document.getElementById('flashcard');
@@ -374,6 +393,7 @@ function prevCard() {
         score = 0;
         
         document.getElementById('quiz-score').innerText = score;
+        document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
         document.getElementById('quiz-bar').style.width = '0%';
         document.getElementById('q-tag').innerText = title;
 
@@ -422,7 +442,6 @@ function loadQuestion(isGrammar = false) {
     currentQuizData = { correct: correctAnswer, options: allOptions };
     
     // ★★★ 修正點：正確的音檔預載位置 ★★★
-    cachedAudioUrl = null; 
     preloadAudio(correctAnswer); 
 
     // 產生選項按鈕
@@ -450,7 +469,7 @@ function checkAnswer(selectedButton, isCorrect) {
         // ★★★ 修正點：答對後延遲播放發音 ★★★
         setTimeout(() => {
             playQuizAudio(currentQuizData.correct); 
-        }, 200); 
+        }, 50); 
 
         selectedButton.classList.add('correct');
         score++;
@@ -473,7 +492,7 @@ function checkAnswer(selectedButton, isCorrect) {
         resultTitle.innerText = "❌ 答錯了！";
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
     }
-
+    document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('quiz-score').innerText = score;
     
     // 顯示結果彈窗
@@ -511,6 +530,10 @@ function hideResultPopup() {
 }
 function preloadAudio(word) {
     if (!word) return;
+    
+    // 清空上一題的暫存
+    cachedAudioObj = null;
+
     const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word);
     
     fetch(url)
@@ -519,16 +542,26 @@ function preloadAudio(word) {
             if (Array.isArray(data) && data[0] && Array.isArray(data[0].phonetics)) {
                 // 找一個有 audio 的項目
                 const ph = data[0].phonetics.find(p => p.audio);
-                if (ph) cachedAudioUrl = ph.audio;
+                if (ph && ph.audio) {
+                    // ★★★ 關鍵修改：立刻建立 Audio 物件並開始下載 ★★★
+                    const audio = new Audio(ph.audio);
+                    audio.preload = 'auto'; // 告訴瀏覽器：現在就下載！
+                    audio.load();           // 強制觸發下載
+                    cachedAudioObj = audio; // 存入全域變數，隨時待命
+                }
             }
         })
         .catch(() => {
-            console.log("預載音檔失敗，稍後將使用機器人發音");
+            console.log("預載音檔失敗 (可能是沒有網路或 API 限制)");
         });
 }
 
 // === 2. 修改後的發音函式 (加入防呆與動畫) ===
 function speakWord() {
+    // ==========================================
+    // 1. 前面這些 UI 設定全部保留 (不用改)
+    // ==========================================
+    
     // 防止重複點擊
     if (isSpeaking) return;
     
@@ -555,53 +588,31 @@ function speakWord() {
         }
     };
 
-    // --- 播放邏輯 ---
+    // ==========================================
+    // 2. 後面這邊改成新的「零延遲」邏輯
+    // ==========================================
     
-    // 情況 A: 已經預載好了 (這是最快的情況，手機通常不會擋)
-    if (cachedAudioUrl) {
-        const audio = new Audio(cachedAudioUrl);
-        audio.play()
+    // 情況 A: 已經有預載好的「物件」 (cachedAudioObj)
+    if (cachedAudioObj) {
+        // 重點：因為是重複使用同一個物件，要先把進度歸零
+        cachedAudioObj.currentTime = 0; 
+        
+        cachedAudioObj.play()
             .then(() => {
-                // 播放成功
-                audio.onended = resetBtn;
-                // 防呆：如果音檔太短或沒觸發 ended，1秒後強制復原
+                // 播放成功，綁定結束事件
+                cachedAudioObj.onended = resetBtn;
+                // 防呆：如果音檔太短或沒觸發 ended，1.5秒後強制復原
                 setTimeout(resetBtn, 1500);
             })
             .catch(err => {
-                console.error("播放被阻擋，嘗試機器人發音", err);
+                console.error("播放被阻擋，轉用機器人", err);
                 useRobotVoice(word, resetBtn);
             });
     } 
-    // 情況 B: 還沒下載好 (網路慢)，只好現場抓
+    // 情況 B: 沒預載到 (可能剛載入還沒抓完，或沒網路)
     else {
-        const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word);
-        fetch(url)
-            .then(res => res.ok ? res.json() : Promise.reject())
-            .then(data => {
-                let audioUrl = null;
-                if (Array.isArray(data) && data[0] && Array.isArray(data[0].phonetics)) {
-                    const ph = data[0].phonetics.find(p => p.audio);
-                    if (ph) audioUrl = ph.audio;
-                }
-
-                if (audioUrl) {
-                    cachedAudioUrl = audioUrl; // 存起來下次用
-                    const audio = new Audio(audioUrl);
-                    
-                    // 這裡因為是 fetch 後播放，手機可能會擋，所以加 catch
-                    audio.play()
-                        .then(() => {
-                            audio.onended = resetBtn;
-                            setTimeout(resetBtn, 1500);
-                        })
-                        .catch(() => useRobotVoice(word, resetBtn));
-                } else {
-                    useRobotVoice(word, resetBtn);
-                }
-            })
-            .catch(() => {
-                useRobotVoice(word, resetBtn);
-            });
+        // 直接用機器人，不再重新 fetch (因為 preloadAudio 已經試過了，若失敗這裡再試通常也沒用)
+        useRobotVoice(word, resetBtn);
     }
 }
 
@@ -629,15 +640,18 @@ function useRobotVoice(word, callback) {
 
 // ★★★ 新增：測驗專用的發音函式 ★★★
 function playQuizAudio(word) {
-    // 如果有預載到真人發音，就播真人
-    if (cachedAudioUrl) {
-        const audio = new Audio(cachedAudioUrl);
-        audio.play().catch(() => {
-            // 如果真人播放失敗，轉用機器人
-            useRobotVoice(word, () => {}); 
+    // 1. 如果有「真正預載好」的聲音物件，直接播 (零延遲！)
+    if (cachedAudioObj) {
+        // 重置播放時間，避免連點時卡住
+        cachedAudioObj.currentTime = 0; 
+        
+        cachedAudioObj.play().catch(err => {
+            console.error("播放被阻擋，轉用機器人", err);
+            useRobotVoice(word, () => {});
         });
-    } else {
-        // 如果沒抓到真人發音，直接用機器人
+    } 
+    // 2. 如果因為網路太慢還沒載好，只好現場抓機器人來唸
+    else {
         useRobotVoice(word, () => {});
     }
 }
@@ -677,10 +691,12 @@ function showDungeonSubMenu() {
 }
 
 // 核心：開啟冒險地圖
+// 修改後的 openDungeonMap (包含冷卻與精通判斷)
 function openDungeonMap(mainCat, subCat = null) {
     let rawData;
     let saveKey; // 用來存 localStorage 的 key
 
+    // 1. 判斷是多益還是托福，決定要拿哪一份單字表
     if (mainCat === 'TOEIC') {
         rawData = vocabDB['TOEIC'];
         saveKey = 'TOEIC';
@@ -698,37 +714,65 @@ function openDungeonMap(mainCat, subCat = null) {
 
     document.getElementById('adv-title').innerText = `地圖: ${subCat || mainCat}`;
 
-    // 1. 讀取玩家進度 (預設解鎖到第 0 關)
-    // 格式: { "TOEIC": 5, "TOEFL_Biology": 2 } 代表解鎖到的 index
+    // 2. 讀取「解鎖進度」 (你有沒有資格打這一關)
     const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
     const unlockedIndex = allProgress[saveKey] || 0;
 
-    // 2. 計算總關卡數 (每 10 個字一關)
+    // ★★★ 3. 讀取「精通與時間紀錄」 (這一關是不是在冷卻、或已經精通) ★★★
+    // 這行是新的！它會去抓我們剛剛說要存的那些時間資料
+    const masteryData = JSON.parse(localStorage.getItem(`vocabRPG_mastery_${saveKey}`)) || {};
+
+    // 4. 計算總關卡數
     const chunkSize = 10;
     const totalLevels = Math.ceil(rawData.length / chunkSize);
     
     const grid = document.getElementById('adventure-grid');
     grid.innerHTML = ''; // 清空舊方塊
 
-    // 3. 產生方塊
+    // 5. 開始一個一個畫出方塊
     for (let i = 0; i < totalLevels; i++) {
         const node = document.createElement('div');
         node.className = 'level-node';
         
-        // 判斷狀態
+        // --- 情況 A: 鎖住 (Locked) ---
+        // 如果這一關的號碼 (i) 大於你目前解鎖到的進度
         if (i > unlockedIndex) {
-            // 尚未解鎖
-            node.classList.add('locked');
-        } else {
-            // 已解鎖
-            if (i < unlockedIndex) {
-                node.classList.add('cleared'); // 已通關
-            }
+            node.classList.add('locked'); // 加上鎖住的樣式
+            grid.appendChild(node);
+            continue; //這一關處理完了，直接跳下一迴圈
+        }
+
+        // --- 準備資料 ---
+        // 拿出這一關的紀錄，如果沒有紀錄就給預設值 (0)
+        const record = masteryData[i] || { nextPlay: 0, count: 0 };
+        const now = Date.now(); // 現在幾點幾分 (毫秒)
+        const isMastered = record.count >= 5; // 通關 5 次就算精通
+        const timeLeft = record.nextPlay - now; // 剩餘等待時間
+
+        // --- 情況 B: 已精通 (Mastered) ---
+        // 如果已經通關 5 次，給它皇冠，隨時可玩
+        if (isMastered) {
+            node.classList.add('mastered');
             node.innerHTML = `<span class="level-num">${i + 1}</span>`;
-            
-            // 綁定點擊事件：進入戰鬥
             node.onclick = () => startDungeonBattle(rawData, i);
         }
+        // --- 情況 C: 冷卻中 (Cooldown) ---
+        // 如果還沒精通，且剩餘時間大於 0，代表還在 CD
+        else if (timeLeft > 0) {
+            node.classList.add('cooldown');
+            // 在格子上顯示剩餘時間 (例如 2h)
+            node.innerHTML = `<span class="level-num" style="font-size:1rem">${formatTimeLeft(timeLeft)}</span>`;
+            // 點擊時跳出警告，不進入戰鬥
+            node.onclick = () => alert(`⏳ 休息一下吧！\n還需等待 ${formatTimeLeft(timeLeft)} 才能再次挑戰此關卡。`);
+        }
+        // --- 情況 D: 可挑戰 (Ready) ---
+        // 時間到了，或者第一次玩，顯示綠色，可以戰鬥
+        else {
+            node.classList.add('ready'); 
+            node.innerHTML = `<span class="level-num">${i + 1}</span>`;
+            node.onclick = () => startDungeonBattle(rawData, i);
+        }
+
         grid.appendChild(node);
     }
 
@@ -841,13 +885,11 @@ function loadDungeonQuestion() {
         // 題目是英文 -> 選中文
         document.getElementById('q-sub').innerText = "請選擇正確的 [中文]";
         // 預載英文發音
-        cachedAudioUrl = null;
         preloadAudio(qData.audioWord);
     } else {
         // 題目是中文 -> 選英文
         document.getElementById('q-sub').innerText = "請選擇對應的 [英文]";
         // 中文題目不用預載，但在答對時我們會播英文
-        cachedAudioUrl = null;
         preloadAudio(qData.audioWord);
     }
 
@@ -884,12 +926,13 @@ function checkDungeonAnswer(btn, isCorrect) {
         btn.classList.add('correct');
         playSound('correct');
         score++;
+        addXP(2);
         document.getElementById('quiz-score').innerText = score;
         
         // ★重點：不管題目是中文還英文，答對時都播放英文發音，加強記憶
         setTimeout(() => {
             playQuizAudio(currentQuizData.audioWord);
-        }, 200);
+        }, 50);
 
         document.getElementById('res-title').innerText = "✅ 正確！";
         document.getElementById('res-detail').innerHTML = ""; // 答對不用顯示解釋
@@ -906,36 +949,94 @@ function checkDungeonAnswer(btn, isCorrect) {
         document.getElementById('res-title').innerText = "❌ 錯誤！";
         document.getElementById('res-detail').innerHTML = `正確答案：<b>${currentQuizData.correct}</b>`;
     }
-
+        document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     // 顯示結果彈窗
     document.getElementById('result-popup').classList.add('show');
 }
 
 // 動作 C：結算與存檔
 function finishDungeon() {
-    // 設定及格分數：20題要對 16 題 (80%)
     const passThreshold = 16; 
     let msg = "";
 
+    // 1. 判斷是否通關 (決定是否解鎖下一關)
     if (score >= passThreshold) {
-        msg = `🎉 副本通關！\n得分: ${score}/20\n下一層已解鎖！`;
+        // ... (這部分處理經驗值和解鎖下一關，保留你原本寫好的) ...
+        addXP(50);
+        msg = `🎉 副本通關！\n得分: ${score}/20\n獲得 50 XP！`; 
         playSound('correct');
-        
-        // 更新 localStorage (手機裡的存檔)
+
         const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
         const currentUnlocked = allProgress[adventureKey] || 0;
-        
-        // 只有當你打的是「最新進度」時，才幫你開下一關
         if (adventureLevelIndex === currentUnlocked) {
             allProgress[adventureKey] = currentUnlocked + 1;
             localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
+            msg += "\n下一層已解鎖！";
         }
     } else {
-        msg = `💀 挑戰失敗...\n得分: ${score}/20\n你需要 ${passThreshold} 分才能通關。`;
+        msg = `💀 挑戰失敗...\n得分: ${score}/20`;
         playSound('wrong');
     }
 
+    // ==========================================
+    // ★★★ 新增：更新 SRS 冷卻與精通狀態 ★★★
+    // ==========================================
+    
+    // 1. 讀取舊紀錄
+    const masteryKey = `vocabRPG_mastery_${adventureKey}`;
+    let masteryData = JSON.parse(localStorage.getItem(masteryKey)) || {};
+    let record = masteryData[adventureLevelIndex] || { nextPlay: 0, count: 0 };
+
+    // 2. 如果這次有「通關」(及格)，才增加累計次數
+    if (score >= passThreshold) {
+        record.count += 1;
+    }
+
+    // 3. 判斷是否已經精通 (通關 >= 5次)
+    if (record.count >= 5) {
+        // 精通了！時間設為 0 (隨時可玩)
+        record.nextPlay = 0;
+        msg += "\n👑 恭喜！你已經精通此區域！";
+    } else {
+        // 還沒精通，計算冷卻時間
+        const cooldown = calculateCooldown(score);
+        record.nextPlay = Date.now() + cooldown;
+        msg += `\n⏳ 下次挑戰：${formatTimeLeft(cooldown)} 後`;
+    }
+
+    // 4. 存檔
+    masteryData[adventureLevelIndex] = record;
+    localStorage.setItem(masteryKey, JSON.stringify(masteryData));
+
     alert(msg);
-    // 結束後，重新整理地圖，這樣才能看到下一關解鎖
+    // 回到地圖頁 (這會觸發 openDungeonMap 重畫格子)
     openDungeonMap(adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', adventureKey.split('_')[1]);
+}
+
+// ==========================================
+// ★★★ 新增：SRS 間隔重複系統邏輯 ★★★
+// ==========================================
+
+// 1. 根據分數計算冷卻時間 (毫秒)
+function calculateCooldown(score) {
+    // 全錯 (0分) -> 30分鐘
+    // 全對 (20分) -> 3天 (72小時)
+    // 中間依比例計算
+    
+    if (score === 20) return 72 * 60 * 60 * 1000; // 3天
+    if (score >= 18) return 48 * 60 * 60 * 1000;  // 2天
+    if (score >= 15) return 24 * 60 * 60 * 1000;  // 1天
+    if (score >= 10) return 12 * 60 * 60 * 1000;  // 12小時
+    if (score >= 5)  return 3 * 60 * 60 * 1000;   // 3小時
+    return 30 * 60 * 1000;                        // 30分鐘
+}
+
+// 2. 顯示剩餘時間 (例如 "2h 5m")
+function formatTimeLeft(ms) {
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 24) return Math.ceil(hours / 24) + "天";
+    if (hours > 0) return `${hours}h${minutes}m`;
+    return `${minutes}m`;
 }
