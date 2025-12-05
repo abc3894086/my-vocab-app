@@ -56,23 +56,29 @@
         </div>
 
         <div class="mode-card" onclick="selectMode('learn')">
-            <div class="mode-icon">📖</div>
-            <div class="mode-info">
-                <h2>單字卷軸</h2>
-                <p>瀏覽字卡積累知識</p>
-            </div>
-        </div>
-        
-        <div class="mode-card" onclick="selectMode('quiz')">
-            <div class="mode-icon">⚔️</div>
-            <div class="mode-info">
-                <h2>戰鬥測驗</h2>
-                <p>挑戰題目獲取經驗</p>
-            </div>
-        </div>
+    <div class="mode-icon">📖</div>
+    <div class="mode-info">
+        <h2>單字卷軸</h2>
+        <p>瀏覽字卡積累知識</p>
     </div>
+</div>
 
-    <div id="page-category" class="page">
+<div class="mode-card" onclick="selectMode('quiz')">
+    <div class="mode-icon">⚔️</div>
+    <div class="mode-info">
+        <h2>戰鬥測驗</h2>
+        <p>挑戰題目獲取經驗</p>
+    </div>
+</div>
+
+<div class="mode-card" style="border-color:#8e44ad;" onclick="selectMode('dungeon')">
+    <div class="mode-icon">🏰</div>
+    <div class="mode-info">
+        <h2 style="color:#8e44ad;">地城副本</h2>
+        <p>推圖闖關 (20題/關)</p>
+    </div>
+</div>
+    </div> <div id="page-category" class="page">
         <div class="navbar">
             <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
             <span class="page-title" id="cat-title">選擇戰場</span>
@@ -197,7 +203,38 @@
             </div>
         </div>
     </div>
+<div id="page-dungeon-select" class="page">
+    <div class="navbar">
+        <button class="back-btn" onclick="showPage('page-landing')"><i class="fas fa-arrow-left"></i></button>
+        <span class="page-title">選擇副本</span>
+    </div>
+    <div id="dungeon-main-menu" class="menu-section" style="margin-top:20px;">
+        <div class="menu-btn" onclick="openDungeonMap('TOEIC')">
+            <span><i class="fas fa-skull-crossbones"></i> 多益地城 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="menu-btn" onclick="showDungeonSubMenu()">
+            <span><i class="fas fa-dragon"></i> 托福地城 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+        </div>
+    </div>
+</div>
 
+<div id="page-dungeon-toefl-sub" class="page">
+    <div class="navbar">
+        <button class="back-btn" onclick="showPage('page-dungeon-select')"><i class="fas fa-arrow-left"></i></button>
+        <span class="page-title">選擇托福區域</span>
+    </div>
+    <div class="scroll-list" id="dungeon-toefl-list" style="margin-top: 20px;">
+        </div>
+</div>
+
+    <div id="page-adventure" class="page">
+        <div class="navbar">
+            <button class="back-btn" onclick="exitAdventure()"><i class="fas fa-arrow-left"></i></button>
+            <span class="page-title" id="adv-title">冒險地圖</span>
+        </div>
+        
+        <div id="adventure-grid" class="adventure-grid"></div>
+    </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
 

@@ -407,3 +407,80 @@ body.theme-dark .app-container {
     from { transform: translateX(-120%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+/* ========================================= */
+/* 6. 地城副本 (Adventure Mode) 樣式 */
+/* ========================================= */
+
+/* 網格容器：自動排版，每個方塊最小 70px */
+.adventure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 關卡方塊 (Node) */
+.level-node {
+    aspect-ratio: 1; /* 強制正方形 */
+    background: var(--card-bg);
+    border: 3px solid var(--border-color);
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: "Georgia", serif;
+}
+
+.level-node:active {
+    transform: translateY(6px);
+    box-shadow: none;
+}
+
+/* 關卡數字 */
+.level-num {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* 鎖定狀態 (Locked) */
+.level-node.locked {
+    background: #e0e0e0;
+    border-color: #bdc3c7;
+    cursor: not-allowed;
+    pointer-events: none; /* 禁止點擊 */
+    filter: grayscale(1);
+}
+.level-node.locked .level-num {
+    display: none; /* 鎖定時不顯示數字 */
+}
+.level-node.locked::after {
+    content: "🔒";
+    font-size: 1.5rem;
+    opacity: 0.5;
+}
+
+/* 已通關狀態 (Cleared) */
+.level-node.cleared {
+    background: var(--accent); /* 綠色背景 */
+    border-color: #219150;
+    color: white;
+}
+.level-node.cleared .level-num {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.level-node.cleared::before {
+    content: "★";
+    position: absolute;
+    bottom: 5px;
+    font-size: 0.8rem;
+    color: #f1c40f;
+}

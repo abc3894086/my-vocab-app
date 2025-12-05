@@ -222,7 +222,30 @@ function playSound(type) {
 
     // === 導航與功能啟動 (已修正 Quiz 邏輯) ===
     function showPage(id) { document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.classList.add('hidden'); }); document.getElementById(id).classList.remove('hidden'); setTimeout(() => document.getElementById(id).classList.add('active'), 10); }
-    function selectMode(mode) { currentMode = mode; document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show')); if (mode === 'learn') { document.getElementById('menu-learn-scope').classList.add('show'); document.getElementById('cat-title').innerText = "選擇卷軸"; } else { document.getElementById('menu-quiz-type').classList.add('show'); document.getElementById('cat-title').innerText = "選擇試煉"; } showPage('page-category'); }
+    function selectMode(mode) {
+    currentMode = mode;
+    isAdventureMode = false; 
+
+    // 1. 先把「所有」有 menu-section 的選單都藏起來 (包含地城選單)
+    document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show'));
+
+    if (mode === 'learn') {
+        document.getElementById('menu-learn-scope').classList.add('show'); // 顯示學習選單
+        document.getElementById('cat-title').innerText = "選擇卷軸";
+        showPage('page-category');
+    } else if (mode === 'quiz') {
+        document.getElementById('menu-quiz-type').classList.add('show'); // 顯示測驗選單
+        document.getElementById('cat-title').innerText = "選擇試煉";
+        showPage('page-category');
+    } else if (mode === 'dungeon') {
+        // ★★★ 修正點在這裡 ★★★
+        // 顯示「地城專用」的選單
+        const dungeonMenu = document.getElementById('dungeon-main-menu');
+        if(dungeonMenu) dungeonMenu.classList.add('show');
+        
+        showPage('page-dungeon-select');
+    }
+}
     function goBack(target) { if(target==='category') { document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show')); if(currentMode==='learn') { document.getElementById('menu-learn-scope').classList.add('show'); } else { document.getElementById('menu-quiz-scope').classList.add('show'); } showPage('page-category'); } }
     function handleBackFromCategory() { if (currentMode === 'quiz' && document.getElementById('menu-quiz-scope').classList.contains('show')) { document.getElementById('menu-quiz-scope').classList.remove('show'); document.getElementById('menu-quiz-type').classList.add('show'); document.getElementById('cat-title').innerText = "選擇試煉"; return; } showPage('page-landing'); }
     function goToSubMenu() { showPage('page-submenu'); }
@@ -459,13 +482,18 @@ function checkAnswer(selectedButton, isCorrect) {
 function nextQuestion() {
     currentIndex++;
     
-    // 【新增這行】進入下一題時，把懸浮按鈕隱藏起來
+    // 隱藏懸浮按鈕與彈窗
     document.getElementById('float-next-btn').classList.remove('show');
-    
-    // 確保彈窗也是關閉的
     document.getElementById('result-popup').classList.remove('show');
-    
-    loadQuestion(quizType === 'grammar');
+
+    // ★★★ 關鍵修改在這裡 ★★★
+    if (isAdventureMode) {
+        // 如果現在是副本模式，呼叫副本專用的載入函式
+        loadDungeonQuestion();
+    } else {
+        // 否則，跑原本的普通測驗邏輯
+        loadQuestion(quizType === 'grammar');
+    }
 }
     
     function showQuizVocabSelection() { quizType = 'vocab'; document.getElementById('menu-quiz-type').classList.remove('show'); document.getElementById('menu-quiz-scope').classList.add('show'); document.getElementById('cat-title').innerText = "選擇領域"; }
@@ -612,4 +640,302 @@ function playQuizAudio(word) {
         // 如果沒抓到真人發音，直接用機器人
         useRobotVoice(word, () => {});
     }
+}
+// ==========================================
+// ★★★ 地城副本核心變數 ★★★
+// ==========================================
+let adventureKey = ""; // 目前正在打哪個副本 (例如 "TOEIC" 或 "TOEFL_Biology")
+let adventureLevelIndex = 0; // 目前正在打第幾關 (0 base)
+let isAdventureMode = false; // 是否處於副本模式中
+
+// ==========================================
+// ★★★ 1. 入口與地圖生成邏輯 ★★★
+// ==========================================
+
+// 點擊首頁「地城副本」卡片
+if (currentMode === 'dungeon') {
+    // 這裡原本的 selectMode 會呼叫，我們在 selectMode 裡面加判斷
+    // (請往下看 selectMode 的修改建議)
+}
+
+// 開啟托福子選單 (與原本學習模式共用按鈕樣式)
+function showDungeonSubMenu() {
+    const list = document.getElementById('dungeon-toefl-list');
+    list.innerHTML = ''; // 清空
+    
+    // 遍歷 TOEFL 資料夾
+    const categories = Object.keys(vocabDB['TOEFL']);
+    categories.forEach(cat => {
+        const btn = document.createElement('div');
+        btn.className = 'menu-btn';
+        btn.innerHTML = `<span>📜 ${cat}</span> <i class="fas fa-chevron-right"></i>`;
+        btn.onclick = () => openDungeonMap('TOEFL', cat);
+        list.appendChild(btn);
+    });
+    
+    showPage('page-dungeon-toefl-sub');
+}
+
+// 核心：開啟冒險地圖
+function openDungeonMap(mainCat, subCat = null) {
+    let rawData;
+    let saveKey; // 用來存 localStorage 的 key
+
+    if (mainCat === 'TOEIC') {
+        rawData = vocabDB['TOEIC'];
+        saveKey = 'TOEIC';
+        adventureKey = 'TOEIC';
+    } else {
+        rawData = vocabDB['TOEFL'][subCat];
+        saveKey = `TOEFL_${subCat}`;
+        adventureKey = saveKey;
+    }
+
+    if (!rawData || rawData.length === 0) {
+        alert("此區域尚未有魔物進駐 (無單字資料)！");
+        return;
+    }
+
+    document.getElementById('adv-title').innerText = `地圖: ${subCat || mainCat}`;
+
+    // 1. 讀取玩家進度 (預設解鎖到第 0 關)
+    // 格式: { "TOEIC": 5, "TOEFL_Biology": 2 } 代表解鎖到的 index
+    const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
+    const unlockedIndex = allProgress[saveKey] || 0;
+
+    // 2. 計算總關卡數 (每 10 個字一關)
+    const chunkSize = 10;
+    const totalLevels = Math.ceil(rawData.length / chunkSize);
+    
+    const grid = document.getElementById('adventure-grid');
+    grid.innerHTML = ''; // 清空舊方塊
+
+    // 3. 產生方塊
+    for (let i = 0; i < totalLevels; i++) {
+        const node = document.createElement('div');
+        node.className = 'level-node';
+        
+        // 判斷狀態
+        if (i > unlockedIndex) {
+            // 尚未解鎖
+            node.classList.add('locked');
+        } else {
+            // 已解鎖
+            if (i < unlockedIndex) {
+                node.classList.add('cleared'); // 已通關
+            }
+            node.innerHTML = `<span class="level-num">${i + 1}</span>`;
+            
+            // 綁定點擊事件：進入戰鬥
+            node.onclick = () => startDungeonBattle(rawData, i);
+        }
+        grid.appendChild(node);
+    }
+
+    showPage('page-adventure');
+}
+
+function exitAdventure() {
+    showPage('page-dungeon-select');
+}
+// ==========================================
+// ★★★ 2. 戰鬥生成與執行邏輯 ★★★
+// ==========================================
+
+function startDungeonBattle(allWords, levelIndex) {
+    adventureLevelIndex = levelIndex; // 記住現在打第幾關
+    isAdventureMode = true; // 標記為副本模式
+
+    // 1. 切割出這一關的 10 個單字
+    const start = levelIndex * 10;
+    const end = start + 10;
+    const chunkWords = allWords.slice(start, end);
+
+    // 2. 產生 20 題 (10 英選中 + 10 中選英)
+    let battleQuestions = [];
+
+    chunkWords.forEach(word => {
+        // --- 題目 A: 英選中 ---
+        // 選項：正確中文 + 3個隨機錯誤中文
+        const cnOptions = generateOptions(allWords, word.details[0].cn, 'cn');
+        battleQuestions.push({
+            type: 'en_to_cn', // 英選中
+            q: word.en,       // 題目: 英文
+            ans: word.details[0].cn, // 答案: 中文
+            options: cnOptions,
+            audioWord: word.en // 用來播放發音
+        });
+
+        // --- 題目 B: 中選英 ---
+        // 選項：正確英文 + 3個隨機錯誤英文
+        const enOptions = generateOptions(allWords, word.en, 'en');
+        battleQuestions.push({
+            type: 'cn_to_en', // 中選英
+            q: word.details[0].cn, // 題目: 中文
+            ans: word.en,          // 答案: 英文
+            options: enOptions,
+            audioWord: word.en
+        });
+    });
+
+    // 3. 洗牌 (Shuffle) 讓題型交錯
+    battleQuestions.sort(() => 0.5 - Math.random());
+
+    // 4. 設定全域變數並開始
+    currentList = battleQuestions; // 覆蓋目前的題目列表
+    quizTotal = 20;
+    currentIndex = 0;
+    score = 0;
+    
+    // 初始化 UI
+    document.getElementById('q-tag').innerText = `關卡 ${levelIndex + 1}`;
+    document.getElementById('quiz-score').innerText = 0;
+    document.getElementById('quiz-bar').style.width = '0%';
+    
+    showPage('page-quiz');
+    loadDungeonQuestion();
+}
+
+// 輔助：產生選項 (包含 1 個正確 + 3 個錯誤)
+function generateOptions(fullDB, correctAns, type) {
+    // 從資料庫隨機抓 3 個錯誤答案
+    let distractors = [];
+    while (distractors.length < 3) {
+        const randomItem = fullDB[Math.floor(Math.random() * fullDB.length)];
+        let candidate = (type === 'cn') ? randomItem.details[0].cn : randomItem.en;
+        
+        // 確保不重複且不是正確答案
+        if (candidate !== correctAns && !distractors.includes(candidate)) {
+            distractors.push(candidate);
+        }
+    }
+    // 加入正確答案並洗牌
+    return [correctAns, ...distractors].sort(() => 0.5 - Math.random());
+}
+// ==========================================
+// ★★★ 3.3 副本專用邏輯 (貼在 script.js 最下方) ★★★
+// ==========================================
+
+// 動作 A：載入副本題目 (支援雙向題型)
+function loadDungeonQuestion() {
+    // 1. 如果題目做完了 (currentIndex 超過總題數)，就去結算
+    if (currentIndex >= quizTotal) {
+        finishDungeon(); 
+        return;
+    }
+
+    // 2. 介面初始化 (隱藏舊彈窗、更新進度條)
+    document.getElementById('result-popup').classList.remove('show');
+    document.getElementById('float-next-btn').classList.remove('show');
+    document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
+    document.getElementById('quiz-bar').style.width = `${(currentIndex / quizTotal) * 100}%`;
+
+    // 3. 取得當前題目資料
+    const qData = currentList[currentIndex];
+    
+    // 4. 設定題目文字
+    document.getElementById('q-text').innerText = qData.q;
+    
+    // 5. 判斷題型並給予提示 (這裡就是副本最特別的地方)
+    if (qData.type === 'en_to_cn') {
+        // 題目是英文 -> 選中文
+        document.getElementById('q-sub').innerText = "請選擇正確的 [中文]";
+        // 預載英文發音
+        cachedAudioUrl = null;
+        preloadAudio(qData.audioWord);
+    } else {
+        // 題目是中文 -> 選英文
+        document.getElementById('q-sub').innerText = "請選擇對應的 [英文]";
+        // 中文題目不用預載，但在答對時我們會播英文
+        cachedAudioUrl = null;
+        preloadAudio(qData.audioWord);
+    }
+
+    // 6. 產生選項按鈕
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    // 儲存正確答案跟發音單字，給等一下檢查用
+    currentQuizData = { 
+        correct: qData.ans, 
+        audioWord: qData.audioWord 
+    };
+
+    qData.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        // 選項前面加 A. B. C. D.
+        btn.innerHTML = `<span style="opacity:0.5;margin-right:8px;">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
+        
+        // 綁定點擊事件：檢查答案
+        btn.onclick = () => checkDungeonAnswer(btn, opt === qData.ans);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+// 動作 B：檢查答案 (副本專用)
+function checkDungeonAnswer(btn, isCorrect) {
+    // 鎖定所有按鈕，避免重複按
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(b => b.onclick = null);
+
+    if (isCorrect) {
+        // 答對了
+        btn.classList.add('correct');
+        playSound('correct');
+        score++;
+        document.getElementById('quiz-score').innerText = score;
+        
+        // ★重點：不管題目是中文還英文，答對時都播放英文發音，加強記憶
+        setTimeout(() => {
+            playQuizAudio(currentQuizData.audioWord);
+        }, 200);
+
+        document.getElementById('res-title').innerText = "✅ 正確！";
+        document.getElementById('res-detail').innerHTML = ""; // 答對不用顯示解釋
+    } else {
+        // 答錯了
+        btn.classList.add('wrong');
+        playSound('wrong');
+        
+        // 把正確答案標示成綠色告訴使用者
+        allBtns.forEach(b => {
+            if (b.innerText.includes(currentQuizData.correct)) b.classList.add('correct');
+        });
+
+        document.getElementById('res-title').innerText = "❌ 錯誤！";
+        document.getElementById('res-detail').innerHTML = `正確答案：<b>${currentQuizData.correct}</b>`;
+    }
+
+    // 顯示結果彈窗
+    document.getElementById('result-popup').classList.add('show');
+}
+
+// 動作 C：結算與存檔
+function finishDungeon() {
+    // 設定及格分數：20題要對 16 題 (80%)
+    const passThreshold = 16; 
+    let msg = "";
+
+    if (score >= passThreshold) {
+        msg = `🎉 副本通關！\n得分: ${score}/20\n下一層已解鎖！`;
+        playSound('correct');
+        
+        // 更新 localStorage (手機裡的存檔)
+        const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
+        const currentUnlocked = allProgress[adventureKey] || 0;
+        
+        // 只有當你打的是「最新進度」時，才幫你開下一關
+        if (adventureLevelIndex === currentUnlocked) {
+            allProgress[adventureKey] = currentUnlocked + 1;
+            localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
+        }
+    } else {
+        msg = `💀 挑戰失敗...\n得分: ${score}/20\n你需要 ${passThreshold} 分才能通關。`;
+        playSound('wrong');
+    }
+
+    alert(msg);
+    // 結束後，重新整理地圖，這樣才能看到下一關解鎖
+    openDungeonMap(adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', adventureKey.split('_')[1]);
 }
