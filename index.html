@@ -1,248 +1,284 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vocab RPG</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="app-container">
-    
-    <div id="daily-modal" class="modal-overlay">
-        <div class="bonus-box">
-            <h2>🎁 每日寶箱</h2>
-            <p>連續登入: <span id="streak-days" style="color:var(--primary); font-weight:bold;">1</span> 天</p>
-            <p id="streak-bonus-text" style="color:#e74c3c; display:none; font-weight:bold;">🔥 第7天雙倍獎勵！</p>
-            <div class="chest-container">
-                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-                <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-            </div>
-        </div>
-    </div>
+    <div class="app-container">
 
-    <div id="page-landing" class="page active">
-        <div class="landing-header">
-            <h1>Vocab RPG</h1>
-            <p>流浪者的試煉</p>
-        </div>
-
-        <div class="level-container">
-            <div class="level-badge">
-                <span class="level-num" id="lvl-num">1</span>
-                <span style="font-size:0.6rem">LV</span>
-            </div>
-            <div class="xp-bar-container">
-                <div class="xp-info">
-                    <span id="lvl-title">流浪者</span>
-                    <span id="xp-text">0/100</span>
+        <div id="daily-modal" class="modal-overlay">
+            <div class="bonus-box">
+                <h2>🎁 每日寶箱</h2>
+                <p>連續登入: <span id="streak-days" style="color:var(--primary); font-weight:bold;">1</span> 天</p>
+                <p id="streak-bonus-text" style="color:#e74c3c; display:none; font-weight:bold;">🔥 第7天雙倍獎勵！</p>
+                <div class="chest-container">
+                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
+                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
+                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
                 </div>
-                <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
             </div>
         </div>
 
-        <div style="width:100%; margin-bottom: 15px;">
-            <div class="theme-selector">
-                <button id="btn-theme-default" class="theme-btn active" style="background:#fdfbf7;" onclick="setTheme('default', 0)">📜</button>
-                <button id="btn-theme-ocean" class="theme-btn locked" data-level="Lv.20" style="background:#e0f7fa;" onclick="setTheme('theme-ocean', 20)">🌊</button>
-                <button id="btn-theme-forest" class="theme-btn locked" data-level="Lv.40" style="background:#d4fc79;" onclick="setTheme('theme-forest', 40)">🌲</button>
-                <button id="btn-theme-sakura" class="theme-btn locked" data-level="Lv.60" style="background:#f3e5f5;" onclick="setTheme('theme-sakura', 60)">🌸</button>
-                <button id="btn-theme-dark" class="theme-btn locked" data-level="Lv.80" style="background:#2c3e50;" onclick="setTheme('theme-dark', 80)">🌑</button>
-            </div>
-        </div>
-
-        <div class="mode-card" onclick="selectMode('learn')">
-    <div class="mode-icon">📖</div>
-    <div class="mode-info">
-        <h2>單字卷軸</h2>
-        <p>瀏覽字卡積累知識</p>
-    </div>
-</div>
-
-<div class="mode-card" onclick="selectMode('quiz')">
-    <div class="mode-icon">⚔️</div>
-    <div class="mode-info">
-        <h2>戰鬥測驗</h2>
-        <p>挑戰題目獲取經驗</p>
-    </div>
-</div>
-
-<div class="mode-card" style="border-color:#8e44ad;" onclick="selectMode('dungeon')">
-    <div class="mode-icon">🏰</div>
-    <div class="mode-info">
-        <h2 style="color:#8e44ad;">地城副本</h2>
-        <p>推圖闖關 (20題/關)</p>
-    </div>
-</div>
-    </div> <div id="page-category" class="page">
-        <div class="navbar">
-            <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
-            <span class="page-title" id="cat-title">選擇戰場</span>
-        </div>
-        
-        <div id="menu-quiz-type" class="menu-section">
-            <div class="menu-btn mistake-btn" onclick="startMistakeQuiz()">
-                <span><i class="fas fa-dungeon"></i> 錯題地牢 (Mistakes)</span> <span id="mistake-count">0</span>
-            </div>
-            <div class="menu-btn" onclick="showQuizVocabSelection()">
-                <span><i class="fas fa-font"></i> 單字試煉 (Vocabulary)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="menu-btn" onclick="startQuizSetup('grammar')">
-                <span><i class="fas fa-pen-nib"></i> 文法試煉 (Grammar)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-        </div>
-
-        <div id="menu-learn-scope" class="menu-section">
-            <div class="backup-controls">
-                <button class="backup-btn" onclick="exportData()"><i class="fas fa-download"></i> 備份</button>
-                <button class="backup-btn" onclick="triggerImport()"><i class="fas fa-upload"></i> 還原</button>
-                <input type="file" id="file-input" style="display:none" onchange="importData(this)" accept=".json">
+        <div id="page-landing" class="page active">
+            <div class="landing-header"
+                style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: -80px; margin-top: -50px;">
+                <img src="images/logo.png" alt="Logo"
+                    style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
             </div>
 
-            <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
-                <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i class="fas fa-chevron-right"></i>
-            </div>
-            
-            <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
-                <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="menu-btn" onclick="goToSubMenu()">
-                <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
-            </div>
-        </div>
-
-<div id="menu-quiz-scope" class="menu-section">
-    <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
-        <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i class="fas fa-chevron-right"></i>
-    </div>
-
-    <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
-        <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
-    </div>
-    <div class="menu-btn" onclick="goToSubMenu()">
-        <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
-    </div>
-</div>
-    </div>
-
-    <div id="page-submenu" class="page">
-        <div class="navbar">
-            <button class="back-btn" onclick="goBack('category')"><i class="fas fa-arrow-left"></i></button>
-            <span class="page-title">托福領域</span>
-        </div>
-        <div class="scroll-list" style="margin-top: 20px;">
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Astronomy')"><span>🌌 天文 (Astronomy)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Biology')"><span>🧬 生物 (Biology)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geography')"><span>🌍 地理 (Geography)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Psychology')"><span>🧠 心理學 (Psychology)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'History')"><span>🏺 歷史考古 (History)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Art')"><span>🎨 藝術音樂 (Art)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geology')"><span>🪨 地質學 (Geology)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Business')"><span>💼 商業經濟 (Business)</span></div>
-            <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'LifeScience')"><span>🦠 生命科學 (Life Science)</span></div>
-        </div>
-    </div>
-
-    <div id="page-flashcard" class="page">
-        <div class="navbar">
-            <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
-            <span class="page-title" id="fc-title">單字卡</span>
-        </div>
-        <div style="flex:1; display:flex; justify-content:center; align-items:center; padding:10px 0;">
-            <div class="flip-card" id="flashcard" onclick="flipCard()">
-                <div class="flip-card-inner">
-                    <div class="card-face card-front">
-                        <button class="star-btn" id="star-btn" onclick="event.stopPropagation(); toggleFavorite()"><i class="fas fa-star"></i></button>
-                        <div class="q-tag" id="fc-tag">Tag</div>
-                        <div class="word-en" id="fc-en">Word</div>
-                        <div class="word-phonetic" id="fc-phonetic">[]</div>
-                        <div class="front-info-box" id="fc-front-info"></div>
-                        <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
-                        <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">(點擊翻面)</p>
+            <div class="level-container">
+                <div class="level-badge">
+                    <span class="level-num" id="lvl-num">1</span>
+                    <span style="font-size:0.6rem">LV</span>
+                </div>
+                <div class="xp-bar-container">
+                    <div class="xp-info">
+                        <span id="lvl-title">勇者</span>
+                        <span id="xp-text">0/100</span>
                     </div>
-                    <div class="card-face card-back" id="fc-back-content"></div>
+                    <div class="xp-track">
+                        <div class="xp-fill" id="xp-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="width:100%; margin-bottom: 15px;">
+                <div class="theme-selector">
+                    <button id="btn-theme-default" class="theme-btn active" style="background:#fdfbf7;"
+                        onclick="setTheme('default', 0)">📜</button>
+                    <button id="btn-theme-ocean" class="theme-btn locked" data-level="Lv.20" style="background:#e0f7fa;"
+                        onclick="setTheme('theme-ocean', 20)">🌊</button>
+                    <button id="btn-theme-forest" class="theme-btn locked" data-level="Lv.40"
+                        style="background:#d4fc79;" onclick="setTheme('theme-forest', 40)">🌲</button>
+                    <button id="btn-theme-sakura" class="theme-btn locked" data-level="Lv.60"
+                        style="background:#f3e5f5;" onclick="setTheme('theme-sakura', 60)">🌸</button>
+                    <button id="btn-theme-dark" class="theme-btn locked" data-level="Lv.80" style="background:#2c3e50;"
+                        onclick="setTheme('theme-dark', 80)">🌑</button>
+                </div>
+            </div>
+
+            <div class="mode-card" onclick="selectMode('learn')">
+                <div class="mode-icon">📖</div>
+                <div class="mode-info">
+                    <h2>單字卷軸</h2>
+                    <p>瀏覽字卡積累知識</p>
+                </div>
+            </div>
+
+            <div class="mode-card" onclick="selectMode('quiz')">
+                <div class="mode-icon">⚔️</div>
+                <div class="mode-info">
+                    <h2>戰鬥測驗</h2>
+                    <p>挑戰題目獲取經驗</p>
+                </div>
+            </div>
+
+            <div class="mode-card" style="border-color:#8e44ad;" onclick="selectMode('dungeon')">
+                <div class="mode-icon">🏰</div>
+                <div class="mode-info">
+                    <h2 style="color:#8e44ad;">地城副本</h2>
+                    <p>推圖闖關 (20題/關)</p>
                 </div>
             </div>
         </div>
-        <div class="controls">
-            <button class="ctrl-btn" onclick="prevCard()">上一張</button>
-            <button class="ctrl-btn main" onclick="nextCard()">下一張</button>
-        </div>
-    </div>
+        <div id="page-category" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
+                <span class="page-title" id="cat-title">選擇戰場</span>
+            </div>
 
-    <div id="page-quiz" class="page">
-        <div class="navbar">
-            <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
-            <div style="flex:1; margin-left:10px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem; opacity:0.8;">
-                    <span>Score: <b id="quiz-score">0</b></span> <span id="quiz-progress">1/10</span>
+            <div id="menu-quiz-type" class="menu-section">
+                <div class="menu-btn mistake-btn" onclick="startMistakeQuiz()">
+                    <span><i class="fas fa-dungeon"></i> 錯題地牢 (Mistakes)</span> <span id="mistake-count">0</span>
                 </div>
-                <div class="progress-bar"><div class="progress-fill" id="quiz-bar"></div></div>
+                <div class="menu-btn" onclick="showQuizVocabSelection()">
+                    <span><i class="fas fa-font"></i> 單字試煉 (Vocabulary)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-btn" onclick="startQuizSetup('grammar')">
+                    <span><i class="fas fa-pen-nib"></i> 文法試煉 (Grammar)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <div id="menu-learn-scope" class="menu-section">
+                <div class="backup-controls">
+                    <button class="backup-btn" onclick="exportData()"><i class="fas fa-download"></i> 備份</button>
+                    <button class="backup-btn" onclick="triggerImport()"><i class="fas fa-upload"></i> 還原</button>
+                    <input type="file" id="file-input" style="display:none" onchange="importData(this)" accept=".json">
+                </div>
+
+                <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
+                    <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i
+                        class="fas fa-chevron-right"></i>
+                </div>
+
+                <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
+                    <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-btn" onclick="goToSubMenu()">
+                    <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <div id="menu-quiz-scope" class="menu-section">
+                <div class="menu-btn fav-menu-btn" onclick="loadFavorites()">
+                    <span><i class="fas fa-star" style="color:var(--star-color)"></i> 我的收藏</span> <i
+                        class="fas fa-chevron-right"></i>
+                </div>
+
+                <div class="menu-btn" onclick="handleCategorySelect('TOEIC')">
+                    <span><i class="fas fa-building"></i> 多益 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-btn" onclick="goToSubMenu()">
+                    <span><i class="fas fa-graduation-cap"></i> 托福 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+                </div>
             </div>
         </div>
-        <div class="quiz-box">
-            <div class="question-card">
-                <div class="q-tag" id="q-tag">Quiz</div>
-                <div class="q-text" id="q-text">Question</div>
-                <div class="q-sub" id="q-sub">Choose the correct answer</div>
+
+        <div id="page-submenu" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="goBack('category')"><i class="fas fa-arrow-left"></i></button>
+                <span class="page-title">托福領域</span>
             </div>
-            <div class="options-grid" id="options-container"></div>
-        </div>
-        
-        <button id="float-next-btn" class="float-next-btn" onclick="nextQuestion()">
-            <i class="fas fa-arrow-right"></i>
-        </button>
-
-        <div class="result-popup" id="result-popup">
-            <h2 id="res-title">Result</h2>
-            <p id="res-detail">Detail</p>
-            
-            <div class="popup-btn-row">
-                <button class="review-btn" onclick="hideResultPopup()">👀 回顧</button>
-                <button class="next-btn" onclick="nextQuestion()">下一題 <i class="fas fa-arrow-right"></i></button>
+            <div class="scroll-list" style="margin-top: 20px;">
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Astronomy')"><span>🌌 天文
+                        (Astronomy)</span></div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Biology')"><span>🧬 生物 (Biology)</span>
+                </div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geography')"><span>🌍 地理
+                        (Geography)</span></div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Psychology')"><span>🧠 心理學
+                        (Psychology)</span></div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'History')"><span>🏺 歷史考古 (History)</span>
+                </div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Art')"><span>🎨 藝術音樂 (Art)</span></div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Geology')"><span>🪨 地質學 (Geology)</span>
+                </div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'Business')"><span>💼 商業經濟
+                        (Business)</span></div>
+                <div class="menu-btn" onclick="handleCategorySelect('TOEFL', 'LifeScience')"><span>🦠 生命科學 (Life
+                        Science)</span></div>
             </div>
         </div>
-    </div>
-<div id="page-dungeon-select" class="page">
-    <div class="navbar">
-        <button class="back-btn" onclick="showPage('page-landing')"><i class="fas fa-arrow-left"></i></button>
-        <span class="page-title">選擇副本</span>
-    </div>
-    <div id="dungeon-main-menu" class="menu-section" style="margin-top:20px;">
-        <div class="menu-btn" onclick="openDungeonMap('TOEIC')">
-            <span><i class="fas fa-skull-crossbones"></i> 多益地城 (TOEIC)</span> <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="menu-btn" onclick="showDungeonSubMenu()">
-            <span><i class="fas fa-dragon"></i> 托福地城 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
-        </div>
-    </div>
-</div>
 
-<div id="page-dungeon-toefl-sub" class="page">
-    <div class="navbar">
-        <button class="back-btn" onclick="showPage('page-dungeon-select')"><i class="fas fa-arrow-left"></i></button>
-        <span class="page-title">選擇托福區域</span>
-    </div>
-    <div class="scroll-list" id="dungeon-toefl-list" style="margin-top: 20px;">
+        <div id="page-flashcard" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
+                <span class="page-title" id="fc-title">單字卡</span>
+            </div>
+            <div style="flex:1; display:flex; justify-content:center; align-items:center; padding:10px 0;">
+                <div class="flip-card" id="flashcard" onclick="flipCard()">
+                    <div class="flip-card-inner">
+                        <div class="card-face card-front">
+                            <button class="star-btn" id="star-btn"
+                                onclick="event.stopPropagation(); toggleFavorite()"><i class="fas fa-star"></i></button>
+                            <div class="q-tag" id="fc-tag">Tag</div>
+                            <div class="word-en" id="fc-en">Word</div>
+                            <div class="word-phonetic" id="fc-phonetic">[]</div>
+                            <div class="front-info-box" id="fc-front-info"></div>
+                            <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i
+                                    class="fas fa-volume-up"></i></button>
+                            <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">(點擊翻面)</p>
+                        </div>
+                        <div class="card-face card-back" id="fc-back-content"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="ctrl-btn" onclick="prevCard()">上一張</button>
+                <button class="ctrl-btn main" onclick="nextCard()">下一張</button>
+            </div>
         </div>
-</div>
 
-    <div id="page-adventure" class="page">
-        <div class="navbar">
-            <button class="back-btn" onclick="exitAdventure()"><i class="fas fa-arrow-left"></i></button>
-            <span class="page-title" id="adv-title">冒險地圖</span>
+        <div id="page-quiz" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="exitPractice()"><i class="fas fa-times"></i></button>
+                <div style="flex:1; margin-left:10px;">
+                    <div style="
+    display:flex; 
+    justify-content:space-between; 
+    font-size: 1.2rem; 
+    font-weight: 900; 
+    color: black; 
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+    margin-bottom: 8px;
+">
+                        <span>Score: <b id="quiz-score">0</b></span>
+                        <span id="quiz-progress">1/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="quiz-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="quiz-box">
+                <div class="question-card">
+                    <div class="q-tag" id="q-tag">Quiz</div>
+                    <div class="q-text" id="q-text">Question</div>
+                    <div class="q-sub" id="q-sub">Choose the correct answer</div>
+                </div>
+                <div class="options-grid" id="options-container"></div>
+            </div>
+
+            <button id="float-next-btn" class="float-next-btn" onclick="nextQuestion()">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <div class="result-popup" id="result-popup">
+                <h2 id="res-title">Result</h2>
+                <p id="res-detail">Detail</p>
+
+                <div class="popup-btn-row">
+                    <button class="review-btn" onclick="hideResultPopup()">👀 回顧</button>
+                    <button class="next-btn" onclick="nextQuestion()">下一題 <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
         </div>
-        
-        <div id="adventure-grid" class="adventure-grid"></div>
-    </div>
-</div>
-<canvas id="confetti-canvas"></canvas>
+        <div id="page-dungeon-select" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="showPage('page-landing')"><i class="fas fa-arrow-left"></i></button>
+                <span class="page-title">選擇副本</span>
+            </div>
+            <div id="dungeon-main-menu" class="menu-section" style="margin-top:20px;">
+                <div class="menu-btn" onclick="openDungeonMap('TOEIC')">
+                    <span><i class="fas fa-skull-crossbones"></i> 多益地城 (TOEIC)</span> <i
+                        class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-btn" onclick="showDungeonSubMenu()">
+                    <span><i class="fas fa-dragon"></i> 托福地城 (TOEFL)</span> <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
 
-<script src="data/data-core.js"></script>
+        <div id="page-dungeon-toefl-sub" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="showPage('page-dungeon-select')"><i
+                        class="fas fa-arrow-left"></i></button>
+                <span class="page-title">選擇托福區域</span>
+            </div>
+            <div class="scroll-list" id="dungeon-toefl-list" style="margin-top: 20px;">
+            </div>
+        </div>
+
+        <div id="page-adventure" class="page">
+            <div class="navbar">
+                <button class="back-btn" onclick="exitAdventure()"><i class="fas fa-arrow-left"></i></button>
+                <span class="page-title" id="adv-title">冒險地圖</span>
+            </div>
+
+            <div id="adventure-grid" class="adventure-grid"></div>
+        </div>
+    </div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="data/data-core.js"></script>
 
     <script src="data/data-toeic.js"></script>
     <script src="data/data-toefl.js"></script>
@@ -252,4 +288,5 @@
     <script src="script.js"></script>
 
 </body>
+
 </html>

@@ -5,7 +5,7 @@
     let userLevel = 1, userXP = 0, xpPerLevel = 100;
     let dailyStreak = 0, lastLoginDate = "", unlockedThemes = ['default'];
     let mistakeDB = []; 
-    const ranks = ["流浪者", "村民", "士兵", "騎士", "男爵", "子爵", "伯爵", "公爵", "親王", "國王"];
+    const ranks = ["村民", "士兵", "勇者", "騎士", "男爵", "子爵", "伯爵", "公爵", "親王", "國王"];
     
     // 導航與測驗變數 (新增 quizTotal 和 currentQuizData)
     let currentMode = ''; let quizType = ''; let currentList = []; let currentIndex = 0; 
@@ -97,19 +97,20 @@ function loadCard() {
     card.classList.remove('flipped'); 
     updateStarStatus(); 
 
-    // 5. 渲染正面 HTML
+// 5. 渲染正面 HTML (已移除標籤與提示文字)
     const frontHTML = `
         <div class="card-face card-front">
             <button class="star-btn" id="star-btn" onclick="event.stopPropagation(); toggleFavorite()">
                 <i class="fas fa-star"></i>
             </button>
-            <div class="q-tag" id="fc-tag">${currentCategoryLabel}</div>
+            
             <div class="word-en" id="fc-en">${data.en}</div>
             <div class="word-phonetic" id="fc-phonetic">${data.phonetic || ""}</div>
             <div class="front-info-box" id="fc-front-info"></div>
+            
             <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
-            <p style="color:#aaa; font-size:0.8rem; margin-top:15px;">(點擊翻面)</p>
-        </div>
+            
+            </div>
     `;
     
     const backHTML = `<div class="card-face card-back" id="fc-back-content"></div>`;
@@ -204,8 +205,87 @@ function playSound(type) {
     // === 輔助函數：經驗、等級與主題 ===
     function addXP(amount) { userXP += amount; if(userXP >= xpPerLevel) { userXP -= xpPerLevel; userLevel++; playSound('correct'); alert(`🎉 升級了！Lv.${userLevel}`); } saveGameData(); }
     function updateLevelUI() { document.getElementById('lvl-num').innerText = userLevel; document.getElementById('lvl-title').innerText = ranks[Math.min(Math.floor((userLevel-1)/10), ranks.length-1)]; document.getElementById('xp-text').innerText = `${userXP}/${xpPerLevel}`; document.getElementById('xp-fill').style.width = `${(userXP/xpPerLevel)*100}%`; }
-    function checkDailyLogin() { /* ...每日登入邏輯待補... */ }
-    function openChest(btn) { /* ...開寶箱邏輯待補... */ }
+    function checkDailyLogin() {
+    // 1. 取得今天的日期字串 (格式 YYYY-MM-DD)
+    const today = new Date().toISOString().split('T')[0];
+
+    // 2. 如果今天已經登入過 (lastLoginDate 等於 today)，就什麼都不做，直接結束
+    if (lastLoginDate === today) {
+        return;
+    }
+
+    // 3. 計算昨天日期的字串
+    const yesterdayDate = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    // 4. 判斷連續登入
+    if (lastLoginDate === yesterdayDate) {
+        // 如果上次登入是昨天，連勝 +1
+        dailyStreak++;
+    } else {
+        // 如果不是昨天 (斷掉了)，重置為 1
+        dailyStreak = 1;
+    }
+
+    // 5. 更新介面上的天數
+    document.getElementById('streak-days').innerText = dailyStreak;
+
+    // 6. 如果是第 7 天，顯示雙倍獎勵提示
+    const bonusText = document.getElementById('streak-bonus-text');
+    if (dailyStreak % 7 === 0) {
+        bonusText.style.display = 'block';
+    } else {
+        bonusText.style.display = 'none';
+    }
+
+    // 7. 顯示「每日寶箱」的彈窗
+    // 這裡我們強制讓它顯示 (設為 flex)
+    const modal = document.getElementById('daily-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // 重置寶箱按鈕狀態 (怕上次點過沒恢復)
+        document.querySelectorAll('.chest-btn').forEach(btn => {
+            btn.disabled = false;
+            btn.innerHTML = '🧰<span class="chest-reward"></span>';
+            btn.classList.remove('opened');
+        });
+    }
+}
+    function openChest(btn) {
+    // 1. 防止重複點擊
+    if (btn.disabled) return;
+    btn.disabled = true; // 鎖住按鈕
+    btn.classList.add('opened'); // 加上已開啟樣式(如果有寫CSS的話)
+
+    // 2. 隨機計算獎勵 (50 ~ 150 XP)
+    let baseReward = Math.floor(Math.random() * 101) + 50;
+
+    // 3. 如果是連續登入第 7 天，獎勵翻倍！
+    if (dailyStreak % 7 === 0) {
+        baseReward *= 2;
+    }
+
+    // 4. 顯示獎勵在按鈕上
+    const rewardSpan = btn.querySelector('.chest-reward');
+    if (rewardSpan) {
+        rewardSpan.innerText = ` +${baseReward} XP`;
+        rewardSpan.style.opacity = '1';
+    }
+
+    // 5. 實際發放獎勵
+    addXP(baseReward);
+
+    // 6. 記錄今天已經領過了 (更新 lastLoginDate)
+    lastLoginDate = new Date().toISOString().split('T')[0];
+    saveGameData(); // 存檔
+
+    // 7. 播放音效 (如果有)
+    playSound('correct');
+
+    // 8. 1.5 秒後關閉視窗
+    setTimeout(() => {
+        document.getElementById('daily-modal').style.display = 'none';
+    }, 1500);
+}
     function setTheme(theme, reqLv) {
         if(theme !== 'default' && !unlockedThemes.includes(theme)) { 
             alert(`🔒 需達到 Lv.${reqLv} 才能解鎖此風格！`); 
@@ -360,46 +440,60 @@ function prevCard() {
         }, 300);
 
     }, 300);
-}     function exitPractice() { showPage('page-category'); }
-    // === 測驗啟動與執行核心 ===
-    function startQuizSetup(type) {
-        quizType = type; 
-        if (quizType === 'grammar') {
-            const maxCount = Math.min(grammarDB.length, 50);
-            let defaultCount = Math.min(10, maxCount);
-            
-            let countInput = prompt(`文法測驗題數 (10-${maxCount} 題，以 10 為單位):`, defaultCount);
-            let quizSize = parseInt(countInput);
-            
-            if (isNaN(quizSize) || quizSize < 10 || quizSize > maxCount || quizSize % 10 !== 0) {
-                alert(`輸入無效。本次測驗將使用 ${defaultCount} 題。`);
-                quizSize = defaultCount;
-            }
+}     function exitPractice() {
+    // 1. 如果是副本模式 (Adventure Mode)
+    if (isAdventureMode) {
+        // 按 X 回到該副本的「關卡地圖 (Grid)」
+        showPage('page-adventure');
+    } 
+    // 2. 如果是普通練習模式
+    else {
+        // ★★★ 修正重點：先隱藏「所有」選單，防止重疊顯示 ★★★
+        document.querySelectorAll('.menu-section').forEach(el => el.classList.remove('show'));
 
-            currentList = grammarDB.sort(()=>0.5-Math.random()).slice(0, quizSize);
-            startGenericQuiz(true, "文法試煉", quizSize); 
-        } 
-    }
-
-    function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) {
-        if (currentList.length === 0) {
-            alert(`本次測驗無題目！請選擇內容更豐富的分類。`);
-            exitPractice();
-            return;
-        }
-
-        quizTotal = totalCount;
-        currentIndex = 0;
-        score = 0;
+        showPage('page-category');
         
-        document.getElementById('quiz-score').innerText = score;
-        document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
-        document.getElementById('quiz-bar').style.width = '0%';
-        document.getElementById('q-tag').innerText = title;
-
-        showPage('page-quiz');
-        loadQuestion(isGrammar);
+        // 根據目前的模式，重新開啟對應的選單
+        if (currentMode === 'learn') {
+            document.getElementById('menu-learn-scope').classList.add('show');
+            document.getElementById('cat-title').innerText = "選擇卷軸";
+        } else if (currentMode === 'quiz') {
+            // 回到測驗類型選擇 (錯題/單字/文法)
+            document.getElementById('menu-quiz-type').classList.add('show');
+            document.getElementById('cat-title').innerText = "選擇試煉";
+        }
     }
+}
+
+function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) {
+    if (currentList.length === 0) {
+        alert(`本次測驗無題目！請選擇內容更豐富的分類。`);
+        exitPractice();
+        return;
+    }
+
+    quizTotal = totalCount;
+    currentIndex = 0;
+    score = 0;
+    
+    document.getElementById('quiz-score').innerText = score;
+    // 這裡原本有兩行 quiz-bar width 設定，保留設定為 0% 即可
+    document.getElementById('quiz-bar').style.width = '0%';
+    
+    // ★★★ 修改重點開始 ★★★
+    // 1. 先抓取元素
+    const qTag = document.getElementById('q-tag');
+    
+    // 2. 如果元素存在 (HTML有寫)，就把它隱藏 (style.display = 'none')
+    // 我們直接刪掉了原本那行 .innerText = title，因為都要隱藏了，不需要設定文字，還會導致報錯
+    if (qTag) {
+        qTag.style.display = 'none'; 
+    }
+    // ★★★ 修改重點結束 ★★★
+
+    showPage('page-quiz');
+    loadQuestion(isGrammar);
+}
 
 // === 修正後的 loadQuestion 與 checkAnswer ===
 
@@ -429,11 +523,11 @@ function loadQuestion(isGrammar = false) {
         correctAnswer = questionData.ans;
         allOptions = questionData.options.sort(() => 0.5 - Math.random());
         document.getElementById('q-text').innerText = questionData.q;
-        document.getElementById('q-sub').innerText = "選擇正確的詞彙填入空格";
+        document.getElementById('q-sub').innerText = "";
     } else {
         correctAnswer = questionData.en;
         document.getElementById('q-text').innerText = questionData.details[0].cn;
-        document.getElementById('q-sub').innerText = "選擇對應的英文單字";
+        document.getElementById('q-sub').innerText = "";
 
         const distractors = generateDistractors(currentList, correctAnswer, 3);
         allOptions = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
@@ -832,7 +926,7 @@ function startDungeonBattle(allWords, levelIndex) {
     score = 0;
     
     // 初始化 UI
-    document.getElementById('q-tag').innerText = `關卡 ${levelIndex + 1}`;
+    document.getElementById('q-tag').innerText = `地下城 ${levelIndex + 1}`;
     document.getElementById('quiz-score').innerText = 0;
     document.getElementById('quiz-bar').style.width = '0%';
     
@@ -883,12 +977,12 @@ function loadDungeonQuestion() {
     // 5. 判斷題型並給予提示 (這裡就是副本最特別的地方)
     if (qData.type === 'en_to_cn') {
         // 題目是英文 -> 選中文
-        document.getElementById('q-sub').innerText = "請選擇正確的 [中文]";
+        document.getElementById('q-sub').innerText = "";
         // 預載英文發音
         preloadAudio(qData.audioWord);
     } else {
         // 題目是中文 -> 選英文
-        document.getElementById('q-sub').innerText = "請選擇對應的 [英文]";
+        document.getElementById('q-sub').innerText = "";
         // 中文題目不用預載，但在答對時我們會播英文
         preloadAudio(qData.audioWord);
     }

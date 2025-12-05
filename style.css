@@ -2,7 +2,7 @@
 /* 1. RPG 主題變數定義 */
 /* ========================================= */
 :root {
-    /* 預設：流浪者 */
+    /* 預設：勇者 */
     --bg-gradient: linear-gradient(135deg, #fdfbf7 0%, #e6d5b8 100%);
     --card-bg: #fffcf5;
     --text-main: #4a3b2a;
@@ -16,10 +16,46 @@
 }
 
 /* 主題變數設定 */
-body.theme-ocean { --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%); --card-bg: #f0faff; --text-main: #2c3e50; --primary: #2980b9; --secondary: #a9cce3; --border-color: #3498db; --btn-shadow: 0 4px 0 #1a5276; }
-body.theme-forest { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --card-bg: #f1f8e9; --text-main: #1b5e20; --primary: #2ecc71; --secondary: #a5d6a7; --border-color: #27ae60; --btn-shadow: 0 4px 0 #145a32; }
-body.theme-sakura { --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); --card-bg: #fff0f5; --text-main: #4a148c; --primary: #9b59b6; --secondary: #e1bee7; --border-color: #8e44ad; --btn-shadow: 0 4px 0 #4a235a; }
-body.theme-dark { --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%); --card-bg: #34495e; --text-main: #ecf0f1; --primary: #e74c3c; --secondary: #7f8c8d; --border-color: #c0392b; --btn-shadow: 0 4px 0 #641e16; --accent: #f1c40f; }
+body.theme-ocean {
+    --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%);
+    --card-bg: #f0faff;
+    --text-main: #2c3e50;
+    --primary: #2980b9;
+    --secondary: #a9cce3;
+    --border-color: #3498db;
+    --btn-shadow: 0 4px 0 #1a5276;
+}
+
+body.theme-forest {
+    --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+    --card-bg: #f1f8e9;
+    --text-main: #1b5e20;
+    --primary: #2ecc71;
+    --secondary: #a5d6a7;
+    --border-color: #27ae60;
+    --btn-shadow: 0 4px 0 #145a32;
+}
+
+body.theme-sakura {
+    --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    --card-bg: #fff0f5;
+    --text-main: #4a148c;
+    --primary: #9b59b6;
+    --secondary: #e1bee7;
+    --border-color: #8e44ad;
+    --btn-shadow: 0 4px 0 #4a235a;
+}
+
+body.theme-dark {
+    --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+    --card-bg: #34495e;
+    --text-main: #ecf0f1;
+    --primary: #e74c3c;
+    --secondary: #7f8c8d;
+    --border-color: #c0392b;
+    --btn-shadow: 0 4px 0 #641e16;
+    --accent: #f1c40f;
+}
 
 /* ========================================= */
 /* 2. 全局基礎樣式 */
@@ -27,56 +63,57 @@ body.theme-dark { --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100
 body {
     font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
     color: var(--text-main);
-    margin: 0; 
-    display: flex; 
-    justify-content: center; 
+    margin: 0;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    min-height: 100vh; 
+    min-height: 100vh;
     overflow: hidden;
     width: 100vw;
     transition: all 0.5s ease;
-    
+
     /* 網頁最底層背景 (深灰色，凸顯 APP) */
-    background-color: #2d3436; 
+    background-color: #2d3436;
 }
 
 /* ========================================= */
 /* 3. APP 容器設定 (含背景圖案) */
 /* ========================================= */
 /* === 1. APP 容器設定 (RPG 地圖版) === */
-/* === 1. 預設：流浪者 (無遮罩，背景清晰版) === */
+/* === 1. 預設：勇者 (無遮罩，背景清晰版) === */
 .app-container {
-    width: 100%; 
-    max-width: 420px; 
-    height: 100vh; 
-    position: relative; 
-    display: flex; 
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    position: relative;
+    display: flex;
     flex-direction: column;
-    overflow: hidden; 
+    overflow: hidden;
 
     /* ★★★ 修改重點：移除 linear-gradient，只留 url ★★★ */
     /* 你之後找到喜歡的圖，只要把下面括號裡的網址換掉就好 */
-    background-image: url('https://images.unsplash.com/photo-1567910640027-4029c4d8e9e0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') !important;
-    
-    background-size: cover !important; 
+    background-image: url('images/bg.png') !important;
+
+    background-size: cover !important;
     background-position: center !important;
-    background-color: #fdfbf7 !important; /* 圖片載入失敗時的底色 */
+    background-color: #fdfbf7 !important;
+    /* 圖片載入失敗時的底色 */
 }
 
 /* ★★★ 2. 海洋 (深海氣泡) ★★★ */
 body.theme-ocean .app-container {
     background-color: #e0f7fa !important;
-    background-image: 
+    background-image:
         radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
         radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 15%),
         linear-gradient(to bottom, #e0f7fa 0%, #81d4fa 100%) !important;
-    background-size: 100% 100% !important; 
+    background-size: 100% 100% !important;
 }
 
 /* ★★★ 3. 森林 (耶穌光) ★★★ */
 body.theme-forest .app-container {
     background-color: #f1f8e9 !important;
-    background-image: 
+    background-image:
         linear-gradient(45deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.4) 100%),
         linear-gradient(to bottom, #d4fc79 0%, #96e6a1 100%) !important;
     background-size: 100% 100% !important;
@@ -85,7 +122,7 @@ body.theme-forest .app-container {
 /* ★★★ 4. 櫻花 (柔焦光暈) ★★★ */
 body.theme-sakura .app-container {
     background-color: #fff0f5 !important;
-    background-image: 
+    background-image:
         radial-gradient(circle at 50% 30%, rgba(255, 192, 203, 0.6) 0%, transparent 50%),
         radial-gradient(circle at 0% 100%, rgba(221, 160, 221, 0.5) 0%, transparent 40%),
         linear-gradient(to bottom, #fff0f5 0%, #e1bee7 100%) !important;
@@ -95,7 +132,7 @@ body.theme-sakura .app-container {
 /* ★★★ 5. 暗黑 (神秘星雲) ★★★ */
 body.theme-dark .app-container {
     background-color: #34495e !important;
-    background-image: 
+    background-image:
         radial-gradient(circle at 80% 20%, rgba(155, 89, 182, 0.3) 0%, transparent 40%),
         radial-gradient(circle at 20% 80%, rgba(52, 152, 219, 0.3) 0%, transparent 40%),
         linear-gradient(to bottom, #2c3e50 0%, #000000 100%) !important;
@@ -106,18 +143,19 @@ body.theme-dark .app-container {
 /* 4. 桌面/平板模式 (修正版) */
 /* ========================================= */
 @media (min-width: 450px) {
-    .app-container { 
-        height: 90vh; 
-        max-height: 800px; 
-        border-radius: 30px; 
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+    .app-container {
+        height: 90vh;
+        max-height: 800px;
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);
-        border: 2px solid var(--border-color); 
+        border: 2px solid var(--border-color);
         background-clip: padding-box;
     }
-    body { 
-        height: 100vh; 
-        overflow: hidden; 
+
+    body {
+        height: 100vh;
+        overflow: hidden;
     }
 }
 
@@ -125,174 +163,707 @@ body.theme-dark .app-container {
 /* 5. 頁面與組件樣式 */
 /* ========================================= */
 .page {
-    position: absolute; 
-    top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; flex-direction: column;
-    
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
     /* ★★★ 修改這裡：將 0.3s 改成 0.6s (想要更慢可以改 0.8s) ★★★ */
     transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
-    padding: 20px; box-sizing: border-box;
-    background: transparent; 
-    overflow-y: auto; overflow-x: hidden;
-    visibility: hidden; pointer-events: none; z-index: 0;
+
+    padding: 20px;
+    box-sizing: border-box;
+    background: transparent;
+    overflow-y: auto;
+    overflow-x: hidden;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 0;
     transform: translateX(100%);
-}.page.active { 
-    transform: translateX(0); z-index: 10; opacity: 1; visibility: visible; pointer-events: auto; 
+}
+
+.page.active {
+    transform: translateX(0);
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 /* === RPG 標題卷軸風格 === */
-.landing-header { 
-    text-align: center; margin-top: 30px; margin-bottom: 30px;
-    display: flex; flex-direction: column; align-items: center; 
-    background-color: #fdfbf7; border: 3px double #8b5e3c; border-radius: 10px;
-    padding: 15px 40px;
-    box-shadow: 0 0 0 4px #fdfbf7, 0 0 0 6px #8b5e3c, 0 10px 20px rgba(0,0,0,0.2); 
-    width: fit-content; margin-left: auto; margin-right: auto; position: relative;
+.landing-header {
+    text-align: center;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+    
+    /* ★★★ 直接在這裡設定負邊距 ★★★ */
+    margin-bottom: -40px; 
+    margin-top: -50px;
 }
-.landing-header::before {
-    content: "⚔️"; font-size: 2.5rem; position: absolute; top: -38px; 
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index: 1;
+
+
+
+.landing-header h1 {
+    font-size: 2.2rem;
+    margin: 0;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
 }
-.landing-header h1 { 
-    font-size: 2.2rem; margin: 0; text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
-    color: var(--primary); text-transform: uppercase; letter-spacing: 2px;
-    border-bottom: 2px solid var(--secondary); padding-bottom: 5px; margin-bottom: 5px;
-}
-.landing-header p { 
-    margin-top: 10px; font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; 
-    font-style: italic; font-size: 1.4rem; font-weight: normal; color: var(--text-main); 
-    opacity: 1; letter-spacing: 1.5px; 
+
+.landing-header p {
+    margin-top: 10px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--text-main);
+    opacity: 1;
+    letter-spacing: 1.5px;
 }
 
 /* 元件 */
-.navbar { display: flex; align-items: center; padding: 10px 0; min-height: 50px; }
-.back-btn { background: none; border: none; font-size: 1.5rem; color: #000000; cursor: pointer; padding: 10px; }
-.page-title { font-size: 1.4rem; font-weight: 800; margin-left: 10px; text-shadow: 1px 1px 0px rgba(255,255,255,0.3); color: #000000;}
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    min-height: 50px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+
+    color: #000000;
+    /* 箭頭是黑色的 */
+
+    cursor: pointer;
+    padding: 10px;
+
+    /* ★★★ 一樣加上白色描邊 ★★★ */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-left: 10px;
+
+    color: #000000;
+    /* 字是黑色的 */
+
+    /* ★★★ 修改重點：用多重陰影做出強力白邊 ★★★ */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
 
 .mode-card {
     /* ★★★ 修改重點：原本是 rgba(255,255,255,0.4)，改成不透明的 #fdfbf7 或 white ★★★ */
-    background: #fdfbf7; 
-    
+    background: #fdfbf7;
+
     border: 2px solid var(--border-color);
-    border-radius: 15px; 
-    padding: 25px; 
+    border-radius: 15px;
+    padding: 25px;
     margin-bottom: 20px;
-    cursor: pointer; 
-    display: flex; 
+    cursor: pointer;
+    display: flex;
     align-items: center;
-    
+
     /* 加強陰影，讓它更有立體感浮在背景上 */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     transition: 0.1s;
-}.mode-card:active { transform: translateY(4px); box-shadow: none; }
-.mode-icon { font-size: 2.5rem; margin-right: 20px; width: 50px; text-align: center; }
-.mode-info h2 { font-size: 1.4rem; margin: 0 0 5px 0; color: var(--primary); }
-.mode-info p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+}
+
+.mode-card:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.mode-icon {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    width: 50px;
+    text-align: center;
+}
+
+.mode-info h2 {
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    color: var(--primary);
+}
+
+.mode-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
 
 /* 選單與按鈕 */
-.menu-section { display: none; width: 100%; } 
-.menu-section.show { display: block; animation: fadeIn 0.6s; }
-.menu-btn { background: var(--card-bg); color: var(--text-main); padding: 20px; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--btn-shadow); transition: 0.1s; }
-.menu-btn:active { transform: translateY(4px); box-shadow: none; }
-.mistake-btn { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
-.backup-controls { display: flex; gap: 10px; margin-bottom: 15px; }
-.backup-btn { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; font-weight:bold; cursor: pointer; background: var(--card-bg); color: var(--text-main); }
+.menu-section {
+    display: none;
+    width: 100%;
+}
+
+.menu-section.show {
+    display: block;
+    animation: fadeIn 0.6s;
+}
+
+.menu-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--btn-shadow);
+    transition: 0.1s;
+}
+
+.menu-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.mistake-btn {
+    border-color: #c0392b;
+    color: #c0392b;
+    background: #fff5f5;
+}
+
+.backup-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.backup-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--card-bg);
+    color: var(--text-main);
+}
 
 /* 等級系統 */
-.level-container { background: var(--card-bg); border: 2px solid var(--border-color); padding: 15px 20px; border-radius: 15px; margin: 20px 0; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 0 rgba(0,0,0,0.1); }
-.level-badge { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; border: 3px solid white; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0; }
-.level-num { font-family: "Georgia", serif; font-size: 1.8rem; font-weight: 900; line-height: 0.9; text-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
-.xp-bar-container { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.xp-info { display: flex; justify-content: space-between; margin-bottom: 6px; font-family: "Georgia", serif; font-size: 1.1rem; font-weight: 900; color: #000000; letter-spacing: 0.5px; }
-.xp-track { width: 100%; height: 14px; background: rgba(0,0,0,0.1); border-radius: 7px; overflow: hidden; border: 1px solid var(--border-color); }
-.xp-fill { height: 100%; background: linear-gradient(90deg, #f1c40f, #e67e22); width: 0%; transition: width 0.5s; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+.level-container {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.level-badge {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    border: 3px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.level-num {
+    font-family: "Georgia", serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 0.9;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.xp-bar-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.xp-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-family: "Georgia", serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #000000;
+    letter-spacing: 0.5px;
+}
+
+.xp-track {
+    width: 100%;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f1c40f, #e67e22);
+    width: 0%;
+    transition: width 0.5s;
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
 
 /* 字卡與測驗 */
-.scroll-list { flex: 1; overflow-y: auto; padding-bottom: 80px; width: 100%; scrollbar-width: none; }
-.scroll-list::-webkit-scrollbar { display: none; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-.bonus-box { background: var(--card-bg); width: 85%; max-width: 350px; border-radius: 20px; padding: 20px; text-align: center; border: 3px solid var(--border-color); transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.modal-overlay.show .bonus-box { transform: scale(1); }
-.chest-container { display: flex; justify-content: space-around; margin-top: 20px; }
-.chest-btn { font-size: 3.5rem; background: none; border: none; cursor: pointer; transition: 0.2s; position: relative; }
-.chest-btn:active { transform: scale(0.9); }
-.chest-reward { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--star-color); color: #333; padding: 2px 8px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; opacity: 0; transition: 0.5s; pointer-events: none; white-space: nowrap; }
-.chest-btn.opened .chest-reward { opacity: 1; top: -30px; }
-.chest-btn.opened { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
+.scroll-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    width: 100%;
+    scrollbar-width: none;
+}
 
-.flip-card { width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
-.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 10px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; overflow-y: auto; padding: 20px; }
+.scroll-list::-webkit-scrollbar {
+    display: none;
+}
+/* ========================================= */
+/* 7. 每日登入與寶箱樣式 (修正版) */
+/* ========================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); /* 背景改深一點，更有沉浸感 */
+    z-index: 2000; /* 確保在最上層 */
+    
+    /* ★★★ 修正重點：預設隱藏，由 JS 控制 display: flex ★★★ */
+    display: none; 
+    
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px); /* 讓背後的遊戲畫面模糊，質感加分 */
+}
+
+.bonus-box {
+    background: #fffcf5;
+    width: 85%;
+    max-width: 350px;
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    border: 4px solid #8b5e3c;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    position: relative;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.bonus-box h2 {
+    color: #d35400;
+    margin-top: 0;
+    font-size: 1.8rem;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+}
+
+.chest-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.chest-btn {
+    font-size: 3.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    filter: drop-shadow(0 4px 0 #8b5e3c);
+    
+    /* 讓寶箱輕輕搖晃 */
+    animation: chestShake 3s infinite;
+}
+
+/* 每個寶箱搖晃時間錯開，看起來比較自然 */
+.chest-btn:nth-child(1) { animation-delay: 0s; }
+.chest-btn:nth-child(2) { animation-delay: 0.2s; }
+.chest-btn:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes chestShake {
+    0%, 100% { transform: rotate(0deg); }
+    90% { transform: rotate(0deg); }
+    92% { transform: rotate(-10deg); }
+    94% { transform: rotate(10deg); }
+    96% { transform: rotate(-10deg); }
+    98% { transform: rotate(10deg); }
+}
+
+.chest-btn:active {
+    transform: scale(0.9) !important;
+}
+
+/* 已開啟狀態 */
+.chest-btn.opened {
+    filter: grayscale(1) opacity(0.6);
+    pointer-events: none;
+    animation: none; /* 開啟後停止搖晃 */
+}
+
+/* 飄出的獎勵文字 */
+.chest-reward {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    
+    background: #f1c40f;
+    color: #2c3e50;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 900;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+    
+    /* 這裡只定義初始狀態，JS 會觸發 CSS class 來改變它，
+       或者我們直接依賴 .opened 狀態 */
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 當寶箱被加上 opened class 時，裡面的 reward 就會飛上去 */
+.chest-btn.opened .chest-reward {
+    opacity: 1;
+    top: -40px; /* 往上飛 */
+    transform: translate(-50%, 0) scale(1.2);
+}
+.flip-card {
+    width: 100%;
+    height: 100%;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 20px;
+}
+
 .card-front {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* ★ 讓內容垂直置中 */
+    justify-content: center;
+    /* ★ 讓內容垂直置中 */
     align-items: center;
-    position: absolute;      /* ★ 設定為定位點，讓按鈕可以參照它 */
+    position: absolute;
+    /* ★ 設定為定位點，讓按鈕可以參照它 */
     padding: 20px;
-    padding-bottom: 100px;   /* ★ 底部留白 100px，避免文字被按鈕擋住 */
+    padding-bottom: 100px;
+    /* ★ 底部留白 100px，避免文字被按鈕擋住 */
     height: 100%;
-    box-sizing: border-box;  /* 確保 padding 不會撐大盒子 */
+    box-sizing: border-box;
+    /* 確保 padding 不會撐大盒子 */
 }
-.card-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: stretch; text-align: left; padding-top: 50px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif; -webkit-font-smoothing: antialiased; }
-.flip-card.flipped .card-front { visibility: hidden; }
 
-.q-tag { background: var(--secondary); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: fit-content; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 auto; z-index: 5; }
+.card-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    text-align: left;
+    padding-top: 50px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.flip-card.flipped .card-front {
+    visibility: hidden;
+}
+
+.q-tag {
+    /* === 1. 位置設定 (改為固定在螢幕下方) === */
+    position: fixed;
+    /* 讓它脫離卡片，固定在視窗上 */
+    bottom: 30px;
+    /* 距離螢幕底部 30px (可依喜好調整) */
+    left: 50%;
+    transform: translateX(-50%);
+    /* 水平置中 */
+
+    /* === 2. 移除背景與干擾 === */
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    width: 100%;
+    /* 寬度設滿，確保文字能置中 */
+    text-align: center;
+    /* 文字置中 */
+
+    /* 讓點擊事件穿透 (重要！這樣才不會擋到下方的按鈕) */
+    pointer-events: none;
+
+    /* 確保層級夠高，但不要擋到結果彈窗(z-index:100以上) */
+    z-index: 95;
+
+    /* === 3. 文字樣式 (黑字強力白邊) === */
+    color: #000000;
+    font-size: 1.2rem;
+    /* 字體稍微加大一點 */
+    font-weight: 900;
+    /* 極粗體 */
+    letter-spacing: 2px;
+    /* 字距拉開一點比較有質感 */
+
+    /* 多重陰影製造強力描邊效果 */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff,
+        0 0 10px rgba(255, 255, 255, 0.8);
+    /* 加一點外發光讓它更明顯 */
+
+    white-space: nowrap;
+}
+
 .word-en {
     font-size: 2.6rem;
     font-weight: 700;
     color: var(--primary);
     margin: 0;
-    margin-bottom: 5px; /* ★ 只留 5px，讓它跟音標很近 */
+    margin-bottom: 5px;
+    /* ★ 只留 5px，讓它跟音標很近 */
     line-height: 1.1;
     letter-spacing: -0.5px;
-}.word-phonetic { 
-    font-family: "Lucida Sans Unicode", sans-serif; 
-    font-size: 1.1rem; 
-    color: #7f8c8d; /* 稍微改深一點的灰色比較好讀 */
-    margin: 0; 
-    margin-bottom: 5px; /* ★★★ 縮小與下方解釋的距離 (原本是20px+gap) ★★★ */
-}.summary-item { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 100%; }
-.summary-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.pos-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 1rem; font-weight: bold; vertical-align: middle; }
-.cn-text { font-size: 1.4rem; font-weight: bold; }
-.forms-text { color: #e17055; font-size: 0.9rem; font-style: italic; margin-top: 5px; }
-.back-header { font-size: 0.9rem; color: #b2bec3; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
-.detail-block { margin-bottom: 25px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
-.detail-block:last-child { border: none; }
-.block-title { 
-    font-weight: bold; 
-    color: var(--primary); 
-    font-size: 1.5rem; 
+}
+
+.word-phonetic {
+    font-family: "Lucida Sans Unicode", sans-serif;
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    /* 稍微改深一點的灰色比較好讀 */
+    margin: 0;
+    margin-bottom: 5px;
+    /* ★★★ 縮小與下方解釋的距離 (原本是20px+gap) ★★★ */
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.summary-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pos-badge {
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.cn-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.forms-text {
+    color: #e17055;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.back-header {
+    font-size: 0.9rem;
+    color: #b2bec3;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.detail-block {
+    margin-bottom: 25px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 15px;
+}
+
+.detail-block:last-child {
+    border: none;
+}
+
+.block-title {
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 1.5rem;
     line-height: 1.2;
-    margin-bottom: 12px; 
-    margin-top: 5px; 
-    letter-spacing: 1px; 
+    margin-bottom: 12px;
+    margin-top: 5px;
+    letter-spacing: 1px;
     display: flex;
     align-items: center;
-    
-    gap: 10px;        /* 標籤跟文字的距離 */
-    flex-wrap: wrap;  /* 如果字太長，自動換行 */
+
+    gap: 10px;
+    /* 標籤跟文字的距離 */
+    flex-wrap: wrap;
+    /* 如果字太長，自動換行 */
 }
+
 .block-title .pos-badge {
     position: relative;
-    top: -1px; /* 負數往上提，正數往下壓 */
-    
-    /* 確保標籤自己不要被行高撐大 */
-    line-height: normal; 
-    padding: 4px 8px; /* 可以稍微把標籤縮小一點點看起來更精緻 */
-}.ex-item { font-size: 1.15rem; color: #2d3436; margin-bottom: 20px; padding-left: 18px; border-left: 4px solid var(--accent); line-height: 1.6; }
-.ex-cn { display: block; color: #7f8c8d; font-size: 1rem; margin-top: 8px; font-weight: normal; line-height: 1.5; }
-.controls { display: flex; gap: 10px; margin-top: 10px; }
-.ctrl-btn { flex: 1; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background: var(--card-bg); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-.ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
-.ctrl-btn.main { background: var(--primary); color: white; }
+    top: -1px;
+    /* 負數往上提，正數往下壓 */
 
-.star-btn { position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 1.8rem; color: #dfe6e9; cursor: pointer; z-index: 20; transition: 0.2s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); height: 30px; display: flex; align-items: center; }
-.star-btn.active { color: var(--star-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+    /* 確保標籤自己不要被行高撐大 */
+    line-height: normal;
+    padding: 4px 8px;
+    /* 可以稍微把標籤縮小一點點看起來更精緻 */
+}
+
+.ex-item {
+    font-size: 1.15rem;
+    color: #2d3436;
+    margin-bottom: 20px;
+    padding-left: 18px;
+    border-left: 4px solid var(--accent);
+    line-height: 1.6;
+}
+
+.ex-cn {
+    display: block;
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-top: 8px;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.ctrl-btn {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 1rem;
+    background: var(--card-bg);
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.ctrl-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.ctrl-btn.main {
+    background: var(--primary);
+    color: white;
+}
+
+.star-btn {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #dfe6e9;
+    cursor: pointer;
+    z-index: 20;
+    transition: 0.2s;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.star-btn.active {
+    color: var(--star-color);
+    text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
+
 .speak-btn-large {
     width: 60px;
     height: 60px;
@@ -302,79 +873,386 @@ body.theme-dark .app-container {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    
+
     /* ★★★ 絕對定位設定 ★★★ */
     position: absolute;
-    bottom: 50px;           /* 距離底部 50px */
-    left: 50%;              /* 水平置中 */
-    transform: translateX(-50%); 
-    
+    bottom: 50px;
+    /* 距離底部 50px */
+    left: 50%;
+    /* 水平置中 */
+    transform: translateX(-50%);
+
     margin: 0;
     transition: 0.2s;
     z-index: 10;
 }
+
 .card-front p {
     color: #aaa;
     font-size: 0.8rem;
-    
+
     /* ★★★ 絕對定位設定 ★★★ */
     position: absolute;
-    bottom: 20px;           /* 放在按鈕下方 */
+    bottom: 20px;
+    /* 放在按鈕下方 */
     left: 0;
-    width: 100%;            /* 確保文字水平置中 */
+    width: 100%;
+    /* 確保文字水平置中 */
     text-align: center;
     margin: 0;
 }
-.speak-btn-large:hover { 
-    background: var(--primary); 
-    color: white; 
-    
+
+.speak-btn-large:hover {
+    background: var(--primary);
+    color: white;
+
     /* 關鍵在這裡：要保留原本的 translateX(-50%)，然後再加上 scale(1.1) */
-    transform: translateX(-50%) scale(1.1); 
-    
+    transform: translateX(-50%) scale(1.1);
+
     /* 加一點陰影讓它浮起來，更有按鈕的感覺 */
     box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
 }
+
 /* 測驗系統 */
-.quiz-box { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; }
-.question-card { background: var(--card-bg); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 8px 0 rgba(0,0,0,0.1); margin-bottom: 30px; }
-.q-text { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
-.q-sub { font-size: 1rem; color: #636e72; }
-.options-grid { display: flex; flex-direction: column; gap: 10px; }
-.option-btn { background: var(--card-bg); border: 2px solid #dfe6e9; padding: 15px; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer; color: var(--text-main); line-height: 1.4; transition: 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-.option-btn:active { transform: translateY(4px); box-shadow: none; }
-.option-btn.correct { background: var(--accent); color: white; border-color: var(--accent); animation: pop 0.3s; }
-.option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); animation: shake 0.4s; }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.quiz-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
 
-.result-popup { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 100%); width: calc(100% - 40px); padding: 20px; background: var(--card-bg); border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); text-align: center; color: var(--text-main); transition: transform 0.3s; display: none; }
-.result-popup.show { display: block; transform: translate(-50%, 0); }
-.popup-btn-row { display: flex; gap: 10px; margin-top: 15px; }
-.review-btn { flex: 1; background: #ffffff; color: var(--text-main); border: 2px solid var(--border-color); padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-.review-btn:active { transform: translateY(4px); box-shadow: none; }
-.next-btn { flex: 2; background: var(--primary); color: white; border: 2px solid var(--primary); padding: 12px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
-.next-btn:active { transform: translateY(4px); box-shadow: none; }
+.question-card {
+    background: var(--card-bg);
+    position: relative;
 
-.float-next-btn { position: absolute; bottom: 25px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 90; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transform: scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.float-next-btn.show { opacity: 1; pointer-events: auto; transform: scale(1); }
-.float-next-btn:active { transform: scale(0.9); }
+    /* 強力置中設定 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-.progress-bar { height: 5px; background: #eee; width: 100%; margin-top: 10px; border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
-#confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    /* ★★★ 修改這裡：上下內距設為一樣 (例如 40px)，這樣才會正中間 ★★★ */
+    padding: 40px 20px;
+
+    border-radius: 20px;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    width: 100%;
+    box-sizing: border-box;
+
+    /* 建議加上最小高度，讓短題目也不會看起來太扁 */
+    min-height: 100px;
+}
+
+.q-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.q-sub {
+    font-size: 1rem;
+    color: #636e72;
+}
+
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-btn {
+    background: var(--card-bg);
+    border: 2px solid #dfe6e9;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-main);
+    line-height: 1.4;
+    transition: 0.2s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.option-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.option-btn.correct {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    animation: pop 0.3s;
+}
+
+.option-btn.wrong {
+    background: var(--wrong);
+    color: white;
+    border-color: var(--wrong);
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.result-popup {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 100%);
+    width: calc(100% - 40px);
+    padding: 20px;
+    background: var(--card-bg);
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: var(--text-main);
+    transition: transform 0.3s;
+    display: none;
+    z-index: 200;
+}
+
+.result-popup.show {
+    display: block;
+    transform: translate(-50%, 0);
+}
+
+.popup-btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.review-btn {
+    flex: 1;
+    background: #ffffff;
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.review-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.next-btn {
+    flex: 2;
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.next-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.float-next-btn {
+    position: absolute;
+    bottom: 25px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 90;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.float-next-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.float-next-btn:active {
+    transform: scale(0.9);
+}
+
+.progress-bar {
+    height: 5px;
+    background: #eee;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
 
 /* 主題按鈕與鎖定狀態 */
-.theme-selector { display: flex; gap: 15px; overflow-x: auto; padding: 20px 0; scrollbar-width: none; justify-content: center; align-items: flex-start; width: 100%; }
-.theme-btn { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #fff; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); flex-shrink: 0; transition: all 0.2s ease; position: relative; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; padding: 0; color: transparent; }
-.theme-btn:hover { transform: translateY(-2px); }
-.theme-btn:active { transform: scale(0.95); }
-.theme-btn.locked { filter: grayscale(100%) brightness(80%); cursor: not-allowed; background-color: #f0f0f0 !important; color: transparent; pointer-events: none; }
-.theme-btn.locked::after { content: "🔒"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; color: #4a4a4a; z-index: 5; opacity: 0.8; text-shadow: 0 0 5px rgba(0,0,0,0.2); }
-.theme-btn.locked::before { content: attr(data-level); position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; font-family: "Georgia", serif; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; z-index: 6; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-.theme-btn.active { transform: scale(1.15); border-color: var(--primary); box-shadow: 0 0 15px var(--primary); z-index: 10; color: var(--text-main); }
-.theme-btn:not(.locked) { filter: none; color: var(--text-main); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.theme-selector {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 0;
+    scrollbar-width: none;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.theme-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 0;
+    color: transparent;
+}
+
+.theme-btn:hover {
+    transform: translateY(-2px);
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}
+
+.theme-btn.locked {
+    filter: grayscale(100%) brightness(80%);
+    cursor: not-allowed;
+    background-color: #f0f0f0 !important;
+    color: transparent;
+    pointer-events: none;
+}
+
+.theme-btn.locked::after {
+    content: "🔒";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: #4a4a4a;
+    z-index: 5;
+    opacity: 0.8;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-btn.locked::before {
+    content: attr(data-level);
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    font-family: "Georgia", serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 5px;
+    z-index: 6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn.active {
+    transform: scale(1.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+    z-index: 10;
+    color: var(--text-main);
+}
+
+.theme-btn:not(.locked) {
+    filter: none;
+    color: var(--text-main);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* style.css 最下方 */
 
@@ -384,6 +1262,7 @@ body.theme-dark .app-container {
 .anim-slide-out-left {
     animation: slideOutLeft 0.3s forwards ease-in;
 }
+
 .anim-slide-in-right {
     animation: slideInRight 0.3s forwards ease-out;
 }
@@ -392,6 +1271,7 @@ body.theme-dark .app-container {
 .anim-slide-out-right {
     animation: slideOutRight 0.3s forwards ease-in;
 }
+
 .anim-slide-in-left {
     animation: slideInLeft 0.3s forwards ease-out;
 }
@@ -399,22 +1279,43 @@ body.theme-dark .app-container {
 /* --- 動畫關鍵影格 --- */
 
 @keyframes slideOutLeft {
-    to { transform: translateX(-120%); opacity: 0; }
+    to {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
 }
 
 @keyframes slideInRight {
-    from { transform: translateX(120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 @keyframes slideOutRight {
-    to { transform: translateX(120%); opacity: 0; }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
 }
 
 @keyframes slideInLeft {
-    from { transform: translateX(-120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
+
 /* ========================================= */
 /* 6. 地城副本 (Adventure Mode) 樣式 */
 /* ========================================= */
@@ -422,7 +1323,7 @@ body.theme-dark .app-container {
 /* 網格容器：自動排版，每個方塊最小 70px */
 .adventure-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     padding: 20px;
     width: 100%;
@@ -431,8 +1332,13 @@ body.theme-dark .app-container {
 
 /* 關卡方塊 (Node) */
 .level-node {
-    aspect-ratio: 1; /* 強制正方形 */
-    background: var(--card-bg);
+    aspect-ratio: 1;
+
+    /* ★★★ 改這裡：換成你的圖片 ★★★ */
+    background-size: cover;
+    /* 讓圖片充滿整個格子 */
+    background-position: center;
+
     border: 3px solid var(--border-color);
     border-radius: 18px;
     display: flex;
@@ -441,9 +1347,12 @@ body.theme-dark .app-container {
     align-items: center;
     cursor: pointer;
     position: relative;
-    box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
     transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     font-family: "Georgia", serif;
+
+    /* 建議加上這行：讓上面的數字文字有陰影，不然背景太花會看不清楚 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .level-node:active {
@@ -460,15 +1369,25 @@ body.theme-dark .app-container {
 
 /* 鎖定狀態 (Locked) */
 .level-node.locked {
-    background: #e0e0e0;
+
+
+    /* ✅ 改成這樣：設定鎖住的圖片 (例如柵欄圖) */
+    /* 如果你沒有準備柵欄圖，也可以用跟原本一樣的石頭圖，然後透過濾鏡變灰 */
+    background-image: url('images/block1.png') !important;
+
     border-color: #bdc3c7;
     cursor: not-allowed;
-    pointer-events: none; /* 禁止點擊 */
-    filter: grayscale(1);
+    pointer-events: none;
+
+    /* 讓圖片變黑白、變暗，看起來像鎖住 */
+    filter: grayscale(1) brightness(0.7);
 }
+
 .level-node.locked .level-num {
-    display: none; /* 鎖定時不顯示數字 */
+    display: none;
+    /* 鎖定時不顯示數字 */
 }
+
 .level-node.locked::after {
     content: "🔒";
     font-size: 1.5rem;
@@ -477,14 +1396,17 @@ body.theme-dark .app-container {
 
 /* 已通關狀態 (Cleared) */
 .level-node.cleared {
-    background: var(--accent); /* 綠色背景 */
+    background: var(--accent);
+    /* 綠色背景 */
     border-color: #219150;
     color: white;
 }
+
 .level-node.cleared .level-num {
     color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .level-node.cleared::before {
     content: "★";
     position: absolute;
@@ -492,21 +1414,28 @@ body.theme-dark .app-container {
     font-size: 0.8rem;
     color: #f1c40f;
 }
+
 /* === 新增：地城狀態樣式 === */
 
 /* 1. 冷卻中 (Cooldown) - 還不能打 */
 .level-node.cooldown {
-    background: #bdc3c7; /* 灰色 */
+    background: #bdc3c7;
+    /* 灰色 */
     border-color: #7f8c8d;
-    cursor: default; /* 滑鼠游標變回普通 */
+    cursor: default;
+    /* 滑鼠游標變回普通 */
     opacity: 0.8;
 }
+
 .level-node.cooldown .level-num {
     color: #fff;
-    font-size: 1.2rem; /* 字體縮小一點顯示時間 */
+    font-size: 1.2rem;
+    /* 字體縮小一點顯示時間 */
 }
+
 .level-node.cooldown::after {
-    content: "⏳"; /* 沙漏圖示 */
+    content: "⏳";
+    /* 沙漏圖示 */
     position: absolute;
     bottom: 5px;
     font-size: 0.8rem;
@@ -515,32 +1444,77 @@ body.theme-dark .app-container {
 
 /* 2. 已精通 (Mastered) - 永久解鎖 */
 .level-node.mastered {
-    background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); /* 金色漸層 */
+
+
+    /* ✅ 改成圖片 */
+
+    /* 讓它看起來金光閃閃 */
+    filter: sepia(1) hue-rotate(5deg) saturate(3);
     border-color: #d35400;
-    box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
 }
+
 .level-node.mastered .level-num {
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
 .level-node.mastered::before {
-    content: "👑"; /* 皇冠圖示 */
+    content: "👑";
+    /* 皇冠圖示 */
     font-size: 0.8rem;
     position: absolute;
     top: -8px;
     right: -8px;
     z-index: 10;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 /* 3. 可挑戰 (Ready) - 這是原本的 cleared 樣式，我們可以微調 */
 .level-node.ready {
-    background: var(--accent); /* 綠色 */
+
+    background-image: url('images/block1.png') !important;
+    /* ✅ 改成這樣：讓它顯示圖片 */
+
     border-color: #27ae60;
-    animation: pulse 2s infinite; /* 讓它輕微跳動提示可玩 */
+    animation: pulse 2s infinite;
+
+    /* 如果你希望它還是有點綠綠的感覺，可以加這行 */
+    /* box-shadow: inset 0 0 0 100px rgba(39, 174, 96, 0.3); */
 }
+
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.quiz-status-bar {
+    display: flex;
+    justify-content: space-between;
+
+    /* 1. 設定字體顏色為全黑 */
+    color: #000000;
+
+    /* 2. 字體加大並加粗 (原本是 0.8rem 太小了) */
+    font-size: 1rem;
+    font-weight: 900;
+
+    /* 3. 取消原本的半透明，改為完全不透明 */
+    opacity: 1;
+
+    /* 4. 強力白邊 (描邊效果) */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+
+    /* 讓它跟下面的進度條有一點距離 */
+    margin-bottom: 8px;
 }
