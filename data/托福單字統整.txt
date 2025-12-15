@@ -1,0 +1,926 @@
+1. 天文 (Astronomy) - 50 字
+(來自你的原始檔案)
+
+Zenith (天頂)
+
+Meteor (流星)
+
+Light-year (光年)
+
+Cosmology (宇宙學)
+
+Planetarium (天文館)
+
+Solstice (至點)
+
+Equinox (分點)
+
+Parallax (視差)
+
+Luminosity (光度)
+
+Elliptical (橢圓的)
+
+Geocentric (地心的)
+
+Heliocentric (日心的)
+
+Retrograde (逆行的)
+
+Crater (隕石坑)
+
+Aurora (極光)
+
+Celestial (天體的)
+
+Orbit (軌道)
+
+Eclipse (蝕)
+
+Meteorite (隕石)
+
+Galaxy (星系)
+
+Constellation (星座)
+
+Comet (彗星)
+
+Asteroid (小行星)
+
+Gravity (重力)
+
+Atmosphere (大氣層)
+
+Cosmos (宇宙)
+
+Nebula (星雲)
+
+Supernova (超新星)
+
+Telescope (望遠鏡)
+
+Axis (軸)
+
+Latitude (緯度)
+
+Longitude (經度)
+
+Equator (赤道)
+
+Hemisphere (半球)
+
+Lunar (月亮的)
+
+Solar (太陽的)
+
+Rotation (自轉)
+
+Revolution (公轉)
+
+Satellite (衛星)
+
+Magnitude (星等/規模)
+
+Observatory (天文台)
+
+Phase (盈虧/階段)
+
+Radiation (輻射)
+
+Spectrum (光譜)
+
+Interstellar (星際的)
+
+Terrestrial (類地的/陸地的)
+
+Jovian (類木的)
+
+Debris (殘骸)
+
+Composition (成分)
+
+Velocity (速度)
+
+2. 生物 (Biology) - 50 字
+(來自你的原始檔案)
+
+Photosynthesis (光合作用)
+
+Metabolism (新陳代謝) [重複]
+
+Organism (生物) [重複]
+
+Genetic (基因的)
+
+Evolution (演化)
+
+Ecosystem (生態系統)
+
+Predator (掠食者)
+
+Mammal (哺乳動物)
+
+Reptile (爬行動物)
+
+Amphibian (兩棲動物)
+
+Species (物種)
+
+Habitat (棲息地)
+
+Adaptation (適應)
+
+Mutation (突變)
+
+Chromosome (染色體)
+
+Cell (細胞)
+
+Tissue (組織)
+
+Membrane (膜)
+
+Enzyme (酵素)
+
+Hormone (荷爾蒙)
+
+Protein (蛋白質)
+
+Nutrient (營養素)
+
+Parasite (寄生蟲)
+
+Host (宿主)
+
+Symbiosis (共生)
+
+Migration (遷徙) [重複]
+
+Hibernate (冬眠)
+
+Extinction (滅絕) [重複]
+
+Fossil (化石) [重複]
+
+Bacteria (細菌)
+
+Virus (病毒)
+
+Immune (免疫的)
+
+Reproduction (繁殖)
+
+Offspring (後代)
+
+Diversity (多樣性)
+
+Herbivore (食草動物)
+
+Carnivore (食肉動物)
+
+Prey (獵物)
+
+Mimicry (擬態)
+
+Camouflage (偽裝)
+
+Pollination (授粉)
+
+Nectar (花蜜)
+
+Dispersal (散佈)
+
+Nocturnal (夜行性的)
+
+Larva (幼蟲)
+
+Vertebrate (脊椎動物)
+
+Invertebrate (無脊椎動物)
+
+Excrete (排泄)
+
+Respiration (呼吸作用)
+
+Fertilization (受精)
+
+3. 心理學 (Psychology) - 50 字
+(來自你的原始檔案)
+
+Cognitive (認知的)
+
+Subconscious (潛意識)
+
+Stimulus (刺激)
+
+Amnesia (失憶症)
+
+Innate (天生的)
+
+Perception (感知)
+
+Behaviorism (行為主義)
+
+Trauma (創傷)
+
+Disorder (失調/障礙)
+
+Conditioning (條件作用)
+
+Narcissism (自戀)
+
+Altruism (利他主義)
+
+Subject (受試者)
+
+Hypothesis (假說)
+
+Correlation (相關性)
+
+Placebo (安慰劑)
+
+Reinforcement (強化)
+
+Repression (壓抑-潛意識)
+
+Conformity (從眾)
+
+Empathy (同理心)
+
+Apathy (冷漠)
+
+Introspection (內省)
+
+Ambivalence (矛盾心理)
+
+Hallucination (幻覺)
+
+Delusion (妄想)
+
+Plasticity (可塑性)
+
+Neurotransmitter (神經傳導物質)
+
+Syndrome (症候群)
+
+Retention (保留/記憶)
+
+Retrieval (提取/檢索)
+
+Subjective (主觀的)
+
+Objective (客觀的)
+
+Bias (偏見)
+
+Diagnosis (診斷)
+
+Therapy (治療)
+
+Obsession (強迫觀念)
+
+Phobia (恐懼症)
+
+Resilience (韌性)
+
+Sensation (感覺)
+
+Stereotype (刻板印象)
+
+Stimulant (興奮劑)
+
+Suppression (壓抑-有意識)
+
+Synapse (突觸)
+
+Temperament (氣質)
+
+Threshold (門檻/閾值)
+
+Trait (特質)
+
+Unconscious (無意識的)
+
+Validation (認可/驗證)
+
+Variable (變數)
+
+Withdrawal (戒斷/退縮)
+
+4. 地理 (Geography) - 50 字
+(新建立)
+
+Topography (地形學)
+
+Terrain (地勢)
+
+Plateau (高原)
+
+Basin (盆地)
+
+Peninsula (半島)
+
+Archipelago (群島)
+
+Strait (海峽)
+
+Isthmus (地峽)
+
+Delta (三角洲)
+
+Estuary (河口)
+
+Tributary (支流)
+
+Glacier (冰河) [重複]
+
+Tundra (凍原)
+
+Savanna (熱帶草原)
+
+Oasis (綠洲)
+
+Dune (沙丘)
+
+Canyon (峽谷)
+
+Valley (山谷)
+
+Summit (山頂)
+
+Altitude (海拔)
+
+Latitude (緯度) [重複]
+
+Longitude (經度) [重複]
+
+Equator (赤道) [重複]
+
+Hemisphere (半球) [重複]
+
+Meridian (子午線)
+
+Continental (大陸的)
+
+Maritime (海事的)
+
+Coastal (沿海的)
+
+Inland (內陸的)
+
+Arid (乾旱的)
+
+Tropical (熱帶的)
+
+Temperate (溫帶的)
+
+Polar (極地的)
+
+Vegetation (植被)
+
+Precipitation (降水)
+
+Erosion (侵蝕) [重複]
+
+Weathering (風化) [重複]
+
+Sediment (沉積物) [重複]
+
+Alluvial (沖積的)
+
+Fertile (肥沃的)
+
+Barren (貧瘠的)
+
+Irrigation (灌溉)
+
+Reservoir (水庫)
+
+Aquifer (蓄水層) [重複]
+
+Demography (人口統計)
+
+Migration (遷移) [重複]
+
+Urbanization (都市化)
+
+Rural (鄉村的)
+
+Indigenous (本土的)
+
+Frontier (邊疆)
+
+5. 歷史 (History) - 50 字
+(新建立)
+
+Civilization (文明)
+
+Artifact (文物)
+
+Archaeology (考古學)
+
+Chronology (年代學)
+
+Era (時代) [重複]
+
+Dynasty (朝代)
+
+Empire (帝國)
+
+Emperor (皇帝)
+
+Monarchy (君主制)
+
+Feudalism (封建制度)
+
+Renaissance (文藝復興)
+
+Revolution (革命) [重複]
+
+Colony (殖民地)
+
+Imperialism (帝國主義)
+
+Nomad (遊牧民族)
+
+Agriculture (農業)
+
+Scribe (抄寫員)
+
+Hieroglyph (象形文字)
+
+Papyrus (紙莎草)
+
+Pharaoh (法老)
+
+Pyramid (金字塔)
+
+Mummy (木乃伊)
+
+Democracy (民主)
+
+Republic (共和國)
+
+Dictator (獨裁者)
+
+Senate (參議院)
+
+Expedition (遠征)
+
+Conquest (征服)
+
+Alliance (同盟)
+
+Treaty (條約)
+
+Reformation (宗教改革)
+
+Enlightenment (啟蒙運動)
+
+Industrialization (工業化)
+
+Propaganda (宣傳)
+
+Depression (蕭條)
+
+Suffrage (投票權)
+
+Sovereignty (主權)
+
+Constitution (憲法)
+
+Hierarchy (階級制度)
+
+Peasant (農民)
+
+Noble (貴族)
+
+Merchant (商人)
+
+Rebellion (叛亂)
+
+Monument (紀念碑)
+
+Legacy (遺產)
+
+Archive (檔案館)
+
+Ritual (儀式)
+
+Mythology (神話)
+
+Prehistoric (史前的)
+
+Medieval (中世紀的)
+
+6. 藝術 (Art) - 50 字
+(新建立)
+
+Portrait (肖像畫)
+
+Symphony (交響樂)
+
+Aesthetic (美學)
+
+Abstract (抽象的)
+
+Exhibition (展覽)
+
+Curator (策展人)
+
+Masterpiece (傑作)
+
+Gallery (畫廊)
+
+Sculpture (雕塑)
+
+Ceramics (陶瓷)
+
+Pottery (陶器)
+
+Mosaic (馬賽克)
+
+Fresco (濕壁畫)
+
+Pigment (顏料)
+
+Canvas (畫布)
+
+Perspective (透視法)
+
+Medium (媒材)
+
+Genre (流派)
+
+Impressionism (印象派)
+
+Expressionism (表現主義)
+
+Surrealism (超現實主義)
+
+Baroque (巴洛克)
+
+Avant-garde (前衛)
+
+Replica (複製品)
+
+Authentic (原作的)
+
+Orchestra (管弦樂團)
+
+Concerto (協奏曲)
+
+Choir (合唱團)
+
+Melody (旋律)
+
+Rhythm (節奏)
+
+Harmony (和聲)
+
+Acoustics (聲學)
+
+Improvisation (即興)
+
+Percussion (打擊樂)
+
+Virtuoso (大師)
+
+Choreography (編舞)
+
+Theatrical (戲劇性的)
+
+Drama (戲劇)
+
+Playwright (劇作家)
+
+Rehearsal (排練)
+
+Audience (觀眾)
+
+Critic (評論家)
+
+Literature (文學)
+
+Poetry (詩歌)
+
+Metaphor (隱喻)
+
+Satire (諷刺)
+
+Rhetoric (修辭)
+
+Eloquent (雄辯的)
+
+Dialect (方言)
+
+Manuscript (手稿)
+
+7. 地質學 (Geology) - 50 字
+(新建立)
+
+Geology (地質學)
+
+Tectonics (板塊構造)
+
+Crust (地殼)
+
+Mantle (地幔)
+
+Core (地核)
+
+Lithosphere (岩石圈)
+
+Magma (岩漿)
+
+Lava (熔岩)
+
+Igneous (火成岩)
+
+Sedimentary (沉積岩)
+
+Metamorphic (變質岩)
+
+Mineral (礦物)
+
+Crystal (晶體)
+
+Seismic (地震的)
+
+Fault (斷層)
+
+Tremor (震動)
+
+Eruption (爆發) [重複]
+
+Dormant (休眠的)
+
+Extinct (死火山/滅絕) [重複]
+
+Crater (火山口) [重複]
+
+Caldera (破火山口)
+
+Geyser (間歇泉)
+
+Glacier (冰川) [重複]
+
+Erosion (侵蝕) [重複]
+
+Weathering (風化) [重複]
+
+Sediment (沉積物) [重複]
+
+Strata (地層)
+
+Fossil (化石) [重複]
+
+Paleontology (古生物學)
+
+Era (地質代) [重複]
+
+Epoch (地質世)
+
+Limestone (石灰岩)
+
+Sandstone (砂岩)
+
+Granite (花崗岩)
+
+Basalt (玄武岩)
+
+Marble (大理石)
+
+Permeable (可滲透的)
+
+Porous (多孔的)
+
+Groundwater (地下水)
+
+Aquifer (含水層) [重複]
+
+Subduction (隱沒作用)
+
+Pangea (盤古大陸)
+
+Rift (裂谷)
+
+Hotspot (熱點)
+
+Tsunami (海嘯)
+
+Stalactite (鐘乳石)
+
+Stalagmite (石筍)
+
+Landslide (山崩)
+
+Avalanche (雪崩)
+
+Geothermal (地熱的)
+
+8. 商業 (Business) - 50 字
+(新建立)
+
+Entrepreneur (企業家)
+
+Merger (合併)
+
+Acquisition (收購)
+
+Bankruptcy (破產)
+
+Dividend (股息)
+
+Monopoly (壟斷)
+
+Oligopoly (寡佔)
+
+Inflation (通膨)
+
+Recession (衰退)
+
+Currency (貨幣)
+
+Commodity (商品)
+
+Liability (負債)
+
+Asset (資產)
+
+Revenue (營收)
+
+Deficit (赤字)
+
+Fiscal (財政的)
+
+Subsidy (補貼)
+
+Tariff (關稅)
+
+Quota (配額)
+
+Outsourcing (外包)
+
+Lucrative (賺錢的)
+
+Conglomerate (集團)
+
+Portfolio (投資組合)
+
+Audit (審計)
+
+Incentive (激勵)
+
+Stakeholder (利益相關者)
+
+Shareholder (股東)
+
+Negotiation (談判)
+
+Consensus (共識)
+
+Agenda (議程)
+
+Executive (行政主管)
+
+Compensation (薪酬)
+
+Recruitment (招募)
+
+Strategy (策略)
+
+Venture (冒險事業)
+
+Equity (股權)
+
+Bond (債券)
+
+Mortgage (房貸)
+
+Warranty (保固)
+
+Patent (專利)
+
+Trademark (商標)
+
+Logistics (物流)
+
+Inventory (庫存)
+
+Wholesale (批發)
+
+Retail (零售)
+
+Transaction (交易)
+
+Client (客戶)
+
+Deadline (截止日)
+
+Collaboration (合作)
+
+Productivity (生產力)
+
+9. 生命科學 (Life Science) - 50 字
+(新建立)
+
+Anatomy (解剖學)
+
+Physiology (生理學)
+
+Cardiovascular (心血管的)
+
+Respiratory (呼吸的)
+
+Antibody (抗體)
+
+Pathogen (病原體)
+
+Vaccine (疫苗)
+
+Antibiotic (抗生素)
+
+Epidemic (流行病)
+
+Pandemic (大流行)
+
+Chronic (慢性的)
+
+Acute (急性的)
+
+Symptom (症狀)
+
+Prognosis (預後)
+
+Prescription (處方)
+
+Hygiene (衛生)
+
+Nutrition (營養)
+
+Vitamin (維他命)
+
+Carbohydrate (碳水化合物)
+
+Cholesterol (膽固醇)
+
+Calorie (卡路里)
+
+Obesity (肥胖)
+
+Diabetes (糖尿病)
+
+Insulin (胰島素)
+
+Surgery (手術)
+
+Anesthesia (麻醉)
+
+Transplant (移植)
+
+Ligament (韌帶)
+
+Tendon (肌腱)
+
+Joint (關節)
+
+Skeleton (骨骼)
+
+Muscle (肌肉)
+
+Organ (器官)
+
+Nerve (神經)
+
+Biotechnology (生物科技)
+
+Clone (複製)
+
+Fermentation (發酵)
+
+Pasteurization (巴氏殺菌)
+
+Dermatology (皮膚科)
+
+Pediatrics (小兒科)
+
+Neurology (神經科)
+
+Digestion (消化)
+
+Heredity (遺傳)
+
+Biodiversity (生物多樣性)
+
+Conservation (保育)
+
+Pollution (污染)
+
+Greenhouse (溫室)
+
+Infection (感染)
+
+Inflammation (發炎)
+
+Remedy (療法)

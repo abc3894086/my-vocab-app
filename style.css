@@ -16,46 +16,6 @@
 }
 
 /* 主題變數設定 */
-body.theme-ocean {
-    --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #81d4fa 100%);
-    --card-bg: #f0faff;
-    --text-main: #2c3e50;
-    --primary: #2980b9;
-    --secondary: #a9cce3;
-    --border-color: #3498db;
-    --btn-shadow: 0 4px 0 #1a5276;
-}
-
-body.theme-forest {
-    --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-    --card-bg: #f1f8e9;
-    --text-main: #1b5e20;
-    --primary: #2ecc71;
-    --secondary: #a5d6a7;
-    --border-color: #27ae60;
-    --btn-shadow: 0 4px 0 #145a32;
-}
-
-body.theme-sakura {
-    --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-    --card-bg: #fff0f5;
-    --text-main: #4a148c;
-    --primary: #9b59b6;
-    --secondary: #e1bee7;
-    --border-color: #8e44ad;
-    --btn-shadow: 0 4px 0 #4a235a;
-}
-
-body.theme-dark {
-    --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
-    --card-bg: #34495e;
-    --text-main: #ecf0f1;
-    --primary: #e74c3c;
-    --secondary: #7f8c8d;
-    --border-color: #c0392b;
-    --btn-shadow: 0 4px 0 #641e16;
-    --accent: #f1c40f;
-}
 
 /* ========================================= */
 /* 2. 全局基礎樣式 */
@@ -171,28 +131,28 @@ body.theme-dark .app-container {
     display: flex;
     flex-direction: column;
 
-    /* ★★★ 修改這裡：將 0.3s 改成 0.6s (想要更慢可以改 0.8s) ★★★ */
-    transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* 動畫設定：讓滑動更順暢 */
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s;
 
     padding: 20px;
     box-sizing: border-box;
     background: transparent;
     overflow-y: auto;
     overflow-x: hidden;
-    visibility: hidden;
-    pointer-events: none;
+
+    /* ★★★ 修正重點：移除 visibility: hidden，改用 opacity 和 transform ★★★ */
+    opacity: 0; 
+    pointer-events: none; /* 看不見時不能點擊 */
     z-index: 0;
-    transform: translateX(100%);
+    transform: translateX(100%); /* 預設在螢幕右邊外面 */
 }
 
 .page.active {
-    transform: translateX(0);
+    transform: translateX(0); /* 滑回螢幕中間 */
     z-index: 10;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    opacity: 1; /* 變成可見 */
+    pointer-events: auto; /* 可以點擊 */
 }
-
 /* === RPG 標題卷軸風格 === */
 .landing-header {
     text-align: center;
@@ -367,76 +327,6 @@ body.theme-dark .app-container {
     color: var(--text-main);
 }
 
-/* 等級系統 */
-.level-container {
-    background: var(--card-bg);
-    border: 2px solid var(--border-color);
-    padding: 15px 20px;
-    border-radius: 15px;
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
-}
-
-.level-badge {
-    width: 60px;
-    height: 60px;
-    background: var(--primary);
-    color: white;
-    border-radius: 50%;
-    border: 3px solid white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
-}
-
-.level-num {
-    font-family: "Georgia", serif;
-    font-size: 1.8rem;
-    font-weight: 900;
-    line-height: 0.9;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
-}
-
-.xp-bar-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.xp-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-family: "Georgia", serif;
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: #000000;
-    letter-spacing: 0.5px;
-}
-
-.xp-track {
-    width: 100%;
-    height: 14px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 7px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-
-.xp-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #f1c40f, #e67e22);
-    width: 0%;
-    transition: width 0.5s;
-    box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-}
 
 /* 字卡與測驗 */
 .scroll-list {
@@ -653,6 +543,7 @@ body.theme-dark .app-container {
     left: 50%;
     transform: translateX(-50%);
     /* 水平置中 */
+    z-index: 100; 
 
     /* === 2. 移除背景與干擾 === */
     background: transparent;
@@ -670,7 +561,7 @@ body.theme-dark .app-container {
     z-index: 95;
 
     /* === 3. 文字樣式 (黑字強力白邊) === */
-    color: #000000;
+    color: #8b5e3c;
     font-size: 1.2rem;
     /* 字體稍微加大一點 */
     font-weight: 900;
@@ -679,11 +570,9 @@ body.theme-dark .app-container {
     /* 字距拉開一點比較有質感 */
 
     /* 多重陰影製造強力描邊效果 */
-    text-shadow:
-        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
-        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff,
-        0 0 10px rgba(255, 255, 255, 0.8);
+    text-shadow: none;
     /* 加一點外發光讓它更明顯 */
+    opacity: 0.6;
 
     white-space: nowrap;
 }
@@ -919,86 +808,113 @@ body.theme-dark .app-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 10px;
+    align-items: center; /* 水平置中 */
+    
+    /* === ★★★ 核心修改：變成白色大卡片 ★★★ === */
+    background: #fffcf5; /* 溫暖的米白色背景 */
+    width: 90%;          /* 卡片寬度 */
+    max-width: 380px;    /* 最大寬度 */
+    margin: 20px auto;   /* 上下留白，水平置中 */
+    padding: 30px 20px;  /* 卡片內距 */
+    border-radius: 25px; /* 圓角 */
+    
+    /* 加一點陰影讓卡片浮起來 */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+    
+    /* 加一個邊框讓它更有 RPG 質感 (可選) */
+    border: 4px solid #d4c5a9; 
+    
+    box-sizing: border-box;
 }
 
 .question-card {
-    background: var(--card-bg);
+    /* === ★★★ 核心修改：移除所有外框與背景 ★★★ === */
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    
     position: relative;
-
-    /* 強力置中設定 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    /* ★★★ 修改這裡：上下內距設為一樣 (例如 40px)，這樣才會正中間 ★★★ */
-    padding: 40px 20px;
-
-    border-radius: 20px;
-    border: 2px solid var(--border-color);
-    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-    width: 100%;
-    box-sizing: border-box;
-
-    /* 建議加上最小高度，讓短題目也不會看起來太扁 */
-    min-height: 100px;
-}
-
-.q-text {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--primary);
+    
+    padding: 0 0 20px 0; /* 下方留點距離給選項 */
     margin-bottom: 10px;
+    width: 100%;
+    min-height: auto; /* 不強制高度，隨內容撐開 */
 }
 
+/* 修改題目文字樣式 */
+.q-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    
+    /* 改回深色字，因為背景是白的 */
+    color: #5d4037; 
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
+
+    /* 移除之前的強力白邊，改用輕微的陰影增加質感 */
+    text-shadow: none; 
+    /* 如果覺得字不夠立體，可以加下面這行，不然保持 clean 也可以 */
+    /* text-shadow: 1px 1px 0px rgba(0,0,0,0.1); */
+}
 .q-sub {
     font-size: 1rem;
     color: #636e72;
 }
-
 .options-grid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px; /* 按鈕間距稍微拉大 */
+    width: 100%; /* 填滿卡片 */
 }
 
+/* 修改選項按鈕：淺色框框風格 */
 .option-btn {
-    background: var(--card-bg);
-    border: 2px solid #dfe6e9;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1rem;
+    background: #ffffff; /* 純白背景 */
+    
+    /* === ★★★ 核心修改：淺淺的框框 ★★★ === */
+    border: 2px solid #e0e0e0; /* 淺灰色邊框 */
+    color: #555; /* 字體深灰 */
+    
+    padding: 15px 20px;
+    border-radius: 15px; /* 圓潤一點 */
+    font-size: 1.1rem;
+    font-weight: 700;
     text-align: left;
     cursor: pointer;
-    color: var(--text-main);
     line-height: 1.4;
-    transition: 0.2s;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    box-shadow: 0 4px 0 #eee; /* 淺淺的立體感 */
+    
+    /* 移除之前的文字描邊 */
+    text-shadow: none !important;
 }
 
+/* 按下時的效果 */
 .option-btn:active {
-    transform: translateY(4px);
-    box-shadow: none;
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #eee;
 }
 
+/* === 答對樣式 === */
 .option-btn.correct {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-    animation: pop 0.3s;
+    background: #d4edda !important; /* 淺綠底 */
+    border-color: #28a745 !important; /* 綠框 */
+    color: #155724 !important; /* 深綠字 */
+    box-shadow: 0 4px 0 #c3e6cb;
 }
 
+/* === 答錯樣式 === */
 .option-btn.wrong {
-    background: var(--wrong);
-    color: white;
-    border-color: var(--wrong);
-    animation: shake 0.4s;
+    background: #f8d7da !important; /* 淺紅底 */
+    border-color: #dc3545 !important; /* 紅框 */
+    color: #721c24 !important; /* 深紅字 */
+    box-shadow: 0 4px 0 #f5c6cb;
 }
-
 @keyframes shake {
 
     0%,

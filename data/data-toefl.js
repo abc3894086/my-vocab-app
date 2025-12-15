@@ -1,6 +1,261 @@
 window.vocabDB["TOEFL"] = {
 "Astronomy": [
                 {
+                    en: "Zenith",
+                    phonetic: "[ˋzinɪθ]",
+                    root: "Arabic 'samt' (path over head 頭頂的路徑)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "天頂、頂點", 
+                            synonyms: "peak, apex, summit",
+                            examples: [
+                                { en: "The sun reaches its zenith at noon.", cn: "太陽在中午到達天頂。" },
+                                { en: "At the zenith of his career, he was known worldwide.", cn: "在他的事業頂峰時期，他聞名於世。" },
+                                { en: "The star is directly overhead at the zenith.", cn: "那顆星星正位於頭頂的天頂位置。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Meteor",
+                    phonetic: "[ˋmitɪɚ]",
+                    root: "meta (high) + aero (air) -> high in the air",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "流星 (在大氣層中燃燒)", 
+                            synonyms: "shooting star, falling star",
+                            examples: [
+                                { en: "We saw a bright meteor streak across the night sky.", cn: "我們看到一顆明亮的流星劃過夜空。" },
+                                { en: "Most meteors burn up before they hit the ground.", cn: "大多數流星在撞擊地面前就燃燒殆盡了。" },
+                                { en: "A meteor shower occurs when Earth passes through debris.", cn: "當地球穿過殘骸帶時，就會發生流星雨。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Light-year",
+                    phonetic: "[ˋlaɪt͵jɪr]",
+                    root: "light (光) + year (年)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "光年 (距離單位)", 
+                            synonyms: "astronomical distance",
+                            examples: [
+                                { en: "The nearest star is over four light-years away.", cn: "最近的恆星距離我們超過四光年。" },
+                                { en: "A light-year is the distance light travels in one year.", cn: "一光年是光在一年內傳播的距離。" },
+                                { en: "This galaxy is millions of light-years from Earth.", cn: "這個星系距離地球數百萬光年。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Cosmology",
+                    phonetic: "[kɑzˋmɑlədʒɪ]",
+                    root: "cosmos (universe) + logy (study)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "宇宙學", 
+                            synonyms: "study of the universe",
+                            examples: [
+                                { en: "Cosmology explores the origins and fate of the universe.", cn: "宇宙學探討宇宙的起源和命運。" },
+                                { en: "The Big Bang theory is a cornerstone of modern cosmology.", cn: "大霹靂理論是現代宇宙學的基石。" },
+                                { en: "Advances in cosmology have changed our view of space.", cn: "宇宙學的進步改變了我們對太空的看法。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Planetarium",
+                    phonetic: "[͵plænəˋtɛrɪəm]",
+                    root: "planet (行星) + arium (place 場所)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "天文館", 
+                            synonyms: "observatory building",
+                            examples: [
+                                { en: "We visited the planetarium to learn about the constellations.", cn: "我們參觀了天文館以了解星座。" },
+                                { en: "The planetarium projector displayed the night sky on the dome.", cn: "天文館的投影機在圓頂上展示了夜空。" },
+                                { en: "School children often go on field trips to the planetarium.", cn: "小學生經常去天文館校外教學。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Solstice",
+                    phonetic: "[ˋsɑlstɪs]",
+                    root: "sol (sun) + stit (stand still 靜止)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "至點 (夏至或冬至)", 
+                            synonyms: "turning point",
+                            examples: [
+                                { en: "The summer solstice is the longest day of the year.", cn: "夏至是一年中白晝最長的一天。" },
+                                { en: "Ancient monuments were often aligned with the winter solstice.", cn: "古代遺跡通常與冬至對齊。" },
+                                { en: "The sun reaches its highest or lowest point at the solstice.", cn: "太陽在至點時達到最高或最低點。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Equinox",
+                    phonetic: "[ˋikwə͵nɑks]",
+                    root: "equi (equal) + nox (night) -> equal night",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "分點 (春分或秋分)", 
+                            synonyms: "equal day and night",
+                            examples: [
+                                { en: "During the equinox, day and night are of equal length.", cn: "在分點期間，白天和黑夜的長度相等。" },
+                                { en: "The spring equinox marks the beginning of spring.", cn: "春分標誌著春天的開始。" },
+                                { en: "Many cultures celebrate festivals around the autumn equinox.", cn: "許多文化在秋分前後慶祝節日。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Parallax",
+                    phonetic: "[ˋpærə͵læks]",
+                    root: "Greek 'parallaxis' (change/alteration 改變)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "視差 (天文測距法)", 
+                            synonyms: "displacement, shift",
+                            examples: [
+                                { en: "Astronomers use parallax to measure distances to nearby stars.", cn: "天文學家使用視差來測量到附近恆星的距離。" },
+                                { en: "Parallax is the apparent shift of an object when viewed from different angles.", cn: "視差是從不同角度觀察物體時的視位移。" },
+                                { en: "The parallax effect is greater for closer objects.", cn: "對於較近的物體，視差效應更大。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Luminosity",
+                    phonetic: "[͵luməˋnɑsətɪ]",
+                    root: "lumen (light 光) + osity",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "光度、亮度", 
+                            synonyms: "brightness, radiance, glow",
+                            examples: [
+                                { en: "The luminosity of a star depends on its size and temperature.", cn: "恆星的光度取決於它的大小和溫度。" },
+                                { en: "Supernovae have incredibly high luminosity.", cn: "超新星擁有極高的光度。" },
+                                { en: "Astronomers classify stars based on their luminosity.", cn: "天文學家根據光度對恆星進行分類。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Elliptical",
+                    phonetic: "[ɪˋlɪptɪk!]",
+                    root: "ellipse (oval 橢圓) + al",
+                    details: [
+                        { 
+                            pos: "adj.", 
+                            cn: "橢圓的", 
+                            synonyms: "oval-shaped",
+                            examples: [
+                                { en: "Planets travel in elliptical orbits around the sun.", cn: "行星以橢圓軌道繞太陽運行。" },
+                                { en: "Some galaxies are elliptical in shape.", cn: "有些星系的形狀是橢圓的。" },
+                                { en: "Kepler discovered that orbits are elliptical, not circular.", cn: "克卜勒發現軌道是橢圓形的，而不是圓形的。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Geocentric",
+                    phonetic: "[͵dʒioˋsɛntrɪk]",
+                    root: "geo (earth) + center",
+                    details: [
+                        { 
+                            pos: "adj.", 
+                            cn: "以地球為中心的 (地心說)", 
+                            synonyms: "Earth-centered",
+                            examples: [
+                                { en: "The ancient geocentric model placed Earth at the center of the universe.", cn: "古代的地心模型將地球置於宇宙的中心。" },
+                                { en: "Galileo challenged the geocentric view of the solar system.", cn: "伽利略挑戰了太陽系的地心觀點。" },
+                                { en: "Aristotle was a proponent of the geocentric theory.", cn: "亞里斯多德是地心說的支持者。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Heliocentric",
+                    phonetic: "[͵hilɪoˋsɛntrɪk]",
+                    root: "helio (sun) + center",
+                    details: [
+                        { 
+                            pos: "adj.", 
+                            cn: "以太陽為中心的 (日心說)", 
+                            synonyms: "Sun-centered",
+                            examples: [
+                                { en: "Copernicus proposed the heliocentric model of the solar system.", cn: "哥白尼提出了太陽系的日心模型。" },
+                                { en: "The heliocentric theory was confirmed by later observations.", cn: "日心說被後來的觀測所證實。" },
+                                { en: "A heliocentric orbit circles around the sun.", cn: "日心軌道是繞著太陽運行的。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Retrograde",
+                    phonetic: "[ˋrɛtrə͵gred]",
+                    root: "retro (backward 向後) + grad (step 走)",
+                    details: [
+                        { 
+                            pos: "adj.", 
+                            cn: "逆行的、倒退的", 
+                            synonyms: "backward, reverse",
+                            examples: [
+                                { en: "Retrograde motion is an optical illusion caused by Earth's orbit.", cn: "逆行運動是由地球軌道引起的一種視錯覺。" },
+                                { en: "Mars appears to move in a retrograde direction periodically.", cn: "火星似乎週期性地以逆行方向移動。" },
+                                { en: "The planet has a retrograde rotation, spinning clockwise.", cn: "這顆行星有逆行自轉，是順時針旋轉的。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Crater",
+                    phonetic: "[ˋkretɚ]",
+                    root: "Greek 'krater' (mixing bowl 碗/盆)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "隕石坑、火山口", 
+                            synonyms: "pit, hollow, cavity",
+                            examples: [
+                                { en: "The moon's surface is covered with impact craters.", cn: "月球表面佈滿了撞擊坑。" },
+                                { en: "A large crater marks the spot where the asteroid hit.", cn: "一個巨大的隕石坑標記了小行星撞擊的地點。" },
+                                { en: "We hiked to the edge of the volcanic crater.", cn: "我們徒步走到了火山口的邊緣。" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    en: "Aurora",
+                    phonetic: "[ɔˋrɔrə]",
+                    root: "Roman goddess of dawn (黎明女神)",
+                    details: [
+                        { 
+                            pos: "n.", 
+                            cn: "極光", 
+                            synonyms: "northern lights (aurora borealis)",
+                            examples: [
+                                { en: "The aurora borealis is a spectacular light display in the north.", cn: "北極光是北方壯觀的燈光秀。" },
+                                { en: "Auroras are caused by solar wind interacting with the atmosphere.", cn: "極光是由太陽風與大氣層相互作用引起的。" },
+                                { en: "Tourists travel to Iceland to see the aurora.", cn: "遊客前往冰島觀看極光。" }
+                            ]
+                        }
+                    ]
+                },
+{
                     en: "Celestial",
                     phonetic: "[sɪˋlɛstʃəl]",
                     root: "celest (heavenly 天上的) + ial",

@@ -14,57 +14,16 @@
 
     <div class="app-container">
 
-        <div id="daily-modal" class="modal-overlay">
-            <div class="bonus-box">
-                <h2>🎁 每日寶箱</h2>
-                <p>連續登入: <span id="streak-days" style="color:var(--primary); font-weight:bold;">1</span> 天</p>
-                <p id="streak-bonus-text" style="color:#e74c3c; display:none; font-weight:bold;">🔥 第7天雙倍獎勵！</p>
-                <div class="chest-container">
-                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-                    <button class="chest-btn" onclick="openChest(this)">🧰<span class="chest-reward"></span></button>
-                </div>
-            </div>
-        </div>
-
+        
         <div id="page-landing" class="page active">
             <div class="landing-header"
-                style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: -80px; margin-top: -50px;">
+                style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: 20px; margin-top: -50px;">
                 <img src="images/logo.png" alt="Logo"
                     style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
             </div>
 
-            <div class="level-container">
-                <div class="level-badge">
-                    <span class="level-num" id="lvl-num">1</span>
-                    <span style="font-size:0.6rem">LV</span>
-                </div>
-                <div class="xp-bar-container">
-                    <div class="xp-info">
-                        <span id="lvl-title">勇者</span>
-                        <span id="xp-text">0/100</span>
-                    </div>
-                    <div class="xp-track">
-                        <div class="xp-fill" id="xp-fill"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="width:100%; margin-bottom: 15px;">
-                <div class="theme-selector">
-                    <button id="btn-theme-default" class="theme-btn active" style="background:#fdfbf7;"
-                        onclick="setTheme('default', 0)">📜</button>
-                    <button id="btn-theme-ocean" class="theme-btn locked" data-level="Lv.20" style="background:#e0f7fa;"
-                        onclick="setTheme('theme-ocean', 20)">🌊</button>
-                    <button id="btn-theme-forest" class="theme-btn locked" data-level="Lv.40"
-                        style="background:#d4fc79;" onclick="setTheme('theme-forest', 40)">🌲</button>
-                    <button id="btn-theme-sakura" class="theme-btn locked" data-level="Lv.60"
-                        style="background:#f3e5f5;" onclick="setTheme('theme-sakura', 60)">🌸</button>
-                    <button id="btn-theme-dark" class="theme-btn locked" data-level="Lv.80" style="background:#2c3e50;"
-                        onclick="setTheme('theme-dark', 80)">🌑</button>
-                </div>
-            </div>
-
+                       <div style="width:100%; margin-bottom: 15px;">
+                
             <div class="mode-card" onclick="selectMode('learn')">
                 <div class="mode-icon">📖</div>
                 <div class="mode-info">
@@ -88,8 +47,7 @@
                     <p>推圖闖關 (20題/關)</p>
                 </div>
             </div>
-        </div>
-        <div id="page-category" class="page">
+        </div> </div> <div id="page-category" class="page">
             <div class="navbar">
                 <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
                 <span class="page-title" id="cat-title">選擇戰場</span>
@@ -222,7 +180,6 @@
                 <div class="question-card">
                     <div class="q-tag" id="q-tag">Quiz</div>
                     <div class="q-text" id="q-text">Question</div>
-                    <div class="q-sub" id="q-sub">Choose the correct answer</div>
                 </div>
                 <div class="options-grid" id="options-container"></div>
             </div>
@@ -278,10 +235,19 @@
     </div>
     <canvas id="confetti-canvas"></canvas>
 
-    <script src="data/data-core.js"></script>
+<script src="data/data-core.js"></script>
 
     <script src="data/data-toeic.js"></script>
-    <script src="data/data-toefl.js"></script>
+    
+    <script src="data/data-toefl-astronomy.js"></script>
+    <script src="data/data-toefl-biology.js"></script>
+    <script src="data/data-toefl-geography.js"></script>
+    <script src="data/data-toefl-psychology.js"></script>
+    <script src="data/data-toefl-history.js"></script>
+    <script src="data/data-toefl-art.js"></script>
+    <script src="data/data-toefl-geology.js"></script>
+    <script src="data/data-toefl-business.js"></script>
+    <script src="data/data-toefl-lifescience.js"></script>
 
     <script src="data/data-grammar.js"></script>
 
