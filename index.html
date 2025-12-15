@@ -13,41 +13,63 @@
 <body>
 
     <div class="app-container">
-
-        
         <div id="page-landing" class="page active">
             <div class="landing-header"
                 style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: 20px; margin-top: -50px;">
                 <img src="images/logo.png" alt="Logo"
                     style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
             </div>
+            <div id="login-section" style="margin-bottom: 20px; text-align: center; width: 100%;">
 
-                       <div style="width:100%; margin-bottom: 15px;">
-                
-            <div class="mode-card" onclick="selectMode('learn')">
-                <div class="mode-icon">📖</div>
-                <div class="mode-info">
-                    <h2>單字卷軸</h2>
-                    <p>瀏覽字卡積累知識</p>
+                <div id="login-ui">
+                    <button onclick="googleLogin()"
+                        style="background: #4285F4; color: white; border: none; padding: 12px 24px; border-radius: 50px; font-size: 1rem; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: transform 0.1s;">
+                        <i class="fab fa-google"></i> 同步進度 / 登入
+                    </button>
+                </div>
+
+                <div id="user-ui" style="display: none;">
+                    <div
+                        style="background: rgba(255,255,255,0.8); display: inline-block; padding: 8px 16px; border-radius: 50px; border: 2px solid #fff;">
+                        <span style="color: #2c3e50; font-weight: bold; margin-right: 10px;">
+                            👤 <span id="user-name">Player</span>
+                        </span>
+                        <button onclick="googleLogout()"
+                            style="background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer;">
+                            登出
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div style="width:100%; margin-bottom: 15px;">
+
+                <div class="mode-card" onclick="selectMode('learn')">
+                    <div class="mode-icon">📖</div>
+                    <div class="mode-info">
+                        <h2>單字卷軸</h2>
+                        <p>瀏覽字卡積累知識</p>
+                    </div>
+                </div>
+
+                <div class="mode-card" onclick="selectMode('quiz')">
+                    <div class="mode-icon">⚔️</div>
+                    <div class="mode-info">
+                        <h2>戰鬥測驗</h2>
+                        <p>挑戰題目獲取經驗</p>
+                    </div>
+                </div>
+
+                <div class="mode-card" style="border-color:#8e44ad;" onclick="selectMode('dungeon')">
+                    <div class="mode-icon">🏰</div>
+                    <div class="mode-info">
+                        <h2 style="color:#8e44ad;">地城副本</h2>
+                        <p>推圖闖關 (20題/關)</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="mode-card" onclick="selectMode('quiz')">
-                <div class="mode-icon">⚔️</div>
-                <div class="mode-info">
-                    <h2>戰鬥測驗</h2>
-                    <p>挑戰題目獲取經驗</p>
-                </div>
-            </div>
-
-            <div class="mode-card" style="border-color:#8e44ad;" onclick="selectMode('dungeon')">
-                <div class="mode-icon">🏰</div>
-                <div class="mode-info">
-                    <h2 style="color:#8e44ad;">地城副本</h2>
-                    <p>推圖闖關 (20題/關)</p>
-                </div>
-            </div>
-        </div> </div> <div id="page-category" class="page">
+        </div>
+        <div id="page-category" class="page">
             <div class="navbar">
                 <button class="back-btn" onclick="handleBackFromCategory()"><i class="fas fa-arrow-left"></i></button>
                 <span class="page-title" id="cat-title">選擇戰場</span>
@@ -235,10 +257,10 @@
     </div>
     <canvas id="confetti-canvas"></canvas>
 
-<script src="data/data-core.js"></script>
+    <script src="data/data-core.js"></script>
 
     <script src="data/data-toeic.js"></script>
-    
+
     <script src="data/data-toefl-astronomy.js"></script>
     <script src="data/data-toefl-biology.js"></script>
     <script src="data/data-toefl-geography.js"></script>
@@ -250,7 +272,31 @@
     <script src="data/data-toefl-lifescience.js"></script>
 
     <script src="data/data-grammar.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHgDR2T8nIl1pFd55GkWoAaebcmrNdDwA",
+            authDomain: "vocabulary-rpg.firebaseapp.com",
+            projectId: "vocabulary-rpg",
+            storageBucket: "vocabulary-rpg.firebasestorage.app",
+            messagingSenderId: "38299465864",
+            appId: "1:38299465864:web:e16e1add6a6fb0b9f1c73d",
+            measurementId: "G-BRTJKHEWMB"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // 建立全域變數，讓 script.js 可以使用
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        console.log("🔥 Firebase 已連線 (標準模式)");
+    </script>
     <script src="script.js"></script>
 
 </body>
