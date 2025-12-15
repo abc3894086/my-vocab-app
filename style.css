@@ -804,31 +804,37 @@ body.theme-dark .app-container {
 
 /* 測驗系統 */
 .quiz-box {
-    flex: 1;
+    /* 讓它在父容器中可以伸縮，但不要太小 */
+    flex: 1; 
+    
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center; /* 水平置中 */
     
-    /* === ★★★ 核心修改：變成白色大卡片 ★★★ === */
-    background: #fffcf5; /* 溫暖的米白色背景 */
-    width: 90%;          /* 卡片寬度 */
-    max-width: 380px;    /* 最大寬度 */
-    margin: 20px auto;   /* 上下留白，水平置中 */
-    padding: 30px 20px;  /* 卡片內距 */
-    border-radius: 25px; /* 圓角 */
+    /* ★★★ 修改這裡：改成 space-around 或 space-between 讓上下拉開 ★★★ */
+    justify-content: space-around; 
+    align-items: center;
     
-    /* 加一點陰影讓卡片浮起來 */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+    margin: 20px auto;
     
-    /* 加一個邊框讓它更有 RPG 質感 (可選) */
-    border: 4px solid #d4c5a9; 
+    /* 背景與寬度保持不變 */
+    background: #fffcf5;
+    width: 90%;
+    max-width: 400px;
     
+    /* ★★★ 修改這裡：內距調整，上方多留一點給題目，下方給按鈕 ★★★ */
+    padding: 40px 25px; 
+    
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border: 4px solid #d4c5a9;
     box-sizing: border-box;
+    
+    /* 限制最大高度，避免在大螢幕拉太長 */
+    max-height: 80vh; 
+    overflow-y: auto; 
 }
 
 .question-card {
-    /* === ★★★ 核心修改：移除所有外框與背景 ★★★ === */
     background: none !important;
     border: none !important;
     box-shadow: none !important;
@@ -839,10 +845,17 @@ body.theme-dark .app-container {
     align-items: center;
     justify-content: center;
     
-    padding: 0 0 20px 0; /* 下方留點距離給選項 */
-    margin-bottom: 10px;
+    padding: 0;
+    
+    /* ★★★ 修改這裡：增加下邊距，把選項往下推 ★★★ */
+    margin-bottom: 40px; 
+    
     width: 100%;
-    min-height: auto; /* 不強制高度，隨內容撐開 */
+    
+    /* 給題目一個固定的最小高度，確保它佔據上方空間 */
+    min-height: 120px; 
+    /* 讓它稍微可以伸縮，佔據剩餘空間 */
+    flex: 1; 
 }
 
 /* 修改題目文字樣式 */
@@ -868,8 +881,11 @@ body.theme-dark .app-container {
 .options-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* 按鈕間距稍微拉大 */
-    width: 100%; /* 填滿卡片 */
+    gap: 15px; /* 選項之間的間距 */
+    width: 100%;
+    
+    /* 防止選項區塊佔太多空間導致題目被壓縮 */
+    flex-shrink: 0; 
 }
 
 /* 修改選項按鈕：淺色框框風格 */
@@ -1433,4 +1449,25 @@ body.theme-dark .app-container {
 
     /* 讓它跟下面的進度條有一點距離 */
     margin-bottom: 8px;
+}
+@media (max-height: 700px) {
+    .quiz-box {
+        padding: 20px; /* 縮小內距 */
+        justify-content: center; /* 改回置中，比較安全 */
+    }
+
+    .question-card {
+        min-height: 80px;
+        margin-bottom: 20px; /* 縮小間距 */
+        flex: 0; /* 取消伸縮 */
+    }
+    
+    .options-grid {
+        gap: 10px;
+    }
+    
+    .option-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
 }

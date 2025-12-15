@@ -617,29 +617,14 @@ function playSound(type) {
 }
 
 function preloadAudio(word) {
-    if (!word) return;
+    // 因為改用電腦即時運算發音，不需要預先下載音檔了
     cachedAudioObj = null;
-
-    const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word);
-
-    fetch(url)
-        .then(res => res.ok ? res.json() : Promise.reject())
-        .then(data => {
-            if (Array.isArray(data) && data[0] && Array.isArray(data[0].phonetics)) {
-                const ph = data[0].phonetics.find(p => p.audio);
-                if (ph && ph.audio) {
-                    const audio = new Audio(ph.audio);
-                    audio.preload = 'auto';
-                    audio.load();
-                    cachedAudioObj = audio;
-                }
-            }
-        })
-        .catch(() => {});
 }
 
 function speakWord() {
     if (isSpeaking) return;
+    
+    // 抓取卡片上的英文單字
     const wordEl = document.getElementById('fc-en');
     if (!wordEl) return;
     const word = (wordEl.innerText || "").trim();
@@ -647,11 +632,14 @@ function speakWord() {
 
     const btn = document.querySelector('.speak-btn-large');
     isSpeaking = true;
+    
+    // 按鈕變成讀取圈圈
     if (btn) {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         btn.style.opacity = "0.7";
     }
 
+    // 發音結束後的復原函式
     const resetBtn = () => {
         isSpeaking = false;
         if (btn) {
@@ -660,42 +648,41 @@ function speakWord() {
         }
     };
 
-    if (cachedAudioObj) {
-        cachedAudioObj.currentTime = 0;
-        cachedAudioObj.play()
-            .then(() => {
-                cachedAudioObj.onended = resetBtn;
-                setTimeout(resetBtn, 1500);
-            })
-            .catch(err => {
-                useRobotVoice(word, resetBtn);
-            });
-    } else {
-        useRobotVoice(word, resetBtn);
-    }
+    // ★★★ 核心修改：不再檢查 cachedAudioObj，直接用機器人發音 ★★★
+    useRobotVoice(word, resetBtn);
 }
 
 function useRobotVoice(word, callback) {
     if ('speechSynthesis' in window) {
+        // 為了避免多音字誤判，有一個小技巧是：
+        // 如果這個字同時有動詞和名詞，電腦通常預設名詞。
+        // 雖然無法完美解決，但我們可以確保語系設定正確。
+        
         const utter = new SpeechSynthesisUtterance(word);
-        utter.lang = 'en-US';
-        utter.rate = 0.9;
+        
+        // ★★★ 強制設定為美式英文 ★★★
+        utter.lang = 'en-US'; 
+        
+        // 語速稍微調慢一點點 (0.8 ~ 0.9)，聽起來會清楚些
+        utter.rate = 0.85; 
+        
         utter.onend = callback;
-        window.speechSynthesis.cancel();
+        
+        // 解決某些瀏覽器語音卡住的 bug
+        window.speechSynthesis.cancel(); 
         window.speechSynthesis.speak(utter);
-        setTimeout(callback, 1000);
+        
+        // 保險起見，設個計時器強制復原按鈕 (避免 onend 沒觸發)
+        setTimeout(callback, 2000);
     } else {
+        alert("您的瀏覽器不支援語音合成功能");
         callback();
     }
 }
 
 function playQuizAudio(word) {
-    if (cachedAudioObj) {
-        cachedAudioObj.currentTime = 0;
-        cachedAudioObj.play().catch(() => useRobotVoice(word, () => {}));
-    } else {
-        useRobotVoice(word, () => {});
-    }
+    // 直接呼叫機器人發音，第二個參數是 callback，這裡給空函式即可
+    useRobotVoice(word, () => {});
 }
 
 // ==========================================
@@ -984,11 +971,22 @@ function finishDungeon() {
 }
 
 function calculateCooldown(score) {
-    if (score === 20) return 72 * 60 * 60 * 1000;
-    if (score >= 18) return 48 * 60 * 60 * 1000;
-    if (score >= 15) return 24 * 60 * 60 * 1000;
-    if (score >= 10) return 12 * 60 * 60 * 1000;
-    if (score >= 5)  return 3 * 60 * 60 * 1000;
+    // 滿分 (20分)：冷卻 36 小時 (1.5天)
+    if (score === 20) return 36 * 60 * 60 * 1000;
+    
+    // 高分 (18-19分)：冷卻 24 小時 (1天)
+    if (score >= 18) return 24 * 60 * 60 * 1000;
+    
+    // 及格 (15-17分)：冷卻 12 小時 (半天)
+    if (score >= 15) return 12 * 60 * 60 * 1000;
+    
+    // 勉強及格 (10-14分)：冷卻 6 小時
+    if (score >= 10) return 6 * 60 * 60 * 1000;
+    
+    // 不及格但有努力 (5-9分)：冷卻 1 小時
+    if (score >= 5)  return 1 * 60 * 60 * 1000;
+    
+    // 太低分 (<5分)：冷卻 30 分鐘 (保持不變，鼓勵趕快重試)
     return 30 * 60 * 1000;
 }
 

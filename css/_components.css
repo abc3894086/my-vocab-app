@@ -1,0 +1,353 @@
+/* _components.css */
+
+/* ========================================= */
+/* 導航與標題樣式 */
+/* ========================================= */
+
+.landing-header {
+    text-align: center;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+    
+    /* ★★★ 直接在這裡設定負邊距 ★★★ */
+    margin-bottom: -40px; 
+    margin-top: -50px;
+}
+
+.landing-header h1 {
+    font-size: 2.2rem;
+    margin: 0;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.landing-header p {
+    margin-top: 10px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--text-main);
+    opacity: 1;
+    letter-spacing: 1.5px;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    min-height: 50px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+
+    color: #000000;
+    /* 箭頭是黑色的 */
+
+    cursor: pointer;
+    padding: 10px;
+
+    /* ★★★ 一樣加上白色描邊 ★★★ */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-left: 10px;
+
+    color: #000000;
+    /* 字是黑色的 */
+
+    /* ★★★ 修改重點：用多重陰影做出強力白邊 ★★★ */
+    text-shadow:
+        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
+
+/* ========================================= */
+/* 通用選單與卡片按鈕樣式 */
+/* ========================================= */
+
+.mode-card {
+    /* ★★★ 修改重點：原本是 rgba(255,255,255,0.4)，改成不透明的 #fdfbf7 或 white ★★★ */
+    background: #fdfbf7;
+
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    /* 加強陰影，讓它更有立體感浮在背景上 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: 0.1s;
+}
+
+.mode-card:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.mode-icon {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    width: 50px;
+    text-align: center;
+}
+
+.mode-info h2 {
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    color: var(--primary);
+}
+
+.mode-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.menu-section {
+    display: none;
+    width: 100%;
+}
+
+.menu-section.show {
+    display: block;
+    animation: fadeIn 0.6s;
+}
+
+.menu-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--btn-shadow);
+    transition: 0.1s;
+}
+
+.menu-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.mistake-btn {
+    border-color: #c0392b;
+    color: #c0392b;
+    background: #fff5f5;
+}
+
+.backup-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.backup-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--card-bg);
+    color: var(--text-main);
+}
+/* ========================================= */
+/* 主題按鈕與鎖定狀態 (Theme Selector) */
+/* ========================================= */
+
+.theme-selector {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 0;
+    scrollbar-width: none;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.theme-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 0;
+    color: transparent;
+}
+
+.theme-btn:hover {
+    transform: translateY(-2px);
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}
+
+.theme-btn.locked {
+    filter: grayscale(100%) brightness(80%);
+    cursor: not-allowed;
+    background-color: #f0f0f0 !important;
+    color: transparent;
+    pointer-events: none;
+}
+
+.theme-btn.locked::after {
+    content: "🔒";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: #4a4a4a;
+    z-index: 5;
+    opacity: 0.8;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-btn.locked::before {
+    content: attr(data-level);
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    font-family: "Georgia", serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 5px;
+    z-index: 6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn.active {
+    transform: scale(1.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+    z-index: 10;
+    color: var(--text-main);
+}
+
+.theme-btn:not(.locked) {
+    filter: none;
+    color: var(--text-main);
+}
+/* ========================================= */
+/* 輔助工具 */
+/* ========================================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* 確保在最上層 */
+    opacity: 0;
+    pointer-events: none; /* 隱藏時點不到 */
+    transition: opacity 0.3s ease;
+}
+
+/* 顯示時的狀態 */
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 神秘商人視窗本體 (紫色風格) */
+.modal-content.merchant-theme {
+    background: linear-gradient(135deg, #2a0e36 0%, #1a0524 100%);
+    border: 3px solid #bba0d6; /* 淡紫框 */
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 90%;
+    max-width: 450px;
+    color: #eaddf5;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.6); /* 紫色發光 */
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 關閉按鈕 (X) */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 32px;
+    cursor: pointer;
+    color: #bba0d6;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+/* 商人對話 */
+.npc-dialogue {
+    font-style: italic;
+    color: #dcd6e5;
+    border-bottom: 1px solid #4a2c5c;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* 讓原本的按鈕區塊在商店裡排好 */
+.skin-shop-container .theme-selector {
+    justify-content: center; /* 按鈕置中 */
+    flex-wrap: wrap;       /* 超出寬度自動換行 */
+    padding: 0;            /* 移除原本的內距 */
+}
