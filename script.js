@@ -547,6 +547,7 @@ function getSmartDistractors(sourceList, correctItem, type) {
 }
 
 
+
 function loadQuestion(isGrammar = false) {
     if (currentIndex >= currentList.length) {
         document.getElementById('quiz-bar').style.width = '100%';
@@ -570,34 +571,32 @@ function loadQuestion(isGrammar = false) {
     let audioWord = "";
 
     const qTextElement = document.getElementById('q-text');
+    
+    // ★★★ 關鍵修改：預設將 q-sub 隱藏並清空 ★★★
+    const qSub = document.getElementById('q-sub');
+    if (qSub) {
+        qSub.innerText = "";
+        qSub.style.display = 'none'; // 隱藏起來，就不會佔空間
+    }
 
-    // === ★★★ 顯示邏輯修正 ★★★ ===
-    // 判斷是否為文法題：符合以下任一條件都算
-    // 1. 外部傳入 isGrammar 為真
-    // 2. 資料本身有 type: 'grammar'
-    // 3. 資料有 q (題目) 屬性，且沒有 en (單字) 屬性 -> 這是為了防止舊資料沒有標籤
-   const isGrammarMode = isGrammar || questionData.type === 'grammar' || (questionData.q && /_{2,}/.test(questionData.q));
-
+    // 判斷是否為文法題
+    const isGrammarMode = isGrammar || questionData.type === 'grammar' || (questionData.q && /_{2,}/.test(questionData.q));
 
     if (isGrammarMode) {
-        // === 文法模式 (句子) ===
+        // === 文法模式 ===
         correctAnswer = questionData.ans;
         allOptions = questionData.options.sort(() => 0.5 - Math.random());
 
         qTextElement.innerText = questionData.q;
-        const qSub = document.getElementById('q-sub');
-        if (qSub) qSub.innerText = "";
         audioWord = "";
 
-        // ★ 設定適合閱讀句子的樣式
-        qTextElement.style.fontSize = "1.2rem";   // 字體縮小
-        qTextElement.style.lineHeight = "1.6";    // 行距拉開
-        qTextElement.style.textAlign = "left";    // 靠左對齊
+        qTextElement.style.fontSize = "1.2rem";
+        qTextElement.style.lineHeight = "1.6";
+        qTextElement.style.textAlign = "left";
         qTextElement.style.fontWeight = "bold";
 
     } else {
-        // === 單字模式 (單詞) ===
-        // ★ 恢復超大字體
+        // === 單字模式 ===
         qTextElement.style.fontSize = "2.5rem";
         qTextElement.style.lineHeight = "1.2";
         qTextElement.style.textAlign = "center";
@@ -618,14 +617,12 @@ function loadQuestion(isGrammar = false) {
         }
     }
 
-    // 將正確答案與發音單字存入 currentQuizData
     currentQuizData = {
         correct: correctAnswer,
         options: allOptions,
         audioWord: audioWord
     };
 
-    // 預載音檔
     if (audioWord) preloadAudio(audioWord);
 
     allOptions.forEach((optionText, index) => {
@@ -658,26 +655,23 @@ function checkAnswer(selectedButton, isCorrect) {
 
     const resultTitle = document.getElementById('res-title');
     const resultDetail = document.getElementById('res-detail');
+    const qSubElement = document.getElementById('q-sub');
 
     if (isCorrect) {
         playSound('correct');
-        setTimeout(() => {
-            if (currentQuizData.audioWord) {
-                playQuizAudio(currentQuizData.audioWord);
-            }
-        }, 50);
-
         selectedButton.classList.add('correct');
         score++;
+
+        setTimeout(() => {
+            if (currentQuizData.audioWord) playQuizAudio(currentQuizData.audioWord);
+        }, 50);
 
         resultTitle.innerText = "✅ 恭喜答對！";
         resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
 
-        // ★★★ 錯題精通機制 ★★★
+        // ★★★ 只有在「錯題地牢」模式才顯示進度 ★★★
         if (quizType === 'mistake') {
             const currentQ = currentList[currentIndex];
-            
-            // 尋找題目索引
             const mistakeIndex = mistakeDB.findIndex(m => {
                 if (currentQ.en) return m.en === currentQ.en;
                 if (currentQ.q) return m.q === currentQ.q;
@@ -685,30 +679,42 @@ function checkAnswer(selectedButton, isCorrect) {
             });
 
             if (mistakeIndex !== -1) {
-                // 更新次數
-                mistakeDB[mistakeIndex].correct_count = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
-                const currentCount = mistakeDB[mistakeIndex].correct_count;
-                
-                // ★★★ 安全修正：先抓元素，確認存在才修改文字 ★★★
-                const qSubElement = document.getElementById('q-sub');
+                let newCount = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
+                mistakeDB[mistakeIndex].correct_count = newCount;
 
-                if (currentCount >= 3) {
-                    mistakeDB.splice(mistakeIndex, 1);
-                    alert(`🎉 恭喜！該題目已精通 (累積答對 ${currentCount} 次)，已從地牢釋放！`);
-                    if (qSubElement) qSubElement.innerText = ""; // 有才清空
-                } else {
-                    if (qSubElement) qSubElement.innerText = `✨ 精通進度: ${currentCount} / 3`; // 有才顯示
+                // ★ 這裡才把顯示打開 (display = block)
+                if (qSubElement) {
+                    qSubElement.style.display = 'block'; 
+                    
+                    if (newCount >= 3) {
+                        mistakeDB.splice(mistakeIndex, 1);
+                        alert(`🎉 太棒了！已連續答對 3 次，此題已移出地牢！`);
+                        qSubElement.innerText = "✨ 已精通！移出地牢 ✨";
+                        qSubElement.style.color = "#f1c40f";
+                    } else {
+                        qSubElement.innerText = `🔥 精通度: ${newCount} / 3`;
+                        qSubElement.style.color = "#27ae60";
+                    }
                 }
-
                 saveGameData();
             }
+        } else {
+            // 如果不是錯題模式，確保它是隱藏的
+            if (qSubElement) qSubElement.style.display = 'none';
         }
 
     } else {
-        // === 答錯邏輯 ===
         playSound('wrong');
         selectedButton.classList.add('wrong');
 
+        const optionsContainer = document.getElementById('options-container');
+        Array.from(optionsContainer.children).forEach(btn => {
+            if (btn.innerText.includes(currentQuizData.correct)) {
+                btn.classList.add('correct');
+            }
+        });
+
+        // 錯題邏輯
         const currentQ = currentList[currentIndex];
         const isAlreadyInDB = mistakeDB.some(m => {
             if (currentQ.en) return m.en === currentQ.en;
@@ -722,29 +728,23 @@ function checkAnswer(selectedButton, isCorrect) {
             saveGameData(); 
         }
 
-        const optionsContainer = document.getElementById('options-container');
-        Array.from(optionsContainer.children).forEach(btn => {
-            if (btn.innerText.includes(currentQuizData.correct)) {
-                btn.classList.add('correct');
-            }
-        });
-
         resultTitle.innerText = "❌ 答錯了！";
         if (currentQuizData.audioWord) {
             setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
         }
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
         
-        // ★★★ 安全修正 ★★★
-        const qSubElement = document.getElementById('q-sub');
-        if (qSubElement) qSubElement.innerText = ""; 
+        // 答錯時也隱藏進度條 (因為這時候看進度沒意義，或是你想保持隱藏)
+        if (qSubElement) {
+            qSubElement.innerText = "";
+            qSubElement.style.display = 'none';
+        }
     }
 
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('result-popup').classList.add('show');
 }
-
 function hideResultPopup() {
     document.getElementById('result-popup').classList.remove('show');
     document.getElementById('float-next-btn').classList.add('show');
@@ -929,7 +929,6 @@ function openDungeonMap(mainCat, subCat = null) {
 
         if (isMastered) {
             node.classList.add('mastered');
-            node.innerHTML = `<span class="level-num">${i + 1}</span>`;
             node.onclick = () => startDungeonBattle(rawData, i);
         }
         else if (timeLeft > 0) {
@@ -939,7 +938,6 @@ function openDungeonMap(mainCat, subCat = null) {
         }
         else {
             node.classList.add('ready');
-            node.innerHTML = `<span class="level-num">${i + 1}</span>`;
             node.onclick = () => startDungeonBattle(rawData, i);
         }
 
@@ -985,8 +983,10 @@ function startDungeonBattle(allWords, levelIndex) {
     quizTotal = 20;
     currentIndex = 0;
     score = 0;
-
-    document.getElementById('q-tag').innerText = `地下城 ${levelIndex + 1}`;
+    const qTag = document.getElementById('q-tag');
+    if (qTag) {
+        qTag.style.display = 'none'; 
+    }
     document.getElementById('quiz-score').innerText = 0;
     document.getElementById('quiz-bar').style.width = '0%';
 
@@ -1083,74 +1083,115 @@ function checkDungeonAnswer(btn, isCorrect) {
 }
 
 function finishDungeon() {
-    const passThreshold = 16;
+    // 設定及格門檻 (例如 20 題要對 16 題)
+    const passThreshold = Math.ceil(quizTotal * 0.8);
     let msg = "";
 
+    // 1. 判斷是否通關
     if (score >= passThreshold) {
         playSound('correct');
+        
+        // 讀取目前的總進度
         const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
-        const currentUnlocked = allProgress[adventureKey] || 0;
-        if (adventureLevelIndex === currentUnlocked) {
+        
+        // ★★★ 修正 1：強制轉成數字 (Number)，避免 "0" !== 0 的問題 ★★★
+        const currentUnlocked = Number(allProgress[adventureKey] || 0);
+        const currentLevelIdx = Number(adventureLevelIndex);
+
+        console.log(`[地城檢測] 目前打的關卡: ${currentLevelIdx}, 已解鎖進度: ${currentUnlocked}`);
+
+        // 如果你打贏的這關，剛好就是目前解鎖的最遠進度，那就解鎖下一關
+        if (currentLevelIdx === currentUnlocked) {
             allProgress[adventureKey] = currentUnlocked + 1;
             localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
-            msg += "\n下一層已解鎖！";
+            
+            msg += "\n🎉 下一層已解鎖！";
+            
+            // ★★★ 修正 2：解鎖後立刻上傳雲端，防止被舊存檔覆蓋 ★★★
+            if (typeof saveToCloud === 'function') {
+                saveToCloud();
+            }
         }
     } else {
-        msg = `💀 挑戰失敗...\n得分: ${score}/20`;
+        msg = `💀 挑戰失敗...\n得分: ${score}/${quizTotal}`;
         playSound('wrong');
     }
 
+    // 2. 更新精通度與冷卻時間 (SRS)
     const masteryKey = `vocabRPG_mastery_${adventureKey}`;
     let masteryData = JSON.parse(localStorage.getItem(masteryKey)) || {};
     let record = masteryData[adventureLevelIndex] || { nextPlay: 0, count: 0 };
 
+    // 只有及格才累積精通次數
     if (score >= passThreshold) {
-        record.count += 1;
+        record.count = (record.count || 0) + 1;
     }
 
+    // 判斷是否已精通 (累積及格 5 次)
     if (record.count >= 5) {
         record.nextPlay = 0;
-        msg += "\n👑 恭喜！你已經精通此區域！";
+        msg += "\n👑 恭喜！你已經精通此區域！(永久解鎖)";
     } else {
-        const cooldown = calculateCooldown(score);
+        // 使用正確率計算冷卻
+        const cooldown = calculateCooldown(score, quizTotal);
+        
+        // 設定下次可以玩的時間
         record.nextPlay = Date.now() + cooldown;
-        msg += `\n⏳ 下次挑戰：${formatTimeLeft(cooldown)} 後`;
+        msg += `\n⏳ SRS冷卻啟動：需等待 ${formatTimeLeft(cooldown)}`;
     }
 
     masteryData[adventureLevelIndex] = record;
     localStorage.setItem(masteryKey, JSON.stringify(masteryData));
 
+    // 3. 顯示結果並重整地圖
     alert(msg);
-    openDungeonMap(adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', adventureKey.includes('_') ? adventureKey.split('_')[1] : null);
+    
+    // 重新載入地圖以更新鎖頭圖示
+    openDungeonMap(
+        adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', 
+        adventureKey.includes('_') ? adventureKey.split('_')[1] : null
+    );
 }
+function calculateCooldown(score, total) {
+    // 防止分母為 0
+    if (total === 0) return 30 * 60 * 1000;
+    
+    const percentage = (score / total) * 100;
 
-function calculateCooldown(score) {
-    // 滿分 (20分)：冷卻 36 小時 (1.5天)
-    if (score === 20) return 36 * 60 * 60 * 1000;
+    // 滿分 (100%)：冷卻 36 小時 (1.5天)
+    if (percentage === 100) return 36 * 60 * 60 * 1000;
 
-    // 高分 (18-19分)：冷卻 24 小時 (1天)
-    if (score >= 18) return 24 * 60 * 60 * 1000;
+    // 高分 (90% 以上)：冷卻 24 小時 (1天)
+    if (percentage >= 90) return 24 * 60 * 60 * 1000;
 
-    // 及格 (15-17分)：冷卻 12 小時 (半天)
-    if (score >= 15) return 12 * 60 * 60 * 1000;
+    // 及格 (75% 以上)：冷卻 12 小時
+    if (percentage >= 75) return 12 * 60 * 60 * 1000;
 
-    // 勉強及格 (10-14分)：冷卻 6 小時
-    if (score >= 10) return 6 * 60 * 60 * 1000;
+    // 勉強 (50% 以上)：冷卻 6 小時
+    if (percentage >= 50) return 6 * 60 * 60 * 1000;
 
-    // 不及格但有努力 (5-9分)：冷卻 1 小時
-    if (score >= 5) return 1 * 60 * 60 * 1000;
+    // 不及格 (25% 以上)：冷卻 1 小時
+    if (percentage >= 25) return 1 * 60 * 60 * 1000;
 
-    // 太低分 (<5分)：冷卻 30 分鐘 (保持不變，鼓勵趕快重試)
-    return 30 * 60 * 1000;
+    // 太低分：冷卻 10 分鐘 (讓你稍微休息一下再試)
+    return 10 * 60 * 1000;
 }
 
 function formatTimeLeft(ms) {
-    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const totalHours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
 
-    if (hours > 24) return Math.ceil(hours / 24) + "天";
-    if (hours > 0) return `${hours}h${minutes}m`;
-    return `${minutes}m`;
+    // 如果超過 24 小時，顯示「X天 Y小時」
+    if (totalHours >= 24) {
+        const days = Math.floor(totalHours / 24);
+        const remainHours = totalHours % 24;
+        if (remainHours === 0) return `${days}天`;
+        return `${days}天 ${remainHours}小時`;
+    }
+    
+    // 不足 24 小時，顯示「X時 Y分」
+    if (totalHours > 0) return `${totalHours}時 ${minutes}分`;
+    return `${minutes}分`;
 }
 
 function triggerImport() { document.getElementById('file-input').click(); }
@@ -1295,30 +1336,32 @@ function loadFromCloud(data) {
 
 // 6. 上傳資料到雲端
 function saveToCloud() {
+    // 1. 如果沒登入，就默默結束，不要跳警告 (不然沒登入玩遊戲會被煩死)
     if (!currentUser) {
-        alert("❌ 請先登入才能進行雲端同步！");
+        // console.log("尚未登入，跳過雲端同步"); 
         return;
     }
 
-    // ★★★ 關鍵修改：將所有需要同步的資料都從本地儲存中讀取出來 ★★★
+    // 讀取本地資料
     const dungeonProgressJSON = localStorage.getItem('vocabRPG_dungeon_progress');
-    const dungeonMasteryJSON = localStorage.getItem('vocabRPG_dungeon_mastery'); // 假設這是你的精通/我的最愛紀錄
+    const dungeonMasteryJSON = localStorage.getItem('vocabRPG_dungeon_mastery');
 
-    // 建立要上傳的資料物件
     const dataToSend = {
-        mistakes: mistakeDB, // 錯題
-        dungeonProgress: dungeonProgressJSON ? JSON.parse(dungeonProgressJSON) : null, // 地城進度
-        dungeonMastery: dungeonMasteryJSON ? JSON.parse(dungeonMasteryJSON) : null // 精通/我的最愛
+        mistakes: mistakeDB,
+        dungeonProgress: dungeonProgressJSON ? JSON.parse(dungeonProgressJSON) : null,
+        dungeonMastery: dungeonMasteryJSON ? JSON.parse(dungeonMasteryJSON) : null
     };
 
     const db = firebase.firestore();
     db.collection("users").doc(currentUser.uid).set(dataToSend)
         .then(() => {
-            alert("✅ 雲端同步成功！");
+            // ★★★ 這裡原本是 alert，改成 console.log ★★★
+            // 這樣只會在 F12 開發者工具顯示，不會干擾玩家
+            console.log("✅ (背景) 雲端同步成功！"); 
         })
         .catch((error) => {
-            alert("❌ 雲端同步失敗: " + error.message);
-            console.error("Error writing document: ", error);
+            // 發生錯誤時再跳視窗提醒就好，或者也改成 console.error
+            console.error("❌ 雲端同步失敗: ", error);
         });
 }
 function nextQuestion() {
@@ -1339,4 +1382,59 @@ function nextQuestion() {
         // (loadQuestion 內部會自動判斷是否結束並跳出 alert)
         loadQuestion(quizType === 'grammar');
     }
+}
+function loadDungeonQuestion() {
+    // 1. 檢查是否結束
+    if (currentIndex >= currentList.length) {
+        finishDungeon(); // 呼叫結算函式
+        return;
+    }
+
+    // 2. 清空選項區
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    // 3. UI 重置
+    document.getElementById('result-popup').classList.remove('show');
+    document.getElementById('float-next-btn').classList.remove('show');
+    
+    // 4. 更新進度條
+    document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
+    document.getElementById('quiz-bar').style.width = `${(currentIndex / quizTotal) * 100}%`;
+
+    // 5. 取得當前題目資料
+    const currentQ = currentList[currentIndex];
+    
+    // 6. 顯示題目文字
+    const qTextElement = document.getElementById('q-text');
+    qTextElement.innerText = currentQ.q;
+    
+    // 設定樣式 (保持跟一般測驗一致)
+    qTextElement.style.fontSize = "2.5rem";
+    qTextElement.style.lineHeight = "1.2";
+    qTextElement.style.textAlign = "center";
+    
+    // 7. 設定發音與正確答案
+    currentQuizData = {
+        correct: currentQ.ans,
+        audioWord: currentQ.audioWord
+    };
+
+    // 預載發音
+    if (currentQ.audioWord) {
+        // 這裡簡單防呆，避免頻繁請求
+        setTimeout(() => preloadAudio(currentQ.audioWord), 0);
+    }
+
+    // 8. 產生選項按鈕
+    currentQ.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `${String.fromCharCode(65 + index)}. ${opt}`;
+        
+        // ★ 注意：地城模式要呼叫 checkDungeonAnswer
+        btn.onclick = () => checkDungeonAnswer(btn, opt === currentQ.ans);
+        
+        optionsContainer.appendChild(btn);
+    });
 }
