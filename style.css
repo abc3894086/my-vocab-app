@@ -60,44 +60,7 @@ body {
     /* 圖片載入失敗時的底色 */
 }
 
-/* ★★★ 2. 海洋 (深海氣泡) ★★★ */
-body.theme-ocean .app-container {
-    background-color: #e0f7fa !important;
-    background-image:
-        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 15%),
-        linear-gradient(to bottom, #e0f7fa 0%, #81d4fa 100%) !important;
-    background-size: 100% 100% !important;
-}
 
-/* ★★★ 3. 森林 (耶穌光) ★★★ */
-body.theme-forest .app-container {
-    background-color: #f1f8e9 !important;
-    background-image:
-        linear-gradient(45deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.4) 100%),
-        linear-gradient(to bottom, #d4fc79 0%, #96e6a1 100%) !important;
-    background-size: 100% 100% !important;
-}
-
-/* ★★★ 4. 櫻花 (柔焦光暈) ★★★ */
-body.theme-sakura .app-container {
-    background-color: #fff0f5 !important;
-    background-image:
-        radial-gradient(circle at 50% 30%, rgba(255, 192, 203, 0.6) 0%, transparent 50%),
-        radial-gradient(circle at 0% 100%, rgba(221, 160, 221, 0.5) 0%, transparent 40%),
-        linear-gradient(to bottom, #fff0f5 0%, #e1bee7 100%) !important;
-    background-size: 100% 100% !important;
-}
-
-/* ★★★ 5. 暗黑 (神秘星雲) ★★★ */
-body.theme-dark .app-container {
-    background-color: #34495e !important;
-    background-image:
-        radial-gradient(circle at 80% 20%, rgba(155, 89, 182, 0.3) 0%, transparent 40%),
-        radial-gradient(circle at 20% 80%, rgba(52, 152, 219, 0.3) 0%, transparent 40%),
-        linear-gradient(to bottom, #2c3e50 0%, #000000 100%) !important;
-    background-size: 100% 100% !important;
-}
 
 /* ========================================= */
 /* 4. 桌面/平板模式 (修正版) */

@@ -180,6 +180,9 @@ function getFavorites() {
 
 function saveFavorites(favList) {
     localStorage.setItem('vocabPro_favorites', JSON.stringify(favList));
+
+    // ✅ 只要登入中，就順便同步到雲端
+    if (typeof saveToCloud === 'function') saveToCloud();
 }
 
 function toggleFavorite() {
@@ -346,6 +349,7 @@ function loadCard() {
             backContent.appendChild(block);
         });
     }
+    speakWord();
 }
 
 function flipCard() {
@@ -533,7 +537,7 @@ function getSmartDistractors(sourceList, correctItem, type) {
                 if (item.en === correctItem.en) continue; // 排除正確答案
 
                 let val = (type === 'en') ? item.en : item.details[0].cn;
-                
+
                 // 檢查重複
                 let correctVal = (type === 'en') ? correctItem.en : correctItem.details[0].cn;
                 if (!distractors.includes(val) && val !== correctVal) {
@@ -571,7 +575,7 @@ function loadQuestion(isGrammar = false) {
     let audioWord = "";
 
     const qTextElement = document.getElementById('q-text');
-    
+
     // ★★★ 關鍵修改：預設將 q-sub 隱藏並清空 ★★★
     const qSub = document.getElementById('q-sub');
     if (qSub) {
@@ -684,8 +688,8 @@ function checkAnswer(selectedButton, isCorrect) {
 
                 // ★ 這裡才把顯示打開 (display = block)
                 if (qSubElement) {
-                    qSubElement.style.display = 'block'; 
-                    
+                    qSubElement.style.display = 'block';
+
                     if (newCount >= 3) {
                         mistakeDB.splice(mistakeIndex, 1);
                         alert(`🎉 太棒了！已連續答對 3 次，此題已移出地牢！`);
@@ -723,9 +727,9 @@ function checkAnswer(selectedButton, isCorrect) {
         });
 
         if (!isAlreadyInDB && (currentQ.en || currentQ.q)) {
-            const newMistake = { ...currentQ, correct_count: 0 }; 
+            const newMistake = { ...currentQ, correct_count: 0 };
             mistakeDB.push(newMistake);
-            saveGameData(); 
+            saveGameData();
         }
 
         resultTitle.innerText = "❌ 答錯了！";
@@ -733,7 +737,7 @@ function checkAnswer(selectedButton, isCorrect) {
             setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
         }
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
-        
+
         // 答錯時也隱藏進度條 (因為這時候看進度沒意義，或是你想保持隱藏)
         if (qSubElement) {
             qSubElement.innerText = "";
@@ -985,7 +989,7 @@ function startDungeonBattle(allWords, levelIndex) {
     score = 0;
     const qTag = document.getElementById('q-tag');
     if (qTag) {
-        qTag.style.display = 'none'; 
+        qTag.style.display = 'none';
     }
     document.getElementById('quiz-score').innerText = 0;
     document.getElementById('quiz-bar').style.width = '0%';
@@ -1012,11 +1016,11 @@ function generateOptions(fullDB, correctAns, type) {
         let val = (type === 'cn' && item.details && item.details[0]) ? item.details[0].cn : item.en;
         if (!distractors.includes(val)) distractors.push(val);
     }
-    
+
     // 2. 【關鍵修正】從 vocabDB 找外援
     if (distractors.length < countNeeded) {
         let backupPool = [];
-        
+
         // ★ 從 vocabDB 抓取所有資料
         if (typeof vocabDB !== 'undefined') {
             if (vocabDB['TOEIC']) backupPool = backupPool.concat(vocabDB['TOEIC']);
@@ -1071,7 +1075,7 @@ function checkDungeonAnswer(btn, isCorrect) {
         btn.classList.add('wrong');
         playSound('wrong');
 
-        allBtns.forEach(b => {
+        allBtns.forEach(b => {  
             if (b.innerText.includes(currentQuizData.correct)) b.classList.add('correct');
         });
 
@@ -1090,10 +1094,10 @@ function finishDungeon() {
     // 1. 判斷是否通關
     if (score >= passThreshold) {
         playSound('correct');
-        
+
         // 讀取目前的總進度
         const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
-        
+
         // ★★★ 修正 1：強制轉成數字 (Number)，避免 "0" !== 0 的問題 ★★★
         const currentUnlocked = Number(allProgress[adventureKey] || 0);
         const currentLevelIdx = Number(adventureLevelIndex);
@@ -1104,9 +1108,9 @@ function finishDungeon() {
         if (currentLevelIdx === currentUnlocked) {
             allProgress[adventureKey] = currentUnlocked + 1;
             localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
-            
+
             msg += "\n🎉 下一層已解鎖！";
-            
+
             // ★★★ 修正 2：解鎖後立刻上傳雲端，防止被舊存檔覆蓋 ★★★
             if (typeof saveToCloud === 'function') {
                 saveToCloud();
@@ -1134,7 +1138,7 @@ function finishDungeon() {
     } else {
         // 使用正確率計算冷卻
         const cooldown = calculateCooldown(score, quizTotal);
-        
+
         // 設定下次可以玩的時間
         record.nextPlay = Date.now() + cooldown;
         msg += `\n⏳ SRS冷卻啟動：需等待 ${formatTimeLeft(cooldown)}`;
@@ -1142,20 +1146,21 @@ function finishDungeon() {
 
     masteryData[adventureLevelIndex] = record;
     localStorage.setItem(masteryKey, JSON.stringify(masteryData));
+    if (typeof saveToCloud === 'function') saveToCloud();
 
     // 3. 顯示結果並重整地圖
     alert(msg);
-    
+
     // 重新載入地圖以更新鎖頭圖示
     openDungeonMap(
-        adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', 
+        adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL',
         adventureKey.includes('_') ? adventureKey.split('_')[1] : null
     );
 }
 function calculateCooldown(score, total) {
     // 防止分母為 0
     if (total === 0) return 30 * 60 * 1000;
-    
+
     const percentage = (score / total) * 100;
 
     // 滿分 (100%)：冷卻 36 小時 (1.5天)
@@ -1180,7 +1185,7 @@ function calculateCooldown(score, total) {
 function formatTimeLeft(ms) {
     // 1. 計算總小時數 (包含天數換算成小時，例如 1天 = 24小時)
     const totalHours = Math.floor(ms / (1000 * 60 * 60));
-    
+
     // 2. 計算剩餘分鐘數
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
 
@@ -1208,6 +1213,16 @@ function exitAdventure() {
 // 9. Firebase 雲端功能
 // ==========================================
 
+function _safeParseJSON(str, fallback) {
+    try { return JSON.parse(str); } catch (e) { return fallback; }
+}
+function _lsGetJSON(key, fallback) {
+    return _safeParseJSON(localStorage.getItem(key), fallback);
+}
+function _lsSetJSON(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
 // 1. 登入函式
 function googleLogin() {
     auth.signInWithPopup(provider)
@@ -1224,15 +1239,137 @@ function googleLogin() {
 function googleLogout() {
     auth.signOut().then(() => {
         alert("已登出雲端帳號");
-        // 登出後重新載入頁面，避免資料混亂
         location.reload();
     }).catch((error) => {
         console.error("登出錯誤", error);
     });
 }
 
-// 3. 監聽登入狀態改變 (大腦)
-// 只要使用者登入或登出，這個函式就會自動執行
+// 3. 自動背景存檔（防止狂寫雲端）
+let __cloudSaveTimer = null;
+function scheduleCloudSave(delayMs = 600) {
+    if (!currentUser) return;
+    clearTimeout(__cloudSaveTimer);
+    __cloudSaveTimer = setTimeout(() => {
+        try { saveToCloud(); } catch (e) { console.error("雲端同步錯誤", e); }
+    }, delayMs);
+}
+
+// 4. 合併策略（重點：地城解鎖取最大值，不倒退）
+function mergeDungeonProgressByMax(localProg, cloudProg) {
+    const a = localProg || {};
+    const b = cloudProg || {};
+    const merged = {};
+    const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+    keys.forEach(k => {
+        const l = Number(a[k] || 0);
+        const c = Number(b[k] || 0);
+        merged[k] = Math.max(l, c);
+    });
+    return merged;
+}
+
+function mergeFavoritesUnion(localFav, cloudFav) {
+    const out = new Map();
+    (localFav || []).forEach(w => { if (w && w.en) out.set(w.en, w); });
+    (cloudFav || []).forEach(w => { if (w && w.en && !out.has(w.en)) out.set(w.en, w); });
+    return Array.from(out.values());
+}
+
+// mistakes：用 en/q 當 key，取合集；correct_count 取最大，避免倒退
+function mergeMistakesUnion(localMistakes, cloudMistakes) {
+    const out = new Map();
+    const keyOf = (m) => (m && m.en) ? `en:${m.en}` : (m && m.q) ? `q:${m.q}` : null;
+
+    (localMistakes || []).forEach(m => {
+        const k = keyOf(m);
+        if (!k) return;
+        out.set(k, { ...m });
+    });
+
+    (cloudMistakes || []).forEach(m => {
+        const k = keyOf(m);
+        if (!k) return;
+
+        if (!out.has(k)) {
+            out.set(k, { ...m });
+            return;
+        }
+        const existing = out.get(k);
+        const merged = { ...existing, ...m };
+        merged.correct_count = Math.max(Number(existing.correct_count || 0), Number(m.correct_count || 0));
+        out.set(k, merged);
+    });
+
+    return Array.from(out.values());
+}
+
+// 5. 地城精通(SRS)同步：把 localStorage 裡所有 vocabRPG_mastery_* 打包成 masteryByKey
+function collectAllMasteryByKey() {
+    const out = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || !k.startsWith('vocabRPG_mastery_')) continue;
+        const advKey = k.replace('vocabRPG_mastery_', '');
+        out[advKey] = _lsGetJSON(k, {});
+    }
+    return out;
+}
+
+function restoreAllMasteryByKey(masteryByKey) {
+    if (!masteryByKey || typeof masteryByKey !== 'object') return;
+    Object.keys(masteryByKey).forEach((advKey) => {
+        _lsSetJSON(`vocabRPG_mastery_${advKey}`, masteryByKey[advKey] || {});
+    });
+}
+
+// 合併 mastery：count 取最大；nextPlay 取最大（避免用另一台設備洗掉冷卻）；若 count>=5 視為精通 => nextPlay=0
+function mergeOneMasteryData(localData, cloudData) {
+    const a = localData || {};
+    const b = cloudData || {};
+    const merged = {};
+
+    const levelKeys = new Set([...Object.keys(a), ...Object.keys(b)]);
+    levelKeys.forEach((lvl) => {
+        const la = a[lvl] || { nextPlay: 0, count: 0 };
+        const lb = b[lvl] || { nextPlay: 0, count: 0 };
+
+        const count = Math.max(Number(la.count || 0), Number(lb.count || 0));
+        let nextPlay = Math.max(Number(la.nextPlay || 0), Number(lb.nextPlay || 0));
+
+        if (count >= 5) nextPlay = 0;
+
+        merged[lvl] = { count, nextPlay };
+    });
+
+    return merged;
+}
+
+function mergeMasteryByKey(localObj, cloudObj) {
+    const a = localObj || {};
+    const b = cloudObj || {};
+    const merged = {};
+    const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+    keys.forEach((advKey) => {
+        merged[advKey] = mergeOneMasteryData(a[advKey] || {}, b[advKey] || {});
+    });
+    return merged;
+}
+
+// 6. 小統計：登入彈窗不再只顯示錯題數
+function summarizeDungeonProgress(prog) {
+    const p = prog || {};
+    let totalUnlocked = 0;
+    let maxUnlocked = 0;
+    Object.keys(p).forEach(k => {
+        const idx = Number(p[k] || 0);
+        totalUnlocked += (idx + 1);
+        maxUnlocked = Math.max(maxUnlocked, idx + 1);
+    });
+    return { totalUnlocked, maxUnlocked };
+}
+
+// 7. 監聽登入狀態改變
 if (typeof auth !== 'undefined') {
     auth.onAuthStateChanged((user) => {
         const loginUI = document.getElementById('login-ui');
@@ -1240,16 +1377,13 @@ if (typeof auth !== 'undefined') {
         const userName = document.getElementById('user-name');
 
         if (user) {
-            // === 使用者已登入 ===
             currentUser = user;
             if (loginUI) loginUI.style.display = 'none';
             if (userUI) userUI.style.display = 'block';
             if (userName) userName.innerText = user.displayName;
 
-            // 一登入就檢查雲端有沒有存檔
             checkCloudSave(user);
         } else {
-            // === 使用者已登出 ===
             currentUser = null;
             if (loginUI) loginUI.style.display = 'block';
             if (userUI) userUI.style.display = 'none';
@@ -1257,26 +1391,39 @@ if (typeof auth !== 'undefined') {
     });
 }
 
-// 4. 檢查雲端存檔
+// 8. 檢查雲端存檔（確定：下載並合併；取消：保留本地並上傳覆蓋）
 function checkCloudSave(user) {
-    const docRef = db.collection("users").doc(user.uid);
+    const firestore = (typeof db !== 'undefined' && db) ? db : firebase.firestore();
+    const docRef = firestore.collection("users").doc(user.uid);
 
     docRef.get().then((doc) => {
-        if (doc.exists) {
-            const cloudData = doc.data();
-            const cloudCount = cloudData.mistakes ? cloudData.mistakes.length : 0;
-            const localCount = mistakeDB.length;
+        if (!doc.exists) {
+            saveToCloud();
+            return;
+        }
 
-            // 如果雲端資料跟本地不一樣，詢問是否同步
-            // (這裡簡單判斷：只要有資料就問，你也可以改寫成時間判斷)
-            if (confirm(`☁️ 雲端發現備份！\n錯題數: ${cloudCount} (本地: ${localCount})\n\n是否要下載並覆蓋目前的進度？`)) {
-                loadFromCloud(cloudData);
-            } else {
-                // 如果使用者選「否」，表示他想保留現在玩的進度，那就把現在的進度上傳覆蓋雲端
-                saveToCloud();
-            }
+        const cloudData = doc.data() || {};
+
+        const cloudMistakes = cloudData.mistakes || [];
+        const localMistakes = mistakeDB || [];
+        const cloudFav = cloudData.favorites || [];
+        const localFav = _lsGetJSON('vocabPro_favorites', []);
+        const cloudProg = cloudData.dungeonProgress || {};
+        const localProg = _lsGetJSON('vocabRPG_dungeon_progress', {});
+        const cloudSummary = summarizeDungeonProgress(cloudProg);
+        const localSummary = summarizeDungeonProgress(localProg);
+
+        const msg =
+`☁️ 雲端發現備份！\n\n` +
+`錯題：雲端 ${cloudMistakes.length}（本地 ${localMistakes.length}）\n` +
+`我的最愛：雲端 ${cloudFav.length}（本地 ${localFav.length}）\n` +
+`地城解鎖：雲端總計約 ${cloudSummary.totalUnlocked} 關（本地約 ${localSummary.totalUnlocked} 關）\n\n` +
+`按【確定】＝下載雲端並「合併」(解鎖不倒退)\n按【取消】＝保留本地並上傳覆蓋雲端`;
+
+        if (confirm(msg)) {
+            loadFromCloud(cloudData);
+            saveToCloud(); // 把合併結果回寫雲端，兩邊一致
         } else {
-            // 新玩家 (雲端沒資料)，自動幫他上傳一次
             saveToCloud();
         }
     }).catch((error) => {
@@ -1284,75 +1431,91 @@ function checkCloudSave(user) {
     });
 }
 
-// 5. 下載雲端資料
+// 9. 下載雲端資料（合併進本地，避免進度倒退）
 function loadFromCloud(data) {
-    mistakeDB = data.mistakes || [];
+    const cloudData = data || {};
 
-    // 讀取地城進度 (Dungeon Progress)
-    if (data.dungeonProgress) {
-        // 直接存入 localStorage，遊戲邏輯會從這裡讀取
-        localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(data.dungeonProgress));
-    } else {
-        localStorage.removeItem('vocabRPG_dungeon_progress'); // 雲端沒有時，清空本地
+    // 1) mistakes：合併合集
+    const mergedMistakes = mergeMistakesUnion(mistakeDB || [], cloudData.mistakes || []);
+    mistakeDB = mergedMistakes;
+    updateMistakeCount();
+    _lsSetJSON('vocabPro_rpg', { mistakes: mistakeDB });
+
+    // 2) favorites：合併合集
+    const localFav = _lsGetJSON('vocabPro_favorites', []);
+    const mergedFav = mergeFavoritesUnion(localFav, cloudData.favorites || []);
+    _lsSetJSON('vocabPro_favorites', mergedFav);
+
+    // 3) 地城解鎖：取最大值合併（核心修復：第三關通過卻沒解鎖第四關的同步倒退）
+    const localProg = _lsGetJSON('vocabRPG_dungeon_progress', {});
+    const mergedProg = mergeDungeonProgressByMax(localProg, cloudData.dungeonProgress || {});
+    _lsSetJSON('vocabRPG_dungeon_progress', mergedProg);
+
+    // 4) 地城精通(SRS)：合併 masteryByKey
+    const localMasteryByKey = collectAllMasteryByKey();
+    const cloudMasteryByKey = cloudData.masteryByKey || {};
+    const mergedMasteryByKey = mergeMasteryByKey(localMasteryByKey, cloudMasteryByKey);
+    restoreAllMasteryByKey(mergedMasteryByKey);
+
+    // 5) 相容舊欄位（如果你過去曾存過 dungeonMastery，就保留一份，不影響新版流程）
+    if (cloudData.dungeonMastery) {
+        _lsSetJSON('vocabRPG_dungeon_mastery', cloudData.dungeonMastery);
     }
-    
-    // 讀取精通/我的最愛紀錄 (Dungeon Mastery/Favorites)
-    if (data.dungeonMastery) {
-        // 假設你的精通/我的最愛也是存在 'vocabRPG_dungeon_mastery' 這個 key 中
-        localStorage.setItem('vocabRPG_dungeon_mastery', JSON.stringify(data.dungeonMastery));
-    } else {
-        localStorage.removeItem('vocabRPG_dungeon_mastery');
-    }
 
-    updateMistakeCount(); // 更新錯題地牢計數
-
-    // 存回本地 localStorage (確保主要進度更新)
-    const localData = { mistakes: mistakeDB };
-    localStorage.setItem('vocabPro_rpg', JSON.stringify(localData));
-
-    // ★ 額外動作：如果現在在地城地圖頁面，強制重新載入，確保地圖顯示正確進度。
-    if (document.getElementById('page-dungeon').classList.contains('active')) {
-        // 假設你有一個函數可以重新載入/繪製地城地圖
-        if (typeof loadDungeonMap === 'function') {
-             loadDungeonMap(); 
-        }
-        // 如果你沒有 loadDungeonMap，可以嘗試強制跳回首頁再回來
-        // showPage('page-landing');
-    }
-    
-    alert("✅ 雲端進度同步完成！");
+    console.log("✅ 雲端資料已下載並合併到本地");
 }
 
-// 6. 上傳資料到雲端
+// 10. 上傳資料到雲端（一次打包全部進度）
 function saveToCloud() {
-    // 1. 如果沒登入，就默默結束，不要跳警告 (不然沒登入玩遊戲會被煩死)
-    if (!currentUser) {
-        // console.log("尚未登入，跳過雲端同步"); 
-        return;
-    }
+    if (!currentUser) return;
 
-    // 讀取本地資料
-    const dungeonProgressJSON = localStorage.getItem('vocabRPG_dungeon_progress');
-    const dungeonMasteryJSON = localStorage.getItem('vocabRPG_dungeon_mastery');
+    const firestore = (typeof db !== 'undefined' && db) ? db : firebase.firestore();
+
+    const localProg = _lsGetJSON('vocabRPG_dungeon_progress', {});
+    const localFav = _lsGetJSON('vocabPro_favorites', []);
+    const masteryByKey = collectAllMasteryByKey();
 
     const dataToSend = {
-        mistakes: mistakeDB,
-        dungeonProgress: dungeonProgressJSON ? JSON.parse(dungeonProgressJSON) : null,
-        dungeonMastery: dungeonMasteryJSON ? JSON.parse(dungeonMasteryJSON) : null
+        mistakes: mistakeDB || [],
+        favorites: localFav || [],
+        dungeonProgress: localProg || {},
+        masteryByKey: masteryByKey || {},
+
+        // 舊欄位相容（不依賴，但存著不礙事）
+        dungeonMastery: _lsGetJSON('vocabRPG_dungeon_mastery', null),
+
+        updatedAt: (firebase && firebase.firestore && firebase.firestore.FieldValue && firebase.firestore.FieldValue.serverTimestamp)
+            ? firebase.firestore.FieldValue.serverTimestamp()
+            : Date.now()
     };
 
-    const db = firebase.firestore();
-    db.collection("users").doc(currentUser.uid).set(dataToSend)
-        .then(() => {
-            // ★★★ 這裡原本是 alert，改成 console.log ★★★
-            // 這樣只會在 F12 開發者工具顯示，不會干擾玩家
-            console.log("✅ (背景) 雲端同步成功！"); 
-        })
-        .catch((error) => {
-            // 發生錯誤時再跳視窗提醒就好，或者也改成 console.error
-            console.error("❌ 雲端同步失敗: ", error);
-        });
+    firestore.collection("users").doc(currentUser.uid).set(dataToSend, { merge: true })
+        .then(() => console.log("✅ (背景) 雲端同步成功！"))
+        .catch((error) => console.error("❌ 雲端同步失敗: ", error));
 }
+
+// 11. 自動同步掛勾：我的最愛、地城SRS 都會自動觸發雲端存檔
+if (typeof saveFavorites === 'function' && !saveFavorites.__cloudWrapped) {
+    const _origSaveFavorites = saveFavorites;
+    saveFavorites = function (favList) {
+        _origSaveFavorites(favList);
+        scheduleCloudSave();
+    };
+    saveFavorites.__cloudWrapped = true;
+}
+
+if (typeof finishDungeon === 'function' && !finishDungeon.__cloudWrapped) {
+    const _origFinishDungeon = finishDungeon;
+    finishDungeon = function (...args) {
+        const r = _origFinishDungeon.apply(this, args);
+        // 原本只在「解鎖」時上傳；這裡補上，確保精通/冷卻也同步
+        scheduleCloudSave();
+        return r;
+    };
+    finishDungeon.__cloudWrapped = true;
+}
+
+
 function nextQuestion() {
     currentIndex++; // 索引 +1，前進到下一題
 
