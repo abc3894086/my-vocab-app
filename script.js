@@ -1235,24 +1235,49 @@ function googleLogout() {
 // 只要使用者登入或登出，這個函式就會自動執行
 if (typeof auth !== 'undefined') {
     auth.onAuthStateChanged((user) => {
-        const loginUI = document.getElementById('login-ui');
-        const userUI = document.getElementById('user-ui');
-        const userName = document.getElementById('user-name');
+        currentUser = user;
+        
+        // 取得新的 UI 元素
+        const authButton = document.getElementById('rpg-auth-btn');
+        const authText = document.getElementById('auth-text');
+        const authIcon = document.getElementById('auth-icon');
 
-        if (user) {
-            // === 使用者已登入 ===
-            currentUser = user;
-            if (loginUI) loginUI.style.display = 'none';
-            if (userUI) userUI.style.display = 'block';
-            if (userName) userName.innerText = user.displayName;
+        if (user && authButton) {
+            // === 使用者已登入 (控制單一按鈕) ===
+            const userName = user.displayName || "勇者";
+            
+            // 1. 設置點擊事件為登出
+            authButton.onclick = googleLogout;
+            
+            // 2. 更改文字：顯示用戶名和登出
+            if (authText) authText.textContent = `${userName} 登出`;
+            
+            // 3. 更改圖示：換成使用者圖示 (👤)
+            if (authIcon) authIcon.className = 'fas fa-user'; 
 
-            // 一登入就檢查雲端有沒有存檔
-            checkCloudSave(user);
-        } else {
-            // === 使用者已登出 ===
+            // 檢查並載入雲端存檔
+            checkCloudSave(user); 
+            console.log("用戶已登入:", user.displayName);
+
+        } else if (authButton) {
+            // === 使用者已登出 (控制單一按鈕) ===
             currentUser = null;
-            if (loginUI) loginUI.style.display = 'block';
-            if (userUI) userUI.style.display = 'none';
+            
+            // 1. 設置點擊事件為登入
+            authButton.onclick = googleLogin;
+            
+            // 2. 更改文字：顯示登入
+            if (authText) authText.textContent = '同步進度 / 登入';
+
+            // 3. 更改圖示：換回 Google 圖示
+            if (authIcon) authIcon.className = 'fab fa-google'; 
+
+            console.log("用戶已登出");
+        }
+        
+        // 確保 updateMistakeCount 在這裡被呼叫，因為它依賴 currentUser
+        if (typeof updateMistakeCount === 'function') {
+            updateMistakeCount(); 
         }
     });
 }
