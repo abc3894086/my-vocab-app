@@ -155,15 +155,25 @@ body.theme-dark .app-container {
 }
 /* === RPG 標題卷軸風格 === */
 .landing-header {
+    /* 1. 基本設定 */
     text-align: center;
-    padding: 0;
     background: none;
     box-shadow: none;
-    border: none;
     
-    /* ★★★ 直接在這裡設定負邊距 ★★★ */
-    margin-bottom: -40px; 
-    margin-top: -50px;
+    
+    /* 2. ★★★ 改用 Padding (內距) 來推 ★★★ */
+    /* 加上 !important 是為了強制執行，無視其他干擾 */
+    
+    padding-top: 10px !important;    /* 這個數字越大，Logo 就會越往下移 */
+    
+    padding-bottom: 70px !important;  /* 這個數字越大，下方的藍色按鈕就會被推得越遠 */
+    
+    /* 3. 把 Margin 歸零，避免干擾 */
+    margin: 0 !important;
+    
+    /* 4. 確保它佔滿寬度 */
+    width: 100%;
+    display: block !important;
 }
 
 
@@ -202,61 +212,129 @@ body.theme-dark .app-container {
 .back-btn {
     background: none;
     border: none;
-    font-size: 1.5rem;
-
-    color: #000000;
-    /* 箭頭是黑色的 */
-
     cursor: pointer;
     padding: 10px;
 
-    /* ★★★ 一樣加上白色描邊 ★★★ */
-    text-shadow:
-        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
-        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+    /* 1. 字體大小改為 1.8rem (跟按鈕一樣大) */
+    font-size: 1.6rem;
+    
+    /* 2. 字體加粗 */
+    font-weight: 900;
+
+    /* 3. 顏色設定：深咖啡色 + 米色描邊 (跟按鈕一致) */
+    color: #3e2723;
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+        
+    transition: 0.2s;
 }
 
+.back-btn:hover {
+    transform: scale(1.1); /* 滑鼠移上去稍微放大 */
+}
 .page-title {
-    font-size: 1.4rem;
-    font-weight: 800;
-    margin-left: 10px;
-
-    color: #000000;
-    /* 字是黑色的 */
-
-    /* ★★★ 修改重點：用多重陰影做出強力白邊 ★★★ */
-    text-shadow:
-        2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
-        1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+    /* 保留原本的位置設定 */
+    position: static; 
+    left: auto;
+    transform: none; 
+    pointer-events: auto; 
+    
+    /* 1. 字體大小改為 1.6rem (跟按鈕一樣大) */
+    font-size: 1.6rem;
+    
+    /* 2. 字體加粗 */
+    font-weight: 900; 
+    
+    /* 3. 顏色設定：深咖啡色 + 米色描邊 (跟按鈕一致) */
+    color: #3e2723;
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+        
+    /* 稍微調整一下跟箭頭的距離，如果覺得太擠可以加 padding-left */
+    margin-left: 5px; 
 }
-
 .mode-card {
-    /* ★★★ 修改重點：原本是 rgba(255,255,255,0.4)，改成不透明的 #fdfbf7 或 white ★★★ */
-    background: #fdfbf7;
+    /* --- 1. 容器排版設定 (讓按鈕自己置中) --- */
+    width: 90%;          /* 寬度 90% */
+    margin-left: auto;   /* 左邊自動推擠 */
+    margin-right: auto;  /* 右邊自動推擠 -> 達成置中 */
+    margin-bottom: 15px; /* 下方留白 */
 
-    border: 2px solid var(--border-color);
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 20px;
-    cursor: pointer;
     display: flex;
-    align-items: center;
+    justify-content: center; /* 內容水平置中 */
+    align-items: center;     /* 內容垂直置中 */
+    cursor: pointer;
 
-    /* 加強陰影，讓它更有立體感浮在背景上 */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transition: 0.1s;
+    /* --- 2. 圖片外框設定 --- */
+    border: none;
+    box-shadow: none;
+    border-radius: 0; 
+
+    /* 掛上金框圖片，並置中 */
+    background: url('images/gold-frame.png') center center / 100% 100% no-repeat;
+    
+    /* 高度設定 */
+    height: 90px; 
+    
+    /* 左右內距 */
+    padding: 0 20px; 
+
+    /* 文字與背景色 */
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #3e2723;
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+        
+    background-color: rgba(0, 0, 0, 0.1); /* 半透明黑底 */
+    transition: transform 0.1s;
 }
 
+/* 3. 新增：滑鼠移過去的效果 */
+.mode-card:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* 背景變深 */
+    transform: translateY(-2px);          /* 稍微浮起來 */
+}
+
+/* 4. 按下去的效果 (維持原狀) */
+.mode-card:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}.mode-card:active {
+    transform: scale(0.95);
+}
+.mode-title {
+    margin: 0;
+    font-size: 1.6rem;  
+    font-weight: 900;   
+    color: #3e2723;     
+    
+    
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+
+}
+.mode-info {
+    flex: 0 1 auto; 
+    width: auto;    
+}
 .mode-card:active {
     transform: translateY(4px);
     box-shadow: none;
 }
 
 .mode-icon {
-    font-size: 2.5rem;
-    margin-right: 20px;
-    width: 50px;
-    text-align: center;
+    font-size: 2rem;
+    
+    
+    margin-right: 0;  
+   
+    
+    line-height: 1;
 }
 
 .mode-info h2 {
@@ -275,40 +353,67 @@ body.theme-dark .app-container {
 .menu-section {
     display: none;
     width: 100%;
+flex-direction: column; 
+    gap: 5px; 
 }
 
 .menu-section.show {
-    display: block;
-    animation: fadeIn 0.6s;
+    display: flex;
 }
 
 .menu-btn {
-    background: var(--card-bg);
-    color: var(--text-main);
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 2px solid var(--border-color);
-    border-radius: 15px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
+    /* --- 1. 容器排版設定 (關鍵修改) --- */
+    
+    /* ❌ 原本是 width: 100% (這樣會被父層的設定帶著跑) */
+    /* width: 100%; */
+
+    /* ✅ 改成：稍微縮小一點，並設定左右 auto 來置中 */
+    width: 90%;          /* 或是 95%，不要佔滿，留點空間讓它置中 */
+    margin-left: auto;   /* ★★★ 左邊自動推擠 */
+    margin-right: auto;  /* ★★★ 右邊自動推擠 -> 這樣就會置中了 */
+    margin-bottom: 15px; /* 保留原本的下方距離 */
+
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    box-shadow: var(--btn-shadow);
-    transition: 0.1s;
-}
+    cursor: pointer;
 
-.menu-btn:active {
-    transform: translateY(4px);
+    /* --- 2. 圖片外框設定 (回歸最單純的置中) --- */
+    border: none;
     box-shadow: none;
+    border-radius: 0; 
+
+    /* 因為容器已經置中了，圖片只要乖乖設 center center 就好 */
+    background: url('images/gold-frame.png') center center / 100% 100% no-repeat;
+    
+    /* 高度設定 */
+    height: 90px; 
+    
+    /* 左右內距 */
+    padding: 0 20px; 
+
+    /* 文字與背景色 */
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #3e2723;
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+        
+    background-color: rgba(0, 0, 0, 0.1); 
+    transition: transform 0.1s;
+}
+/* 滑鼠移過去的效果 */
+.menu-btn:hover {
+    transform: scale(1.02); /* 稍微放大 */
+    filter: brightness(1.1); /* 讓框框稍微變亮一點 */
 }
 
-.mistake-btn {
-    border-color: #c0392b;
-    color: #c0392b;
-    background: #fff5f5;
+/* 按下去的效果 */
+.menu-btn:active {
+    transform: scale(0.98);
 }
+
 
 .backup-controls {
     display: flex;
@@ -1439,4 +1544,116 @@ body.theme-dark .app-container {
 
     /* 讓它跟下面的進度條有一點距離 */
     margin-bottom: 8px;
+}
+.mistake-btn {
+    position: relative; /* 重要：設定絕對定位的基準點 */
+    
+    /* ...保留原本的紅色框框設定... */
+}
+
+/* 2. 針對你的 id="mistake-count" 設定位置 */
+#mistake-count {
+    position: absolute;  /* 讓它脫離排版，自由飛行 */
+    right: 20px;         /* 靠右邊 20px */
+    
+    /* 數字美化 */
+    font-family: "Segoe UI", sans-serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #c0392b;      /* 紅色字 */
+    
+    /* 如果想要跟標題一樣有描邊，把下面這行取消註解 */
+    /* text-shadow: 2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3; */
+}
+/* ========================================= */
+/* RPG 按鈕樣式總整理 (乾淨版) */
+/* ========================================= */
+
+/* 1. 【共用設定】所有按鈕長得一樣的地方 (金框、字體、互動) */
+.menu-btn, .mode-card, .rpg-login-btn {
+    /* 排版 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    
+    /* 讓按鈕置中 (左右自動推擠) */
+    margin-left: auto;
+    margin-right: auto;
+
+    /* 外觀歸零 */
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+
+    /* ★ 背景圖設定：金框 ★ */
+    /* 這裡設定背景，但「不設定」大小，讓個別按鈕自己決定大小 */
+    background-image: url('images/gold-frame.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%; /* 讓圖片填滿按鈕設定的寬高 */
+
+    /* 字體樣式 */
+    font-weight: 900;
+    color: #3e2723;
+    text-shadow: 
+        2px 0 #f5deb3, -2px 0 #f5deb3, 0 2px #f5deb3, 0 -2px #f5deb3,
+        1px 1px #f5deb3, -1px -1px #f5deb3, 1px -1px #f5deb3, -1px 1px #f5deb3;
+    
+    /* 半透明底色 */
+    background-color: rgba(0, 0, 0, 0.1);
+    
+    /* 動畫 */
+    transition: transform 0.1s, filter 0.1s;
+}
+
+/* 2. 【大按鈕專區】選單按鈕 & 模式卡片 */
+.menu-btn, .mode-card {
+    width: 90%;       /* 寬度佔滿 90% */
+    height: 90px;     /* 高度固定 90px */
+    padding: 0 20px;  /* 內距 */
+    margin-bottom: 15px;
+    font-size: 1.8rem; /* 字體大一點 */
+}
+
+/* 3. 【小按鈕專區】登入按鈕 (修正重點在這裡) */
+.rpg-login-btn {
+    /* ★ 寬度設定：根據文字內容自動調整 ★ */
+    width: auto;
+    
+    /* [↓ 修改 1] 最小寬度改小，避免太寬 */
+    min-width: 160px; /* 原本 200px */
+    
+    /* [↓ 修改 2] 高度變矮，讓框框看起來更細緻 */
+    height: 55px;     /* 原本 70px，(大按鈕是 90px) */
+    
+    /* [↓ 修改 3] 內距改小，讓框框左右不要留太多白，看起來更緊湊 */
+    padding: 0 30px;  /* 原本 0 40px */
+    
+    /* [↓ 修改 4] 位置調整：往下移 (增加上面的距離) */
+    margin-top: 35px;    /* 原本 20px，數字越大越往下 */
+    margin-bottom: 20px; /* 保持跟下面按鈕的距離 */
+    
+    /* [↓ 修改 5] 字體改小，比較秀氣 */
+    font-size: 1.2rem; /* 原本 1.4rem */
+    
+    /* 確保 Google 圖示顏色正確 */
+    fill: #3e2723;
+}
+
+.rpg-login-btn i {
+    color: #3e2723;
+    margin-right: 8px;
+    /* [↓ 修改 6] 圖示也跟著稍微縮小 */
+    font-size: 1.1rem; /* 原本 1.2rem */
+}
+
+/* 4. 【滑鼠互動】移過去的效果 */
+.menu-btn:hover, .mode-card:hover, .rpg-login-btn:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+.menu-btn:active, .mode-card:active, .rpg-login-btn:active {
+    transform: scale(0.98);
 }

@@ -852,15 +852,15 @@ function showDungeonSubMenu() {
 
     // 1. 定義中文名稱與 Emoji 對照表 (這裡複製了你 HTML 裡的設定)
     const catNameMap = {
-        "Astronomy": "🌌 天文 (Astronomy)",
-        "Biology": "🧬 生物 (Biology)",
-        "Geography": "🌍 地理 (Geography)",
-        "Psychology": "🧠 心理學 (Psychology)",
-        "History": "🏺 歷史考古 (History)",
-        "Art": "🎨 藝術音樂 (Art)",
-        "Geology": "🪨 地質學 (Geology)",
-        "Business": "💼 商業經濟 (Business)",
-        "LifeScience": "🦠 生命科學 (Life Science)"
+        "Astronomy": "🌌 天文 ",
+        "Biology": "🧬 生物 ",
+        "Geography": "🌍 地理 ",
+        "Psychology": "🧠 心理學 ",
+        "History": "🏺 歷史考古 ",
+        "Art": "🎨 藝術音樂 ",
+        "Geology": "🪨 地質學 ",
+        "Business": "💼 商業經濟 ",
+        "LifeScience": "🦠 生命科學 "
     };
 
     const categories = Object.keys(vocabDB['TOEFL']);
@@ -1178,33 +1178,22 @@ function calculateCooldown(score, total) {
 }
 
 function formatTimeLeft(ms) {
+    // 1. 計算總小時數 (包含天數換算成小時，例如 1天 = 24小時)
     const totalHours = Math.floor(ms / (1000 * 60 * 60));
+    
+    // 2. 計算剩餘分鐘數
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
 
-    // 如果超過 24 小時，顯示「X天 Y小時」
-    if (totalHours >= 24) {
-        const days = Math.floor(totalHours / 24);
-        const remainHours = totalHours % 24;
-        if (remainHours === 0) return `${days}天`;
-        return `${days}天 ${remainHours}小時`;
-    }
-    
-    // 不足 24 小時，顯示「X時 Y分」
-    if (totalHours > 0) return `${totalHours}時 ${minutes}分`;
-    return `${minutes}分`;
+    // 3. 補零函數 (如果數字小於 10，前面補一個 0)
+    // padStart(2, '0') 的意思是：字串長度要 2，不夠的話前面補 '0'
+    const hStr = totalHours.toString().padStart(2, '0');
+    const mStr = minutes.toString().padStart(2, '0');
+
+    // 4. 回傳格式 HH:MM
+    return `${hStr}:${mStr}`;
 }
 
-function triggerImport() { document.getElementById('file-input').click(); }
-function importData(input) { alert("還原功能需配合後端或 FileReader 實作"); }
-function exportData() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mistakeDB));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "vocab_backup.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-}
+
 function exitAdventure() {
     // 判斷目前所在的副本類型，決定要退回到哪一層選單
     if (adventureKey && adventureKey.startsWith('TOEFL')) {
