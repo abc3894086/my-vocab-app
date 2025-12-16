@@ -489,57 +489,53 @@ function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) 
 
 
 function getSmartDistractors(sourceList, correctItem, type) {
-    // type 是 'en' (英文) 或 'cn' (中文)
-    // sourceList 在錯題模式下就是錯題列表
-
     let distractors = [];
 
     // --- 步驟 A：先從當前的列表 (sourceList) 找 ---
-    // 過濾掉正確答案自己 (比對英文是否相同)
     let potential = sourceList.filter(item => item.en !== correctItem.en);
-    // 打亂順序
     potential.sort(() => Math.random() - 0.5);
 
-    // 嘗試加入選項
     for (let item of potential) {
-        if (distractors.length >= 3) break; // 湊滿 3 個就停
-
-        // 根據需要的類型取值
+        if (distractors.length >= 3) break;
         let val = (type === 'en') ? item.en : item.details[0].cn;
-
-        // 確保不重複加入
         if (!distractors.includes(val)) {
             distractors.push(val);
         }
     }
 
-    // --- 步驟 B：如果選項還不夠 3 個，就去「外部題庫」借 ---
+    // --- 步驟 B：如果選項還不夠 3 個，就去「總題庫 (vocabDB)」借 ---
     if (distractors.length < 3) {
         let backupPool = [];
 
-        // 把多益、托福等全域變數加進來當後備
-        // (使用 typeof 檢查避免變數不存在報錯)
-        if (typeof toeicVocabulary !== 'undefined') backupPool = backupPool.concat(toeicVocabulary);
-        if (typeof toefl_astronomy !== 'undefined') backupPool = backupPool.concat(toefl_astronomy);
-        // 你可以依此類推加入更多...
+        // ★★★ 關鍵修正：從 vocabDB 抓取所有單字 ★★★
+        if (typeof vocabDB !== 'undefined') {
+            // 1. 抓多益
+            if (vocabDB['TOEIC']) {
+                backupPool = backupPool.concat(vocabDB['TOEIC']);
+            }
+            // 2. 抓托福所有分類
+            if (vocabDB['TOEFL']) {
+                Object.values(vocabDB['TOEFL']).forEach(list => {
+                    backupPool = backupPool.concat(list);
+                });
+            }
+        }
 
         if (backupPool.length > 0) {
-            // 隨機切一塊出來打亂 (優化效能，不用打亂整個大題庫)
+            // 隨機切一塊出來打亂
             let start = Math.floor(Math.random() * (backupPool.length - 50));
             let slice = backupPool.slice(Math.max(0, start), start + 50);
             slice.sort(() => Math.random() - 0.5);
 
             for (let item of slice) {
                 if (distractors.length >= 3) break;
-
-                // 檢查：不要跟正確答案重複
-                if (item.en === correctItem.en) continue;
+                if (!item.details || item.details.length === 0) continue; // 防呆
+                if (item.en === correctItem.en) continue; // 排除正確答案
 
                 let val = (type === 'en') ? item.en : item.details[0].cn;
-
-                // 檢查：不要跟已經選好的干擾項重複，也不要跟正確答案顯示的文字重複
+                
+                // 檢查重複
                 let correctVal = (type === 'en') ? correctItem.en : correctItem.details[0].cn;
-
                 if (!distractors.includes(val) && val !== correctVal) {
                     distractors.push(val);
                 }
@@ -656,6 +652,7 @@ function generateDistractors(wordList, excludeVal, count, type = 'en') {
     return shuffled.slice(0, count);
 }
 
+
 function checkAnswer(selectedButton, isCorrect) {
     document.getElementById('options-container').querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
 
@@ -675,26 +672,55 @@ function checkAnswer(selectedButton, isCorrect) {
 
         resultTitle.innerText = "✅ 恭喜答對！";
         resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
+
+        // ★★★ 錯題精通機制 ★★★
+        if (quizType === 'mistake') {
+            const currentQ = currentList[currentIndex];
+            
+            // 尋找題目索引
+            const mistakeIndex = mistakeDB.findIndex(m => {
+                if (currentQ.en) return m.en === currentQ.en;
+                if (currentQ.q) return m.q === currentQ.q;
+                return false;
+            });
+
+            if (mistakeIndex !== -1) {
+                // 更新次數
+                mistakeDB[mistakeIndex].correct_count = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
+                const currentCount = mistakeDB[mistakeIndex].correct_count;
+                
+                // ★★★ 安全修正：先抓元素，確認存在才修改文字 ★★★
+                const qSubElement = document.getElementById('q-sub');
+
+                if (currentCount >= 3) {
+                    mistakeDB.splice(mistakeIndex, 1);
+                    alert(`🎉 恭喜！該題目已精通 (累積答對 ${currentCount} 次)，已從地牢釋放！`);
+                    if (qSubElement) qSubElement.innerText = ""; // 有才清空
+                } else {
+                    if (qSubElement) qSubElement.innerText = `✨ 精通進度: ${currentCount} / 3`; // 有才顯示
+                }
+
+                saveGameData();
+            }
+        }
+
     } else {
+        // === 答錯邏輯 ===
         playSound('wrong');
         selectedButton.classList.add('wrong');
 
-        // === ★★★ 核心修正：讓文法題也能存入地牢 ★★★ ===
         const currentQ = currentList[currentIndex];
-
-        // 判斷是否已經在錯題庫中 (單字比對 en，文法比對 q)
         const isAlreadyInDB = mistakeDB.some(m => {
-            if (currentQ.en) return m.en === currentQ.en; // 如果是單字
-            if (currentQ.q) return m.q === currentQ.q;   // 如果是文法
+            if (currentQ.en) return m.en === currentQ.en;
+            if (currentQ.q) return m.q === currentQ.q;
             return false;
         });
 
-        // 只要不是重複的，且具有內容 (en 或 q)，就存進去
         if (!isAlreadyInDB && (currentQ.en || currentQ.q)) {
-            mistakeDB.push(currentQ);
-            saveGameData(); // 存檔 (包含雲端)
+            const newMistake = { ...currentQ, correct_count: 0 }; 
+            mistakeDB.push(newMistake);
+            saveGameData(); 
         }
-        // ===============================================
 
         const optionsContainer = document.getElementById('options-container');
         Array.from(optionsContainer.children).forEach(btn => {
@@ -704,31 +730,19 @@ function checkAnswer(selectedButton, isCorrect) {
         });
 
         resultTitle.innerText = "❌ 答錯了！";
-
         if (currentQuizData.audioWord) {
-            setTimeout(() => {
-                playQuizAudio(currentQuizData.audioWord);
-            }, 200);
+            setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
         }
-
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
+        
+        // ★★★ 安全修正 ★★★
+        const qSubElement = document.getElementById('q-sub');
+        if (qSubElement) qSubElement.innerText = ""; 
     }
 
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('result-popup').classList.add('show');
-}
-
-function nextQuestion() {
-    currentIndex++;
-    document.getElementById('float-next-btn').classList.remove('show');
-    document.getElementById('result-popup').classList.remove('show');
-
-    if (isAdventureMode) {
-        loadDungeonQuestion();
-    } else {
-        loadQuestion(quizType === 'grammar');
-    }
 }
 
 function hideResultPopup() {
@@ -980,58 +994,61 @@ function startDungeonBattle(allWords, levelIndex) {
     loadDungeonQuestion();
 }
 
+
 function generateOptions(fullDB, correctAns, type) {
     let distractors = [];
-    if (fullDB.length < 5) return ["A", "B", "C"];
+    const countNeeded = 3;
 
-    let maxAttempts = 50;
-    while (distractors.length < 3 && maxAttempts > 0) {
-        maxAttempts--;
-        const randomItem = fullDB[Math.floor(Math.random() * fullDB.length)];
-        let candidate = (type === 'cn') ? randomItem.details[0].cn : randomItem.en;
+    // 1. 從當前副本的單字庫找
+    let potentialDistractors = fullDB
+        .filter(item => {
+            let itemVal = (type === 'cn' && item.details && item.details[0]) ? item.details[0].cn : item.en;
+            return itemVal !== correctAns;
+        })
+        .sort(() => Math.random() - 0.5);
 
-        if (candidate !== correctAns && !distractors.includes(candidate)) {
-            distractors.push(candidate);
+    for (let item of potentialDistractors) {
+        if (distractors.length >= countNeeded) break;
+        let val = (type === 'cn' && item.details && item.details[0]) ? item.details[0].cn : item.en;
+        if (!distractors.includes(val)) distractors.push(val);
+    }
+    
+    // 2. 【關鍵修正】從 vocabDB 找外援
+    if (distractors.length < countNeeded) {
+        let backupPool = [];
+        
+        // ★ 從 vocabDB 抓取所有資料
+        if (typeof vocabDB !== 'undefined') {
+            if (vocabDB['TOEIC']) backupPool = backupPool.concat(vocabDB['TOEIC']);
+            if (vocabDB['TOEFL']) {
+                Object.values(vocabDB['TOEFL']).forEach(list => {
+                    backupPool = backupPool.concat(list);
+                });
+            }
+        }
+
+        if (backupPool.length > 0) {
+            backupPool.sort(() => Math.random() - 0.5);
+
+            for (let item of backupPool) {
+                if (distractors.length >= countNeeded) break;
+                if (!item.details || item.details.length === 0) continue;
+
+                let val = (type === 'cn') ? item.details[0].cn : item.en;
+
+                if (val !== correctAns && !distractors.includes(val)) {
+                    distractors.push(val);
+                }
+            }
         }
     }
-    return [correctAns, ...distractors].sort(() => 0.5 - Math.random());
-}
 
-function loadDungeonQuestion() {
-    if (currentIndex >= quizTotal) {
-        finishDungeon();
-        return;
+    // 如果真的還是湊不到 (極端情況)，補上 ABC 以防當機，但通常上面就會解決了
+    while (distractors.length < countNeeded) {
+        distractors.push("---");
     }
 
-    document.getElementById('result-popup').classList.remove('show');
-    document.getElementById('float-next-btn').classList.remove('show');
-    document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
-    document.getElementById('quiz-bar').style.width = `${(currentIndex / quizTotal) * 100}%`;
-
-    const qData = currentList[currentIndex];
-    document.getElementById('q-text').innerText = qData.q;
-
-    if (qData.type === 'en_to_cn') {
-        preloadAudio(qData.audioWord);
-    } else {
-        preloadAudio(qData.audioWord);
-    }
-
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '';
-
-    currentQuizData = {
-        correct: qData.ans,
-        audioWord: qData.audioWord
-    };
-
-    qData.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = `<span style="opacity:0.5;margin-right:8px;">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
-        btn.onclick = () => checkDungeonAnswer(btn, opt === qData.ans);
-        optionsContainer.appendChild(btn);
-    });
+    return [correctAns, ...distractors].sort(() => Math.random() - 0.5);
 }
 
 function checkDungeonAnswer(btn, isCorrect) {
@@ -1241,42 +1258,85 @@ function checkCloudSave(user) {
 function loadFromCloud(data) {
     mistakeDB = data.mistakes || [];
 
-    // 如果有地城進度，也一起讀取
+    // 讀取地城進度 (Dungeon Progress)
     if (data.dungeonProgress) {
+        // 直接存入 localStorage，遊戲邏輯會從這裡讀取
         localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(data.dungeonProgress));
+    } else {
+        localStorage.removeItem('vocabRPG_dungeon_progress'); // 雲端沒有時，清空本地
     }
-    // 如果有精通紀錄
+    
+    // 讀取精通/我的最愛紀錄 (Dungeon Mastery/Favorites)
     if (data.dungeonMastery) {
-        // 因為 mastery 是分開存的，這裡示範簡單讀取邏輯，需視你存檔結構調整
-        // 這裡暫時先不處理 mastery 的複雜同步，先保證錯題能同步
+        // 假設你的精通/我的最愛也是存在 'vocabRPG_dungeon_mastery' 這個 key 中
+        localStorage.setItem('vocabRPG_dungeon_mastery', JSON.stringify(data.dungeonMastery));
+    } else {
+        localStorage.removeItem('vocabRPG_dungeon_mastery');
     }
 
-    updateMistakeCount();
+    updateMistakeCount(); // 更新錯題地牢計數
 
-    // 存回本地 localStorage
+    // 存回本地 localStorage (確保主要進度更新)
     const localData = { mistakes: mistakeDB };
     localStorage.setItem('vocabPro_rpg', JSON.stringify(localData));
 
-    alert("✅ 同步完成！");
+    // ★ 額外動作：如果現在在地城地圖頁面，強制重新載入，確保地圖顯示正確進度。
+    if (document.getElementById('page-dungeon').classList.contains('active')) {
+        // 假設你有一個函數可以重新載入/繪製地城地圖
+        if (typeof loadDungeonMap === 'function') {
+             loadDungeonMap(); 
+        }
+        // 如果你沒有 loadDungeonMap，可以嘗試強制跳回首頁再回來
+        // showPage('page-landing');
+    }
+    
+    alert("✅ 雲端進度同步完成！");
 }
 
 // 6. 上傳資料到雲端
 function saveToCloud() {
-    if (!currentUser) return; // 沒登入就不上傳
+    if (!currentUser) {
+        alert("❌ 請先登入才能進行雲端同步！");
+        return;
+    }
 
-    const dungeonProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
+    // ★★★ 關鍵修改：將所有需要同步的資料都從本地儲存中讀取出來 ★★★
+    const dungeonProgressJSON = localStorage.getItem('vocabRPG_dungeon_progress');
+    const dungeonMasteryJSON = localStorage.getItem('vocabRPG_dungeon_mastery'); // 假設這是你的精通/我的最愛紀錄
 
-    const dataToSave = {
-        mistakes: mistakeDB,
-        dungeonProgress: dungeonProgress,
-        lastUpdated: new Date().getTime()
+    // 建立要上傳的資料物件
+    const dataToSend = {
+        mistakes: mistakeDB, // 錯題
+        dungeonProgress: dungeonProgressJSON ? JSON.parse(dungeonProgressJSON) : null, // 地城進度
+        dungeonMastery: dungeonMasteryJSON ? JSON.parse(dungeonMasteryJSON) : null // 精通/我的最愛
     };
 
-    db.collection("users").doc(currentUser.uid).set(dataToSave)
+    const db = firebase.firestore();
+    db.collection("users").doc(currentUser.uid).set(dataToSend)
         .then(() => {
-            console.log("☁️ 雲端自動備份成功");
+            alert("✅ 雲端同步成功！");
         })
         .catch((error) => {
-            console.error("上傳失敗: ", error);
+            alert("❌ 雲端同步失敗: " + error.message);
+            console.error("Error writing document: ", error);
         });
+}
+function nextQuestion() {
+    currentIndex++; // 索引 +1，前進到下一題
+
+    // 1. 隱藏結果彈窗
+    document.getElementById('result-popup').classList.remove('show');
+    
+    // 2. 隱藏懸浮的下一題按鈕
+    document.getElementById('float-next-btn').classList.remove('show');
+
+    // 3. 根據目前的模式，決定載入哪種題目
+    if (isAdventureMode) {
+        // 如果是地城副本模式
+        loadDungeonQuestion();
+    } else {
+        // 如果是單字/文法/錯題模式
+        // (loadQuestion 內部會自動判斷是否結束並跳出 alert)
+        loadQuestion(quizType === 'grammar');
+    }
 }
