@@ -908,19 +908,20 @@ flex-direction: column;
     border: 2px solid #e0e0e0;
     color: #555;
     
-    /* === ★★★ 核心修改開始 ★★★ === */
+    /* === ★★★ 核心修改：靠左對齊設定 ★★★ === */
     display: flex;          
-    flex-direction: row;    /* 改回水平排列 (預設) */
-    flex-wrap: wrap;        /* ★ 關鍵：空間不夠時自動折行 */
-    align-items: baseline;  /* 讓英文跟中文底部對齊 */
-    justify-content: flex-start;
+    flex-direction: row;    
+    align-items: center;      /* 建議改用 center，讓單行文字也能垂直居中 */
+    justify-content: flex-start; /* ★ 關鍵：讓內容靠左排列 */
     
+    text-align: left;         /* ★ 關鍵：讓多行文字 (例如換行的 C 選項) 靠左 */
+    padding-left: 25px;       /* ★ 關鍵：左邊加寬，讓 A. B. C. 不要貼壁 */
+    padding-right: 15px;      /* 右邊留一點空隙 */
+    /* === ★★★ 核心修改結束 ★★★ === */
+
     height: auto;           
     min-height: 55px;       
     
-    padding: 12px 15px;
-    /* === ★★★ 核心修改結束 ★★★ === */
-
     border-radius: 15px;
     font-size: 1.1rem;
     font-weight: 700;

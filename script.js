@@ -601,7 +601,17 @@ function checkAnswer(selectedButton, isCorrect) {
         playSound('wrong');
         selectedButton.classList.add('wrong');
         document.querySelectorAll('.option-btn').forEach(btn => {
-            if (btn.innerText.includes(currentQuizData.correct)) btn.classList.add('correct');
+            // 1. 先把按鈕文字依照 ". " 切開，取後面那一段 (去除 A. B. C. D.)
+            const parts = btn.innerText.split('. ');
+            
+            if (parts.length > 1) {
+                const optionText = parts[1].trim(); // 取得純單字部分
+                
+                // 2. 進行「完全相等」比對 (這樣 'be' 就不會等於 'being' 了)
+                if (optionText === currentQuizData.correct) {
+                    btn.classList.add('correct');
+                }
+            }
         });
 
         // 錯題紀錄
