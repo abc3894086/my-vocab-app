@@ -814,7 +814,15 @@ function exitAdventure() {
 // 9. Firebase 雲端功能 (整理版)
 // ==========================================
 
-function _safeParseJSON(str, fallback) { try { return JSON.parse(str); } catch (e) { return fallback; } }
+function _safeParseJSON(str, fallback) {
+    if (str === null) return fallback; // ★ 關鍵修正：如果是 null，直接回傳預設值
+    try {
+        const result = JSON.parse(str);
+        return result === null ? fallback : result; // 確保解析出來不是 null
+    } catch (e) {
+        return fallback;
+    }
+}
 function _lsGetJSON(key, fallback) { return _safeParseJSON(localStorage.getItem(key), fallback); }
 function _lsSetJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
@@ -911,7 +919,8 @@ function loadFromCloud(cloudData) {
     const localM = mistakeDB || [];
     const cloudM = cloudData.mistakes || [];
     const mOut = new Map();
-    [...localM, ...cloudM].forEach(m => {
+    // 確保 localM 和 cloudM 都是陣列，避免 crash
+    (Array.isArray(localM) ? localM : []).concat(Array.isArray(cloudM) ? cloudM : []).forEach(m => {
         const k = (m.en) ? m.en : m.q;
         if(k && !mOut.has(k)) mOut.set(k, m);
     });
@@ -920,16 +929,19 @@ function loadFromCloud(cloudData) {
     updateMistakeCount();
 
     // 2. 合併最愛 (聯集)
-    const localF = _lsGetJSON('vocabPro_favorites', []);
+    // ★★★ 這裡就是原本報錯的地方，現在加上了 || [] 防呆 ★★★
+    const localF = _lsGetJSON('vocabPro_favorites', []) || [];
     const cloudF = cloudData.favorites || [];
     const fOut = new Map();
+    
+    // 安全合併
     [...localF, ...cloudF].forEach(f => {
         if(f.en && !fOut.has(f.en)) fOut.set(f.en, f);
     });
     _lsSetJSON('vocabPro_favorites', Array.from(fOut.values()));
 
     // 3. 合併地城進度 (取大)
-    const localP = _lsGetJSON('vocabRPG_dungeon_progress', {});
+    const localP = _lsGetJSON('vocabRPG_dungeon_progress', {}) || {};
     const cloudP = cloudData.dungeonProgress || {};
     const mergedP = { ...localP };
     Object.keys(cloudP).forEach(k => {
@@ -938,7 +950,7 @@ function loadFromCloud(cloudData) {
     _lsSetJSON('vocabRPG_dungeon_progress', mergedP);
 
     // 4. 合併每日數據 (取大)
-    const localD = _lsGetJSON('vocabRPG_daily_activity', {});
+    const localD = _lsGetJSON('vocabRPG_daily_activity', {}) || {};
     const cloudD = cloudData.dailyActivity || {};
     const mergedD = { ...localD };
     Object.keys(cloudD).forEach(k => {
@@ -948,7 +960,6 @@ function loadFromCloud(cloudData) {
 
     console.log("✅ 雲端資料合併完成");
 }
-
 // ==========================================
 // 10. 手機觸控優化
 // ==========================================
