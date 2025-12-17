@@ -964,7 +964,9 @@ function saveToCloud() {
 function loadFromCloud(cloudData) {
     if (!cloudData) return;
 
-    // 1. 合併錯題
+    console.log("📥 開始處理雲端資料...");
+
+    // 1. 合併錯題 (聯集)
     const localM = Array.isArray(mistakeDB) ? mistakeDB : [];
     const cloudM = Array.isArray(cloudData.mistakes) ? cloudData.mistakes : [];
     const mOut = new Map();
@@ -976,22 +978,19 @@ function loadFromCloud(cloudData) {
     _lsSetJSON('vocabPro_rpg', { mistakes: mistakeDB });
     updateMistakeCount();
 
-    // 2. 合併最愛 (這裡就是原本報錯的地方)
-    // 加上 || [] 確保它絕對是陣列
+    // 2. 合併最愛 (聯集)
     const localF = _lsGetJSON('vocabPro_favorites', []) || [];
     const cloudF = cloudData.favorites || [];
-    
-    // 再次檢查，如果 _lsGetJSON 回傳的不是陣列，強制轉為空陣列
+    // 安全合併
     const safeLocalF = Array.isArray(localF) ? localF : [];
     const safeCloudF = Array.isArray(cloudF) ? cloudF : [];
-
     const fOut = new Map();
     [...safeLocalF, ...safeCloudF].forEach(f => {
         if(f && f.en && !fOut.has(f.en)) fOut.set(f.en, f);
     });
     _lsSetJSON('vocabPro_favorites', Array.from(fOut.values()));
 
-    // 3. 合併地城進度
+    // 3. 合併地城進度 (取最大值)
     const localP = _lsGetJSON('vocabRPG_dungeon_progress', {}) || {};
     const cloudP = cloudData.dungeonProgress || {};
     const mergedP = { ...localP };
@@ -1000,7 +999,7 @@ function loadFromCloud(cloudData) {
     });
     _lsSetJSON('vocabRPG_dungeon_progress', mergedP);
 
-    // 4. 合併每日數據
+    // 4. 合併每日數據 (取最大值)
     const localD = _lsGetJSON('vocabRPG_daily_activity', {}) || {};
     const cloudD = cloudData.dailyActivity || {};
     const mergedD = { ...localD };
@@ -1009,9 +1008,42 @@ function loadFromCloud(cloudData) {
     });
     _lsSetJSON('vocabRPG_daily_activity', mergedD);
 
-    console.log("✅ 雲端資料合併完成，地城進度已更新");
-}
+    // 5. 合併 SRS 精通資料 (Mastery)
+    // 這裡需要先把本地所有的 mastery key 抓出來，再跟雲端比對
+    // (這部分如果原本沒有寫，建議加上去，不然 SRS 進度不會同步)
+    const cloudMastery = cloudData.masteryByKey || {};
+    // 還原雲端的 mastery 到本地
+    Object.keys(cloudMastery).forEach(key => {
+        const localKey = `vocabRPG_mastery_${key}`;
+        const localVal = _lsGetJSON(localKey, {}) || {};
+        const cloudVal = cloudMastery[key] || {};
+        
+        // 合併單個副本的每一關紀錄
+        const mergedVal = { ...localVal };
+        Object.keys(cloudVal).forEach(lvl => {
+            const lRec = localVal[lvl] || { count: 0, nextPlay: 0 };
+            const cRec = cloudVal[lvl] || { count: 0, nextPlay: 0 };
+            // 取次數多的為準
+            if (cRec.count > lRec.count) {
+                mergedVal[lvl] = cRec;
+            }
+        });
+        _lsSetJSON(localKey, mergedVal);
+    });
 
+    console.log("✅ 雲端資料合併完成");
+
+    // ★★★ 核心修改：跳出通知並重新整理頁面 ★★★
+    // 只有當使用者第一次登入觸發同步時才重整，避免無限迴圈
+    // 我們可以用 sessionStorage 做個簡單標記
+    if (!sessionStorage.getItem('just_synced')) {
+        sessionStorage.setItem('just_synced', 'true');
+        alert("📥 雲端進度同步完成！即將更新畫面...");
+        location.reload(); // <--- 這行會讓網頁重新整理，你的進度就會出現了！
+    } else {
+        sessionStorage.removeItem('just_synced');
+    }
+}
 // ==========================================
 // 10. 手機觸控優化
 // ==========================================
