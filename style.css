@@ -16,7 +16,37 @@
 }
 
 /* 主題變數設定 */
+/* ========================================= */
+/* ★★★ 新增：手機體驗優化 (Mobile Native Feel) ★★★ */
+/* ========================================= */
 
+/* 1. 全局設定：移除手機點擊的高亮色塊、禁止選取文字 */
+* {
+    -webkit-tap-highlight-color: transparent; /* 移除點擊時的灰色背景 */
+    -webkit-touch-callout: none; /* 移除長按跳出的選單 (iOS) */
+}
+
+/* 讓所有按鈕文字無法被選取 (避免長按變反白) */
+.menu-btn, .mode-card, .option-btn, .rpg-login-btn, .back-btn, .level-node {
+    user-select: none;
+    -webkit-user-select: none;
+    /* 增加彈性過渡動畫，讓彈起來的時候有 Q 度 */
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.1s !important;
+}
+
+/* 2. 電腦版專屬特效 (手機不執行 Hover) */
+@media (hover: hover) {
+    .menu-btn:hover, .mode-card:hover, .rpg-login-btn:hover, .option-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+    }
+}
+
+/* 3. 手機版按壓特效 (由 JS 控制加入這個 class) */
+.rpg-pressed {
+    transform: scale(0.95) !important; /* 縮小 95%，產生按壓感 */
+    filter: brightness(0.9) !important; /* 稍微變暗，模擬凹陷陰影 */
+}
 /* ========================================= */
 /* 2. 全局基礎樣式 */
 /* ========================================= */
