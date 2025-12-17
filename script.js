@@ -815,13 +815,18 @@ function checkDungeonAnswer(btn, isCorrect) {
 }
 
 function finishDungeon() {
-    const passThreshold = Math.ceil(quizTotal * 0.8);
-    let msg = (score >= passThreshold) ? "🎉 挑戰成功！" : "💀 挑戰失敗...";
+    const passThreshold = Math.ceil(quizTotal * 0.8); // 及格線 (20題 * 0.8 = 16題)
+    const isPassed = score >= passThreshold;
     
-    if (score >= passThreshold) {
+    let msg = isPassed ? "🎉 挑戰成功！" : "💀 挑戰失敗...";
+    
+    // 1. 處理通關解鎖
+    if (isPassed) {
         playSound('correct');
         const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
         const currentUnlocked = Number(allProgress[adventureKey] || 0);
+        
+        // 如果目前打的這關 = 目前解鎖到的最大關卡，就解鎖下一關
         if (Number(adventureLevelIndex) === currentUnlocked) {
             allProgress[adventureKey] = currentUnlocked + 1;
             localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
@@ -830,34 +835,53 @@ function finishDungeon() {
         }
     } else {
         playSound('wrong');
+        msg += "\n(請再接再厲，失敗不扣次數，可立即重試)";
     }
 
+    // 2. 處理精通度與冷卻 (SRS 核心邏輯)
     const masteryKey = `vocabRPG_mastery_${adventureKey}`;
     let masteryData = JSON.parse(localStorage.getItem(masteryKey)) || {};
     let record = masteryData[adventureLevelIndex] || { nextPlay: 0, count: 0 };
 
-    if (score >= passThreshold) record.count = (record.count || 0) + 1;
-    if (record.count >= 5) {
-        record.nextPlay = 0;
-        msg += "\n👑 已精通！";
+    if (isPassed) {
+        // ★ 只有通關才增加精通度
+        record.count = (record.count || 0) + 1;
+        
+        if (record.count >= 5) {
+            record.nextPlay = 0; // 已精通，永久解鎖
+            msg += "\n👑 已精通！該關卡將永久開放！";
+        } else {
+            // ★ 只有通關才計算冷卻 (答越好等越久)
+            const cooldown = calculateCooldown(score, quizTotal);
+            record.nextPlay = Date.now() + cooldown;
+            msg += `\n⏳ 下次挑戰：${formatTimeLeft(cooldown)} 後`;
+        }
     } else {
-        const cooldown = calculateCooldown(score, quizTotal);
-        record.nextPlay = Date.now() + cooldown;
-        msg += `\n⏳ 冷卻中`;
+        // ★ 失敗了：不設冷卻，讓他可以馬上重打
+        // 保持原本的 nextPlay (如果有舊紀錄) 或是 0 (如果第一次打)
+        // 這裡不做任何 nextPlay 的改動，意味著如果原本是開放的，現在還是開放
     }
+
+    // 存檔
     masteryData[adventureLevelIndex] = record;
     localStorage.setItem(masteryKey, JSON.stringify(masteryData));
     scheduleCloudSave();
 
     alert(msg);
+    // 重新載入地圖
     openDungeonMap(adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', adventureKey.includes('_') ? adventureKey.split('_')[1] : null);
 }
+function calculateCooldown(score, total) {
+    // 1. 設定最大冷卻時間：36 小時 (毫秒)
+    const maxTime = 36 * 60 * 60 * 1000; 
 
-function calculateCooldown(score, total) { return 10 * 60 * 1000; } // 簡化版
-function formatTimeLeft(ms) { 
-    const h = Math.floor(ms/3600000).toString().padStart(2,'0');
-    const m = Math.floor((ms%3600000)/60000).toString().padStart(2,'0');
-    return `${h}:${m}`;
+    // 2. 計算答對率 (例如 20/20 = 1.0, 16/20 = 0.8)
+    // 邏輯：錯越多 -> 分數越低 -> 比率越小 -> 冷卻時間越短
+    const ratio = score / total;
+
+    // 3. 回傳計算結果
+    // 例如：全對 = 36小時; 剛好及格(80%) = 28.8小時
+    return Math.floor(maxTime * ratio);
 }
 function exitAdventure() {
     if (adventureKey && adventureKey.startsWith('TOEFL')) showPage('page-dungeon-toefl-sub');
@@ -1154,4 +1178,27 @@ function findWordCN(word) {
     
     // 5. 真的找不到
     return null;
+}
+function showFinalResult(score) {
+    const modal = document.getElementById('modal-overlay');
+    const title = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+    
+    // 顯示遮罩
+    modal.style.display = 'block';
+
+    // 邏輯判斷
+    if (score >= 60) { // 假設 60 分及格
+        title.innerText = "🏆 挑戰成功！";
+        title.style.color = "green";
+        body.innerText = "恭喜你！你的分數是: " + score;
+    } else {
+        title.innerText = "💀 挑戰失敗...";
+        title.style.color = "red";
+        body.innerText = "很遺憾，你的分數是: " + score + "。請再接再厲！";
+    }
+}
+
+function closeModal() {
+    document.getElementById('modal-overlay').style.display = 'none';
 }
