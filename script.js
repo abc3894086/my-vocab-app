@@ -499,7 +499,14 @@ function loadQuestion(isGrammar = false) {
         }
     }
 
-    currentQuizData = { correct: correctAnswer, options: allOptions, audioWord: audioWord };
+   currentQuizData = {
+        correct: correctAnswer,
+        options: allOptions,
+        audioWord: audioWord,
+        cn: questionData.cn || "",
+        meanings: questionData.meanings || null 
+    };
+
     if (audioWord) preloadAudio(audioWord);
 
     allOptions.forEach((optionText, index) => {
@@ -512,20 +519,63 @@ function loadQuestion(isGrammar = false) {
 }
 
 function checkAnswer(selectedButton, isCorrect) {
+    // 1. 鎖定所有按鈕，不能再點
     document.querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
+    
     const resultTitle = document.getElementById('res-title');
     const resultDetail = document.getElementById('res-detail');
-    const qSubElement = document.getElementById('q-sub');
+    const qSubElement = document.getElementById('q-sub'); 
+
+    // ==========================================
+    // ★★★ 顯示中文 (已移除括號) ★★★
+    // ==========================================
+    
+    // A. 顯示題目中文
+    if (currentQuizData.cn && qSubElement) {
+        qSubElement.innerText = currentQuizData.cn;
+        qSubElement.style.display = 'block';
+        qSubElement.style.color = '#7f8c8d'; 
+        qSubElement.style.marginTop = '10px';
+        
+        qSubElement.style.opacity = '0';
+        qSubElement.style.transition = 'opacity 0.5s';
+        requestAnimationFrame(() => qSubElement.style.opacity = '1');
+    }
+
+    // B. 顯示選項中文
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        const parts = btn.innerText.split('. ');
+        if (parts.length > 1) {
+            const englishWord = parts[1].trim(); 
+            
+            let cnMeaning = null;
+            if (currentQuizData.meanings && currentQuizData.meanings[englishWord]) {
+                cnMeaning = currentQuizData.meanings[englishWord];
+            } else {
+                cnMeaning = findWordCN(englishWord);
+            }
+            
+            if (cnMeaning) {
+                // ★★★ 改這裡：原本是 `(${cnMeaning})`，現在把括號拿掉 ★★★
+                btn.innerHTML += ` <small class="opt-cn">${cnMeaning}</small>`;
+            }
+        }
+    });
+
+    // ==========================================
+    // 2. 判斷對錯與計分
+    // ==========================================
 
     if (isCorrect) {
         playSound('correct');
         selectedButton.classList.add('correct');
         score++;
+        
         setTimeout(() => { if (currentQuizData.audioWord) playQuizAudio(currentQuizData.audioWord); }, 50);
+        
         resultTitle.innerText = "✅ 恭喜答對！";
-        resultDetail.innerHTML = `答案：<b>${currentQuizData.correct}</b>`;
+        resultDetail.innerHTML = ""; 
 
-        // 錯題移除邏輯
         if (quizType === 'mistake') {
             const currentQ = currentList[currentIndex];
             const mistakeIndex = mistakeDB.findIndex(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
@@ -533,15 +583,11 @@ function checkAnswer(selectedButton, isCorrect) {
                 let newCount = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
                 mistakeDB[mistakeIndex].correct_count = newCount;
                 if (qSubElement) {
-                    qSubElement.style.display = 'block';
-                    if (newCount >= 3) {
-                        mistakeDB.splice(mistakeIndex, 1);
-                        qSubElement.innerText = "✨ 已精通！移出地牢 ✨";
-                        qSubElement.style.color = "#f1c40f";
-                    } else {
-                        qSubElement.innerText = `🔥 精通度: ${newCount} / 3`;
-                        qSubElement.style.color = "#27ae60";
-                    }
+                    const masteryText = newCount >= 3 ? "✨ 已精通！移出地牢 ✨" : `🔥 精通度: ${newCount} / 3`;
+                    const color = newCount >= 3 ? "#f1c40f" : "#27ae60";
+                    qSubElement.innerHTML += `<br><span style="color:${color}; font-weight:bold;">${masteryText}</span>`;
+                    
+                    if (newCount >= 3) mistakeDB.splice(mistakeIndex, 1);
                 }
                 saveGameData();
             }
@@ -549,11 +595,11 @@ function checkAnswer(selectedButton, isCorrect) {
     } else {
         playSound('wrong');
         selectedButton.classList.add('wrong');
+        
         document.querySelectorAll('.option-btn').forEach(btn => {
             if (btn.innerText.includes(currentQuizData.correct)) btn.classList.add('correct');
         });
 
-        // 錯題加入邏輯
         const currentQ = currentList[currentIndex];
         const isAlreadyInDB = mistakeDB.some(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
         if (!isAlreadyInDB) {
@@ -564,6 +610,7 @@ function checkAnswer(selectedButton, isCorrect) {
 
         resultTitle.innerText = "❌ 答錯了！";
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
+        
         if (currentQuizData.audioWord) setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
     }
 
@@ -571,13 +618,20 @@ function checkAnswer(selectedButton, isCorrect) {
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('result-popup').classList.add('show');
 }
-
 function nextQuestion() {
     currentIndex++;
     document.getElementById('result-popup').classList.remove('show');
     document.getElementById('float-next-btn').classList.remove('show');
     if (isAdventureMode) loadDungeonQuestion();
     else loadQuestion(quizType === 'grammar');
+}
+
+function hideResultPopup() {
+    // 1. 隱藏結果視窗
+    document.getElementById('result-popup').classList.remove('show');
+    
+    // 2. 顯示右下角的「浮動下一題」按鈕 (不然你會卡住沒辦法去下一題)
+    document.getElementById('float-next-btn').classList.add('show');
 }
 
 // ==========================================
@@ -1072,3 +1126,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('touchend', endTouch, { passive: true });
     document.body.addEventListener('touchcancel', endTouch, { passive: true });
 });
+// ==========================================
+// ★★★ 補上遺失的小工具：全域單字搜尋 (查中文) ★★★
+// ==========================================
+function findWordCN(word) {
+    // 1. 基本防呆
+    if (!word || typeof vocabDB === 'undefined') return null;
+    
+    // 2. 判斷是不是中文 (如果是中文選項，就不用查了)
+    // 這一行可以避免程式拿著「蘋果」去英文單字庫裡找，浪費效能
+    if (/[\u4e00-\u9fa5]/.test(word)) return null;
+
+    // 3. 找 TOEIC 資料庫
+    if (vocabDB['TOEIC']) {
+        const found = vocabDB['TOEIC'].find(w => w.en === word);
+        if (found && found.details) return found.details[0].cn;
+    }
+    
+    // 4. 找 TOEFL 資料庫 (遍歷所有分類)
+    if (vocabDB['TOEFL']) {
+        for (const catKey in vocabDB['TOEFL']) {
+            const list = vocabDB['TOEFL'][catKey];
+            const found = list.find(w => w.en === word);
+            if (found && found.details) return found.details[0].cn;
+        }
+    }
+    
+    // 5. 真的找不到
+    return null;
+}

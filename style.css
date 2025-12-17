@@ -978,24 +978,44 @@ flex-direction: column;
 
 /* 修改選項按鈕：淺色框框風格 */
 .option-btn {
-    background: #ffffff; /* 純白背景 */
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    color: #555;
     
-    /* === ★★★ 核心修改：淺淺的框框 ★★★ === */
-    border: 2px solid #e0e0e0; /* 淺灰色邊框 */
-    color: #555; /* 字體深灰 */
+    /* === ★★★ 核心修改開始 ★★★ === */
+    display: flex;          
+    flex-direction: row;    /* 改回水平排列 (預設) */
+    flex-wrap: wrap;        /* ★ 關鍵：空間不夠時自動折行 */
+    align-items: baseline;  /* 讓英文跟中文底部對齊 */
+    justify-content: flex-start;
     
-    padding: 15px 20px;
-    border-radius: 15px; /* 圓潤一點 */
+    height: auto;           
+    min-height: 55px;       
+    
+    padding: 12px 15px;
+    /* === ★★★ 核心修改結束 ★★★ === */
+
+    border-radius: 15px;
     font-size: 1.1rem;
     font-weight: 700;
-    text-align: left;
     cursor: pointer;
-    line-height: 1.4;
+    line-height: 1.4;       
     transition: all 0.2s;
-    box-shadow: 0 4px 0 #eee; /* 淺淺的立體感 */
-    
-    /* 移除之前的文字描邊 */
+    box-shadow: 0 4px 0 #eee;
     text-shadow: none !important;
+    word-break: break-word; 
+}
+.opt-cn {
+    font-size: 0.9rem;      /* 字體小一點 */
+    color: #e67e22;         /* 橘色字 */
+    font-weight: bold;      /* 加粗 */
+    margin-left: 8px;       /* 讓它跟英文之間有點距離 */
+    
+    /* 確保如果折行後，不會黏得太緊 */
+    margin-top: 2px;
+    
+    /* 稍微透明一點 */
+    opacity: 0.9;
 }
 
 /* 按下時的效果 */
@@ -1603,9 +1623,9 @@ flex-direction: column;
 /* 2. 【大按鈕專區】選單按鈕 & 模式卡片 */
 .menu-btn, .mode-card {
     width: 90%;       /* 寬度佔滿 90% */
-    height: 90px;     /* 高度固定 90px */
+    height: 70px;     /* 高度固定 90px */
     padding: 0 20px;  /* 內距 */
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     font-size: 1.8rem; /* 字體大一點 */
 }
 
@@ -1625,7 +1645,7 @@ flex-direction: column;
     
     /* [↓ 修改 4] 位置調整：往下移 (增加上面的距離) */
     margin-top: 35px;    /* 原本 20px，數字越大越往下 */
-    margin-bottom: 20px; /* 保持跟下面按鈕的距離 */
+    margin-bottom: 30px; /* 保持跟下面按鈕的距離 */
     
     /* [↓ 修改 5] 字體改小，比較秀氣 */
     font-size: 1.2rem; /* 原本 1.4rem */
