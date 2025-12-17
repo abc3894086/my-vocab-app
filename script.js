@@ -881,16 +881,21 @@ if (typeof auth !== 'undefined') {
         if (user) {
             // === 登入成功狀態 ===
             currentUser = user;
-            console.log("偵測到使用者:", user.displayName);
-
-            // 把按鈕改成「登出」的樣子
+            
+            // 把按鈕文字改成「登出」
             if (authText) authText.innerText = `登出 (${user.displayName || '勇者'})`;
             if (authIcon) authIcon.className = 'fas fa-sign-out-alt';
             
             // 點擊行為改成登出
             if (loginBtn) {
                 loginBtn.onclick = googleLogout;
-                loginBtn.style.background = "#bdc3c7"; // 稍微變灰，區分狀態
+                
+                // ★★★ 關鍵修正：刪除下面這行，不要讓它變灰色！ ★★★
+                // loginBtn.style.background = "#bdc3c7"; 
+                
+                // 讓它保持原本 CSS 設定的金色框框 (gold-frame.png)
+                // 如果你想讓登出按鈕稍微不一樣，可以用濾鏡 (選填)
+                // loginBtn.style.filter = "hue-rotate(180deg)"; // 這樣會變成藍色框框
             }
 
             // 開始同步資料
@@ -905,12 +910,14 @@ if (typeof auth !== 'undefined') {
             
             if (loginBtn) {
                 loginBtn.onclick = googleLogin;
-                loginBtn.style.background = ""; // 恢復原色
+                
+                // 清除可能被設定過的樣式，回復預設
+                loginBtn.style.background = ""; 
+                loginBtn.style.filter = "";
             }
         }
     });
 }
-
 // 6. 檢查雲端存檔
 function checkCloudSave(user) {
     console.log("☁️ 檢查雲端...");
