@@ -385,6 +385,9 @@ function startQuizSetup(type) {
 }
 
 function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) {
+    isAdventureMode = false; 
+
+    // 👇 以下是你原本的程式碼，完全保留原樣 👇
     if (currentList.length === 0) { alert(`本次測驗無題目！`); exitPractice(); return; }
     quizTotal = totalCount;
     currentIndex = 0;
@@ -519,17 +522,13 @@ function loadQuestion(isGrammar = false) {
 }
 
 function checkAnswer(selectedButton, isCorrect) {
-    // 1. 鎖定所有按鈕，不能再點
+    // 1. 鎖定按鈕
     document.querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
     
     const resultTitle = document.getElementById('res-title');
     const resultDetail = document.getElementById('res-detail');
     const qSubElement = document.getElementById('q-sub'); 
 
-    // ==========================================
-    // ★★★ 顯示中文 (已移除括號) ★★★
-    // ==========================================
-    
     // A. 顯示題目中文
     if (currentQuizData.cn && qSubElement) {
         qSubElement.innerText = currentQuizData.cn;
@@ -547,66 +546,74 @@ function checkAnswer(selectedButton, isCorrect) {
         const parts = btn.innerText.split('. ');
         if (parts.length > 1) {
             const englishWord = parts[1].trim(); 
-            
-            let cnMeaning = null;
-            if (currentQuizData.meanings && currentQuizData.meanings[englishWord]) {
-                cnMeaning = currentQuizData.meanings[englishWord];
-            } else {
-                cnMeaning = findWordCN(englishWord);
-            }
-            
+            let cnMeaning = (currentQuizData.meanings && currentQuizData.meanings[englishWord]) 
+                            ? currentQuizData.meanings[englishWord] 
+                            : findWordCN(englishWord);
             if (cnMeaning) {
-                // ★★★ 改這裡：原本是 `(${cnMeaning})`，現在把括號拿掉 ★★★
                 btn.innerHTML += ` <small class="opt-cn">${cnMeaning}</small>`;
             }
         }
     });
 
-    // ==========================================
-    // 2. 判斷對錯與計分
-    // ==========================================
-
+    // 2. 判斷對錯
     if (isCorrect) {
         playSound('correct');
         selectedButton.classList.add('correct');
         score++;
         
-        setTimeout(() => { if (currentQuizData.audioWord) playQuizAudio(currentQuizData.audioWord); }, 50);
+        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 50);
         
         resultTitle.innerText = "✅ 恭喜答對！";
         resultDetail.innerHTML = ""; 
 
+        // ★★★ 錯題地牢邏輯 (保留精通度顯示，移除按鈕) ★★★
         if (quizType === 'mistake') {
-            const currentQ = currentList[currentIndex];
-            const mistakeIndex = mistakeDB.findIndex(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
-            if (mistakeIndex !== -1) {
-                let newCount = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
-                mistakeDB[mistakeIndex].correct_count = newCount;
-                if (qSubElement) {
+            try {
+                const currentQ = currentList[currentIndex];
+                const mistakeIndex = mistakeDB.findIndex(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
+                
+                if (mistakeIndex !== -1) {
+                    let newCount = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
+                    mistakeDB[mistakeIndex].correct_count = newCount;
+
                     const masteryText = newCount >= 3 ? "✨ 已精通！移出地牢 ✨" : `🔥 精通度: ${newCount} / 3`;
                     const color = newCount >= 3 ? "#f1c40f" : "#27ae60";
-                    qSubElement.innerHTML += `<br><span style="color:${color}; font-weight:bold;">${masteryText}</span>`;
+                    const masteryHTML = `<br><span style="color:${color}; font-weight:bold;">${masteryText}</span>`;
+
+                    // 顯示在題目下方
+                    if (qSubElement) {
+                        qSubElement.style.display = 'block'; 
+                        qSubElement.style.opacity = '1';     
+                        qSubElement.innerHTML += masteryHTML;
+                    }
+                    
+                    // 顯示在彈窗內
+                    if (resultDetail) {
+                        resultDetail.innerHTML = masteryHTML;
+                    }
                     
                     if (newCount >= 3) mistakeDB.splice(mistakeIndex, 1);
+                    saveGameData();
                 }
-                saveGameData();
-            }
+            } catch (e) { console.error(e); }
         }
     } else {
         playSound('wrong');
         selectedButton.classList.add('wrong');
-        
         document.querySelectorAll('.option-btn').forEach(btn => {
             if (btn.innerText.includes(currentQuizData.correct)) btn.classList.add('correct');
         });
 
-        const currentQ = currentList[currentIndex];
-        const isAlreadyInDB = mistakeDB.some(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
-        if (!isAlreadyInDB) {
-            const newMistake = { ...currentQ, correct_count: 0 };
-            mistakeDB.push(newMistake);
-            saveGameData();
-        }
+        // 錯題紀錄
+        try {
+            const currentQ = currentList[currentIndex];
+            const isAlreadyInDB = mistakeDB.some(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
+            if (!isAlreadyInDB) {
+                const newMistake = { ...currentQ, correct_count: 0 };
+                mistakeDB.push(newMistake);
+                saveGameData();
+            }
+        } catch(e) {}
 
         resultTitle.innerText = "❌ 答錯了！";
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
@@ -614,16 +621,10 @@ function checkAnswer(selectedButton, isCorrect) {
         if (currentQuizData.audioWord) setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
     }
 
+    // 顯示結果視窗
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('result-popup').classList.add('show');
-}
-function nextQuestion() {
-    currentIndex++;
-    document.getElementById('result-popup').classList.remove('show');
-    document.getElementById('float-next-btn').classList.remove('show');
-    if (isAdventureMode) loadDungeonQuestion();
-    else loadQuestion(quizType === 'grammar');
 }
 
 function hideResultPopup() {
@@ -688,47 +689,111 @@ function showDungeonSubMenu() {
     showPage('page-dungeon-toefl-sub');
 }
 
+// ==========================================
 function openDungeonMap(mainCat, subCat = null) {
     if (typeof vocabDB === 'undefined') return;
+
+    // 取得原始資料
     let rawData, saveKey;
-    if (mainCat === 'TOEIC') { rawData = vocabDB['TOEIC']; saveKey = 'TOEIC'; adventureKey = 'TOEIC'; }
-    else { rawData = vocabDB['TOEFL'][subCat]; saveKey = `TOEFL_${subCat}`; adventureKey = saveKey; }
+    if (mainCat === 'TOEIC') { 
+        rawData = vocabDB['TOEIC']; 
+        saveKey = 'TOEIC'; 
+        adventureKey = 'TOEIC'; 
+    } else { 
+        rawData = vocabDB['TOEFL'][subCat]; 
+        saveKey = `TOEFL_${subCat}`; 
+        adventureKey = saveKey; 
+    }
     
     if (!rawData || rawData.length === 0) { alert("此區域無資料！"); return; }
+    
+    // ★★★ 關鍵：使用固定雜湊排序打亂資料 ★★★
+    // 這樣每次進來，順序都是亂的，但永遠固定不變
+    const shuffledData = pseudoShuffle(rawData);
+
     document.getElementById('adv-title').innerText = `地圖: ${subCat || mainCat}`;
 
     const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
     const unlockedIndex = Number(allProgress[saveKey] || 0);
     const masteryData = JSON.parse(localStorage.getItem(`vocabRPG_mastery_${saveKey}`)) || {};
-    const totalLevels = Math.ceil(rawData.length / 10);
+    
+    // 使用打亂後的長度計算關卡數
+    const totalLevels = Math.ceil(shuffledData.length / 10);
     const grid = document.getElementById('adventure-grid');
     grid.innerHTML = '';
 
     for (let i = 0; i < totalLevels; i++) {
         const node = document.createElement('div');
         node.className = 'level-node';
+        
+        // 取得該關卡的紀錄
+        const record = masteryData[i] || { nextPlay: 0, count: 0 };
+        
+        // 判斷鎖定
         if (i > unlockedIndex) {
             node.classList.add('locked');
             grid.appendChild(node);
             continue;
         }
-        const record = masteryData[i] || { nextPlay: 0, count: 0 };
+
+        const starHtml = `<div class="star-container">${getStarHtml(record.count)}</div>`;
         const now = Date.now();
         const timeLeft = record.nextPlay - now;
+
+        // ★★★ 這裡傳入 shuffledData 給戰鬥系統 ★★★
         if (record.count >= 5) {
             node.classList.add('mastered');
-            node.onclick = () => startDungeonBattle(rawData, i);
+            node.innerHTML = starHtml; 
+            node.onclick = () => startDungeonBattle(shuffledData, i);
         } else if (timeLeft > 0) {
             node.classList.add('cooldown');
-            node.innerHTML = `<span class="level-num" style="font-size:1rem">${formatTimeLeft(timeLeft)}</span>`;
+            node.innerHTML = `${starHtml}<span class="level-num" style="font-size:1rem">${formatTimeLeft(timeLeft)}</span>`;
             node.onclick = () => alert(`⏳ 還需等待 ${formatTimeLeft(timeLeft)}`);
         } else {
             node.classList.add('ready');
-            node.onclick = () => startDungeonBattle(rawData, i);
+            node.innerHTML = starHtml;
+            node.onclick = () => startDungeonBattle(shuffledData, i);
         }
+        
         grid.appendChild(node);
     }
     showPage('page-adventure');
+}
+
+// ==========================================
+// 2. 固定亂數排序器 (這兩個函式請放在 script.js 裡面)
+// ==========================================
+function pseudoShuffle(array) {
+    // 複製一份陣列，避免改壞原始資料庫
+    const copy = [...array];
+    
+    // 使用 sort 進行排序
+    copy.sort((a, b) => {
+        // 取得單字的英文作為排序種子 (轉小寫避免大小寫差異)
+        const wordA = (a.en || a.q || "").toLowerCase();
+        const wordB = (b.en || b.q || "").toLowerCase();
+        
+        // 算出雜湊值 (Hash Code)
+        const hashA = stringHashCode(wordA);
+        const hashB = stringHashCode(wordB);
+        
+        // 根據數字大小排序 -> 達成「亂序但固定」的效果
+        return hashA - hashB;
+    });
+
+    return copy;
+}
+
+// 將字串轉換為數字的演算法
+function stringHashCode(str) {
+    let hash = 0;
+    if (str.length === 0) return hash;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
 }
 
 function startDungeonBattle(allWords, levelIndex) {
@@ -815,61 +880,82 @@ function checkDungeonAnswer(btn, isCorrect) {
 }
 
 function finishDungeon() {
-    const passThreshold = Math.ceil(quizTotal * 0.8); // 及格線 (20題 * 0.8 = 16題)
+    const passThreshold = Math.ceil(quizTotal * 0.8); // 及格門檻
     const isPassed = score >= passThreshold;
     
-    let msg = isPassed ? "🎉 挑戰成功！" : "💀 挑戰失敗...";
-    
-    // 1. 處理通關解鎖
+    // 1. 準備彈窗內容 (不使用 alert，改用 HTML)
+    let titleText = isPassed ? "🏆 挑戰成功！" : "💀 挑戰失敗...";
+    let bodyText = `得分：${score} / ${quizTotal}`;
+    let titleColor = isPassed ? "green" : "red";
+
+    // 2. 處理通關解鎖邏輯
     if (isPassed) {
         playSound('correct');
         const allProgress = JSON.parse(localStorage.getItem('vocabRPG_dungeon_progress')) || {};
         const currentUnlocked = Number(allProgress[adventureKey] || 0);
         
-        // 如果目前打的這關 = 目前解鎖到的最大關卡，就解鎖下一關
         if (Number(adventureLevelIndex) === currentUnlocked) {
             allProgress[adventureKey] = currentUnlocked + 1;
             localStorage.setItem('vocabRPG_dungeon_progress', JSON.stringify(allProgress));
-            msg += "\n🎉 下一層已解鎖！";
+            bodyText += "<br><br>🎉 恭喜！<b>下一層已解鎖！</b>";
             scheduleCloudSave();
         }
     } else {
         playSound('wrong');
-        msg += "\n(請再接再厲，失敗不扣次數，可立即重試)";
+        bodyText += "<br><br>(失敗不扣次數，請再接再厲)";
     }
 
-    // 2. 處理精通度與冷卻 (SRS 核心邏輯)
+    // 3. 處理精通度與冷卻 (SRS)
     const masteryKey = `vocabRPG_mastery_${adventureKey}`;
     let masteryData = JSON.parse(localStorage.getItem(masteryKey)) || {};
     let record = masteryData[adventureLevelIndex] || { nextPlay: 0, count: 0 };
 
     if (isPassed) {
-        // ★ 只有通關才增加精通度
         record.count = (record.count || 0) + 1;
-        
         if (record.count >= 5) {
-            record.nextPlay = 0; // 已精通，永久解鎖
-            msg += "\n👑 已精通！該關卡將永久開放！";
+            record.nextPlay = 0;
+            bodyText += "<br>👑 <b style='color:#f1c40f'>已精通！此關卡永久開放。</b>";
         } else {
-            // ★ 只有通關才計算冷卻 (答越好等越久)
             const cooldown = calculateCooldown(score, quizTotal);
             record.nextPlay = Date.now() + cooldown;
-            msg += `\n⏳ 下次挑戰：${formatTimeLeft(cooldown)} 後`;
+            bodyText += `<br>⏳ 下次挑戰冷卻：${formatTimeLeft(cooldown)}`;
         }
-    } else {
-        // ★ 失敗了：不設冷卻，讓他可以馬上重打
-        // 保持原本的 nextPlay (如果有舊紀錄) 或是 0 (如果第一次打)
-        // 這裡不做任何 nextPlay 的改動，意味著如果原本是開放的，現在還是開放
     }
-
+    
     // 存檔
     masteryData[adventureLevelIndex] = record;
     localStorage.setItem(masteryKey, JSON.stringify(masteryData));
     scheduleCloudSave();
 
-    alert(msg);
-    // 重新載入地圖
-    openDungeonMap(adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', adventureKey.includes('_') ? adventureKey.split('_')[1] : null);
+    // 4. ★★★ 顯示彈窗並設定「離開行為」 ★★★
+    const modal = document.getElementById('modal-overlay');
+    const mTitle = document.getElementById('modal-title');
+    const mBody = document.getElementById('modal-body');
+    // 嘗試抓取彈窗裡的關閉按鈕，假設你的 HTML 裡按鈕是唯一的 button 或最後一個
+    const mBtn = modal.querySelector('button'); 
+
+    if (mTitle) {
+        mTitle.innerText = titleText;
+        mTitle.style.color = titleColor;
+    }
+    if (mBody) mBody.innerHTML = bodyText;
+    
+    if (modal) modal.style.display = 'flex';
+
+    // 重要：重新定義「關閉按鈕」的行為
+    // 當在地城結算按關閉時，要執行「回到地圖」
+    if (mBtn) {
+        mBtn.onclick = function() {
+            modal.style.display = 'none';
+            // 恢復按鈕預設行為 (避免影響其他模式)
+            mBtn.onclick = closeModal; 
+            // 回到地圖
+            openDungeonMap(
+                adventureKey.includes('TOEIC') ? 'TOEIC' : 'TOEFL', 
+                adventureKey.includes('_') ? adventureKey.split('_')[1] : null
+            );
+        };
+    }
 }
 function calculateCooldown(score, total) {
     // 1. 設定最大冷卻時間：36 小時 (毫秒)
@@ -1046,10 +1132,17 @@ function saveToCloud() {
 }
 
 // 8. ★★★ 修正：下載並合併 (解決 localF error) ★★★
+// 📥 讀取雲端存檔並合併 (強力修復版：解決進度鎖死問題)
 function loadFromCloud(cloudData) {
     if (!cloudData) return;
 
     console.log("📥 開始處理雲端資料...");
+
+    // Helper: 強制轉為整數，如果失敗則回傳 0 (防止 NaN 導致關卡鎖死)
+    const safeInt = (val) => {
+        const n = parseInt(val, 10);
+        return isNaN(n) ? 0 : n;
+    };
 
     // 1. 合併錯題 (聯集)
     const localM = Array.isArray(mistakeDB) ? mistakeDB : [];
@@ -1066,7 +1159,6 @@ function loadFromCloud(cloudData) {
     // 2. 合併最愛 (聯集)
     const localF = _lsGetJSON('vocabPro_favorites', []) || [];
     const cloudF = cloudData.favorites || [];
-    // 安全合併
     const safeLocalF = Array.isArray(localF) ? localF : [];
     const safeCloudF = Array.isArray(cloudF) ? cloudF : [];
     const fOut = new Map();
@@ -1076,39 +1168,44 @@ function loadFromCloud(cloudData) {
     _lsSetJSON('vocabPro_favorites', Array.from(fOut.values()));
 
     // 3. 合併地城進度 (取最大值)
+    // ★★★ 修正重點：使用 Set 抓出所有 Key (本地+雲端)，確保壞掉的本地資料也會被修復 ★★★
     const localP = _lsGetJSON('vocabRPG_dungeon_progress', {}) || {};
     const cloudP = cloudData.dungeonProgress || {};
-    const mergedP = { ...localP };
-    Object.keys(cloudP).forEach(k => {
-        mergedP[k] = Math.max(Number(localP[k]||0), Number(cloudP[k]||0));
+    
+    // 建立所有進度 Key 的清單 (包含 TOEIC, TOEFL_Biology 等)
+    const allKeys = new Set([...Object.keys(localP), ...Object.keys(cloudP)]);
+    const mergedP = {};
+
+    allKeys.forEach(k => {
+        // 確保兩邊都是有效數字，如果有 NaN 就會變成 0
+        const valL = safeInt(localP[k]);
+        const valC = safeInt(cloudP[k]);
+        mergedP[k] = Math.max(valL, valC);
     });
     _lsSetJSON('vocabRPG_dungeon_progress', mergedP);
 
     // 4. 合併每日數據 (取最大值)
     const localD = _lsGetJSON('vocabRPG_daily_activity', {}) || {};
     const cloudD = cloudData.dailyActivity || {};
-    const mergedD = { ...localD };
-    Object.keys(cloudD).forEach(k => {
-        mergedD[k] = Math.max(Number(localD[k]||0), Number(cloudD[k]||0));
+    const allDailyKeys = new Set([...Object.keys(localD), ...Object.keys(cloudD)]);
+    const mergedD = {};
+    
+    allDailyKeys.forEach(k => {
+        mergedD[k] = Math.max(safeInt(localD[k]), safeInt(cloudD[k]));
     });
     _lsSetJSON('vocabRPG_daily_activity', mergedD);
 
     // 5. 合併 SRS 精通資料 (Mastery)
-    // 這裡需要先把本地所有的 mastery key 抓出來，再跟雲端比對
-    // (這部分如果原本沒有寫，建議加上去，不然 SRS 進度不會同步)
     const cloudMastery = cloudData.masteryByKey || {};
-    // 還原雲端的 mastery 到本地
     Object.keys(cloudMastery).forEach(key => {
         const localKey = `vocabRPG_mastery_${key}`;
         const localVal = _lsGetJSON(localKey, {}) || {};
         const cloudVal = cloudMastery[key] || {};
         
-        // 合併單個副本的每一關紀錄
         const mergedVal = { ...localVal };
         Object.keys(cloudVal).forEach(lvl => {
             const lRec = localVal[lvl] || { count: 0, nextPlay: 0 };
             const cRec = cloudVal[lvl] || { count: 0, nextPlay: 0 };
-            // 取次數多的為準
             if (cRec.count > lRec.count) {
                 mergedVal[lvl] = cRec;
             }
@@ -1118,17 +1215,16 @@ function loadFromCloud(cloudData) {
 
     console.log("✅ 雲端資料合併完成");
 
-    // ★★★ 核心修改：跳出通知並重新整理頁面 ★★★
-    // 只有當使用者第一次登入觸發同步時才重整，避免無限迴圈
-    // 我們可以用 sessionStorage 做個簡單標記
+    // 重整頁面邏輯
     if (!sessionStorage.getItem('just_synced')) {
         sessionStorage.setItem('just_synced', 'true');
         alert("📥 雲端進度同步完成！即將更新畫面...");
-        location.reload(); // <--- 這行會讓網頁重新整理，你的進度就會出現了！
+        location.reload(); 
     } else {
         sessionStorage.removeItem('just_synced');
     }
 }
+
 // ==========================================
 // 10. 手機觸控優化
 // ==========================================
@@ -1201,4 +1297,71 @@ function showFinalResult(score) {
 
 function closeModal() {
     document.getElementById('modal-overlay').style.display = 'none';
+}
+function formatTimeLeft(ms) {
+    if (ms <= 0) return "00:00:00";
+    
+    // 計算時、分、秒
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 60 * 60)));
+
+    // 補零 (例如 5 -> 05)
+    const pad = (n) => n < 10 ? '0' + n : n;
+    
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+function nextQuestion() {
+    // 1. 隱藏結果彈窗與浮動按鈕
+    const resultPopup = document.getElementById('result-popup');
+    const floatBtn = document.getElementById('float-next-btn');
+    
+    if (resultPopup) resultPopup.classList.remove('show');
+    if (floatBtn) floatBtn.classList.remove('show');
+
+    // 2. 題號 +1
+    currentIndex++;
+
+    // 3. 判斷現在是「地城副本」還是「一般測驗」
+    if (isAdventureMode) {
+        // --- 地城模式 ---
+        // 直接呼叫 loadDungeonQuestion，它內部會自己判斷「題目沒了就結算」
+        loadDungeonQuestion();
+    } else {
+        // --- 一般模式 (單字/填空/文法/錯題) ---
+        // 判斷是否為文法題 (因為 loadQuestion 需要這個參數)
+        const isGrammar = (quizType === 'grammar');
+        loadQuestion(isGrammar);
+    }
+}
+function getStarHtml(count) {
+    // 如果沒有通關紀錄，或次數為 0，回傳空字串
+    if (!count || count <= 0) return '';
+
+    // 如果通關 5 次 (含) 以上，回傳一顆大星星
+    if (count >= 5) {
+        return '<span class="star-big">★</span>';
+    }
+
+    // 如果通關 1~4 次，回傳對應數量的小星星
+    let stars = '';
+    for (let i = 0; i < count; i++) {
+        stars += '<span class="star-small">★</span>';
+    }
+    return stars;
+}
+function getStarHtml(count) {
+    if (!count || count <= 0) return '';
+    
+    // 如果通關 5 次以上，顯示一顆大星星
+    if (count >= 5) {
+        return '<div class="star-big">★</div>';
+    }
+    
+    // 否則顯示對應數量的小星星
+    let stars = '';
+    for (let i = 0; i < count; i++) {
+        stars += '<span class="star-small">★</span>';
+    }
+    return stars;
 }

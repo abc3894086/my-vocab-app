@@ -438,136 +438,62 @@ flex-direction: column;
 .scroll-list::-webkit-scrollbar {
     display: none;
 }
-/* ========================================= */
-/* 7. 每日登入與寶箱樣式 (修正版) */
-/* ========================================= */
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* 背景改深一點，更有沉浸感 */
-    z-index: 2000; /* 確保在最上層 */
-    
-    /* ★★★ 修正重點：預設隱藏，由 JS 控制 display: flex ★★★ */
-    display: none; 
-    
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px); /* 讓背後的遊戲畫面模糊，質感加分 */
-}
-
-.bonus-box {
-    background: #fffcf5;
-    width: 85%;
-    max-width: 350px;
-    border-radius: 20px;
-    padding: 25px;
-    text-align: center;
-    border: 4px solid #8b5e3c;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-    position: relative;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-.bonus-box h2 {
-    color: #d35400;
-    margin-top: 0;
-    font-size: 1.8rem;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
-}
-
-.chest-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-.chest-btn {
-    font-size: 3.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s;
-    position: relative;
-    filter: drop-shadow(0 4px 0 #8b5e3c);
-    
-    /* 讓寶箱輕輕搖晃 */
-    animation: chestShake 3s infinite;
-}
-
-/* 每個寶箱搖晃時間錯開，看起來比較自然 */
-.chest-btn:nth-child(1) { animation-delay: 0s; }
-.chest-btn:nth-child(2) { animation-delay: 0.2s; }
-.chest-btn:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes chestShake {
-    0%, 100% { transform: rotate(0deg); }
-    90% { transform: rotate(0deg); }
-    92% { transform: rotate(-10deg); }
-    94% { transform: rotate(10deg); }
-    96% { transform: rotate(-10deg); }
-    98% { transform: rotate(10deg); }
-}
-
-.chest-btn:active {
-    transform: scale(0.9) !important;
-}
-
-/* 已開啟狀態 */
-.chest-btn.opened {
-    filter: grayscale(1) opacity(0.6);
-    pointer-events: none;
-    animation: none; /* 開啟後停止搖晃 */
-}
-
-/* 飄出的獎勵文字 */
-.chest-reward {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    
-    background: #f1c40f;
-    color: #2c3e50;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 900;
-    border: 2px solid #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    
-    opacity: 0;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 10;
-    
-    /* 這裡只定義初始狀態，JS 會觸發 CSS class 來改變它，
-       或者我們直接依賴 .opened 狀態 */
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* 當寶箱被加上 opened class 時，裡面的 reward 就會飛上去 */
-.chest-btn.opened .chest-reward {
-    opacity: 1;
-    top: -40px; /* 往上飛 */
-    transform: translate(-50%, 0) scale(1.2);
-}
 .flip-card {
     width: 100%;
     height: 100%;
     perspective: 1000px;
     cursor: pointer;
 }
+.modal-overlay {
+    /* 關鍵修改：改成 absolute，讓它只在 app-container 裡面定位 */
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
 
+    /* 確保遮罩的角落也跟手機殼一樣圓圓的 */
+    border-radius: 20px; 
+}
+
+/* 彈窗本體 */
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 彈窗按鈕 */
+.modal-btn {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+/* 彈窗出現動畫 */
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 .flip-card-inner {
     position: relative;
     width: 100%;
@@ -1669,4 +1595,57 @@ flex-direction: column;
 
 .menu-btn:active, .mode-card:active, .rpg-login-btn:active {
     transform: scale(0.98);
+}
+.star-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px; /* 讓星星跟文字有點距離 */
+    height: 20px;       /* 固定高度，避免沒有星星時版面跳動 */
+}
+
+/* 1. 確保關卡方塊是定位基準點 */
+.level-node {
+    position: relative; /* 關鍵！讓裡面的星星以此為邊界 */
+    /* 其他原本的 width, height, background 設定保持不變 */
+}
+
+/* 星星容器：基礎設定 */
+.star-container {
+    /* --- 1. 定位設定 (保留原本的，確保位置還是在方塊正中間) --- */
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: 20;
+    pointer-events: none;
+
+    /* --- 2. 排列設定 (改成剛剛測試的風格) --- */
+    display: flex;
+    justify-content: center; /* 關鍵：不再分靠左或靠右，全部強制置中 */
+    align-items: center;     /* 垂直置中 */
+    gap: 5px;                /* 關鍵：星星之間的空隙，這裡控制間距 */
+}
+
+/* --- 3. 星星共用樣式 --- */
+/* 不管是大星星還是小星星，都要移除原本的 margin，改用上面的 gap 控制 */
+.star-small, .star-big {
+    margin-right: 0;         /* 歸零，避免間距不平均 */
+    line-height: 1;          /* 修正垂直高度 */
+}
+
+/* 小星星樣式 (保留顏色大小) */
+.star-small {
+    color: #ffd700;
+    font-size: 14px;
+    text-shadow: 0 0 3px #000, 0 0 1px #000;
+}
+
+/* 大星星樣式 (保留顏色大小與動畫) */
+.star-big {
+    color: #ff4500;
+    font-size: 30px;
+    text-shadow: 0 0 5px #ffd700, 0 0 2px #000;
+    animation: pulseStar 1.5s infinite;
 }
