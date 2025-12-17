@@ -811,87 +811,135 @@ function exitAdventure() {
 }
 
 // ==========================================
-// 9. Firebase 雲端功能 (整理版)
+// 9. Firebase 雲端功能 (防呆修正版)
 // ==========================================
 
+// 1. 強化版 JSON 解析 (防止 null 導致當機)
 function _safeParseJSON(str, fallback) {
-    if (str === null) return fallback; // ★ 關鍵修正：如果是 null，直接回傳預設值
+    if (!str || str === "null" || str === "undefined") return fallback;
     try {
         const result = JSON.parse(str);
-        return result === null ? fallback : result; // 確保解析出來不是 null
+        return result === null ? fallback : result;
     } catch (e) {
         return fallback;
     }
 }
-function _lsGetJSON(key, fallback) { return _safeParseJSON(localStorage.getItem(key), fallback); }
-function _lsSetJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
+function _lsGetJSON(key, fallback) {
+    return _safeParseJSON(localStorage.getItem(key), fallback);
+}
+
+function _lsSetJSON(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+// 2. 登入函式
 function googleLogin() {
     if (typeof auth === 'undefined') {
-        alert("Firebase 尚未載入，請檢查 index.html 設定。");
+        alert("Firebase 尚未載入，請檢查網路連線或 index.html 設定。");
         return;
     }
     auth.signInWithPopup(provider)
-        .then((result) => { console.log("登入成功", result.user); })
-        .catch((error) => { console.error(error); alert("登入失敗: " + error.message); });
+        .then((result) => {
+            console.log("登入成功", result.user);
+            // 登入後不需要做什麼，onAuthStateChanged 會自動處理
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("登入失敗: " + error.message);
+        });
 }
 
+// 3. 登出函式
 function googleLogout() {
-    if (typeof auth !== 'undefined') auth.signOut().then(() => location.reload());
+    if (typeof auth !== 'undefined') {
+        auth.signOut().then(() => {
+            alert("已登出");
+            location.reload();
+        });
+    }
 }
 
+// 4. 背景存檔排程
 let __cloudSaveTimer = null;
 function scheduleCloudSave(delayMs = 600) {
     if (!currentUser) return;
     clearTimeout(__cloudSaveTimer);
-    __cloudSaveTimer = setTimeout(() => { try { saveToCloud(); } catch (e) {} }, delayMs);
+    __cloudSaveTimer = setTimeout(() => {
+        try { saveToCloud(); } catch (e) { console.error("背景存檔失敗", e); }
+    }, delayMs);
 }
 
-// 監聽登入狀態
+// 5. ★★★ 修正：監聽登入狀態並更新按鈕 ★★★
 if (typeof auth !== 'undefined') {
     auth.onAuthStateChanged((user) => {
-        const loginUI = document.getElementById('login-ui');
-        const userUI = document.getElementById('user-ui');
-        const userName = document.getElementById('user-name');
+        // 抓取你的 HTML 裡原本就有的按鈕元件
+        const loginBtn = document.getElementById('rpg-auth-btn');
+        const authText = document.getElementById('auth-text');
+        const authIcon = document.getElementById('auth-icon');
+
         if (user) {
+            // === 登入成功狀態 ===
             currentUser = user;
-            if (loginUI) loginUI.style.display = 'none';
-            if (userUI) userUI.style.display = 'block';
-            if (userName) userName.innerText = user.displayName;
+            console.log("偵測到使用者:", user.displayName);
+
+            // 把按鈕改成「登出」的樣子
+            if (authText) authText.innerText = `登出 (${user.displayName || '勇者'})`;
+            if (authIcon) authIcon.className = 'fas fa-sign-out-alt';
+            
+            // 點擊行為改成登出
+            if (loginBtn) {
+                loginBtn.onclick = googleLogout;
+                loginBtn.style.background = "#bdc3c7"; // 稍微變灰，區分狀態
+            }
+
+            // 開始同步資料
             checkCloudSave(user);
         } else {
+            // === 未登入狀態 ===
             currentUser = null;
-            if (loginUI) loginUI.style.display = 'block';
-            if (userUI) userUI.style.display = 'none';
+
+            // 恢復按鈕為「登入」
+            if (authText) authText.innerText = "同步進度 / 登入";
+            if (authIcon) authIcon.className = 'fab fa-google';
+            
+            if (loginBtn) {
+                loginBtn.onclick = googleLogin;
+                loginBtn.style.background = ""; // 恢復原色
+            }
         }
     });
 }
 
+// 6. 檢查雲端存檔
 function checkCloudSave(user) {
     console.log("☁️ 檢查雲端...");
     const dbRef = (typeof db !== 'undefined' && db) ? db : firebase.firestore();
+    
     dbRef.collection("users").doc(user.uid).get().then((doc) => {
         if (!doc.exists) {
-            console.log("☁️ 無存檔，上傳本地...");
+            console.log("☁️ 無雲端存檔，正在上傳本地進度...");
             saveToCloud();
         } else {
-            console.log("☁️ 合併存檔...");
+            console.log("☁️ 發現雲端存檔，開始合併...");
             loadFromCloud(doc.data());
+            // 合併完後立刻回寫，確保雙邊一致
             saveToCloud();
         }
+    }).catch(err => {
+        console.error("雲端讀取錯誤:", err);
     });
 }
 
+// 7. 上傳資料
 function saveToCloud() {
     if (!currentUser) return;
     const dbRef = (typeof db !== 'undefined' && db) ? db : firebase.firestore();
     
-    // 收集所有資料
     const localProg = _lsGetJSON('vocabRPG_dungeon_progress', {});
     const localFav = _lsGetJSON('vocabPro_favorites', []);
     const localHistory = _lsGetJSON('vocabRPG_daily_activity', {});
     
-    // 收集 Mastery (遍歷 localStorage)
     const masteryByKey = {};
     for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
@@ -912,15 +960,15 @@ function saveToCloud() {
     dbRef.collection("users").doc(currentUser.uid).set(dataToSend, { merge: true });
 }
 
+// 8. ★★★ 修正：下載並合併 (解決 localF error) ★★★
 function loadFromCloud(cloudData) {
     if (!cloudData) return;
 
-    // 1. 合併錯題 (聯集)
-    const localM = mistakeDB || [];
-    const cloudM = cloudData.mistakes || [];
+    // 1. 合併錯題
+    const localM = Array.isArray(mistakeDB) ? mistakeDB : [];
+    const cloudM = Array.isArray(cloudData.mistakes) ? cloudData.mistakes : [];
     const mOut = new Map();
-    // 確保 localM 和 cloudM 都是陣列，避免 crash
-    (Array.isArray(localM) ? localM : []).concat(Array.isArray(cloudM) ? cloudM : []).forEach(m => {
+    [...localM, ...cloudM].forEach(m => {
         const k = (m.en) ? m.en : m.q;
         if(k && !mOut.has(k)) mOut.set(k, m);
     });
@@ -928,19 +976,22 @@ function loadFromCloud(cloudData) {
     _lsSetJSON('vocabPro_rpg', { mistakes: mistakeDB });
     updateMistakeCount();
 
-    // 2. 合併最愛 (聯集)
-    // ★★★ 這裡就是原本報錯的地方，現在加上了 || [] 防呆 ★★★
+    // 2. 合併最愛 (這裡就是原本報錯的地方)
+    // 加上 || [] 確保它絕對是陣列
     const localF = _lsGetJSON('vocabPro_favorites', []) || [];
     const cloudF = cloudData.favorites || [];
-    const fOut = new Map();
     
-    // 安全合併
-    [...localF, ...cloudF].forEach(f => {
-        if(f.en && !fOut.has(f.en)) fOut.set(f.en, f);
+    // 再次檢查，如果 _lsGetJSON 回傳的不是陣列，強制轉為空陣列
+    const safeLocalF = Array.isArray(localF) ? localF : [];
+    const safeCloudF = Array.isArray(cloudF) ? cloudF : [];
+
+    const fOut = new Map();
+    [...safeLocalF, ...safeCloudF].forEach(f => {
+        if(f && f.en && !fOut.has(f.en)) fOut.set(f.en, f);
     });
     _lsSetJSON('vocabPro_favorites', Array.from(fOut.values()));
 
-    // 3. 合併地城進度 (取大)
+    // 3. 合併地城進度
     const localP = _lsGetJSON('vocabRPG_dungeon_progress', {}) || {};
     const cloudP = cloudData.dungeonProgress || {};
     const mergedP = { ...localP };
@@ -949,7 +1000,7 @@ function loadFromCloud(cloudData) {
     });
     _lsSetJSON('vocabRPG_dungeon_progress', mergedP);
 
-    // 4. 合併每日數據 (取大)
+    // 4. 合併每日數據
     const localD = _lsGetJSON('vocabRPG_daily_activity', {}) || {};
     const cloudD = cloudData.dailyActivity || {};
     const mergedD = { ...localD };
@@ -958,8 +1009,9 @@ function loadFromCloud(cloudData) {
     });
     _lsSetJSON('vocabRPG_daily_activity', mergedD);
 
-    console.log("✅ 雲端資料合併完成");
+    console.log("✅ 雲端資料合併完成，地城進度已更新");
 }
+
 // ==========================================
 // 10. 手機觸控優化
 // ==========================================
