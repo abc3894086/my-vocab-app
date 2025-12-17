@@ -22,28 +22,17 @@
                 <img src="images/logo.png" alt="Logo"
                     style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
             </div>
-            <div id="login-section" style="margin-bottom: 20px; text-align: center; width: 100%;">
+            
 
-                <div id="login-ui">
-    <button class="rpg-login-btn" onclick="googleLogin()">
-        <i class="fab fa-google"></i> 同步進度 / 登入
+<div id="login-section" style="margin-bottom: 20px; text-align: center; width: 100%;">
+
+    <button class="rpg-login-btn" id="rpg-auth-btn" onclick="googleLogin()">
+        <i class="fab fa-google" id="auth-icon"></i> <span id="auth-text">同步進度 / 登入</span>
     </button>
+
 </div>
 
-                <div id="user-ui" style="display: none;">
-                    <div
-                        style="background: rgba(255,255,255,0.8); display: inline-block; padding: 8px 16px; border-radius: 50px; border: 2px solid #fff;">
-                        <span style="color: #2c3e50; font-weight: bold; margin-right: 10px;">
-                            👤 <span id="user-name">Player</span>
-                        </span>
-                        <button onclick="googleLogout()"
-                            style="background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer;">
-                            登出
-                        </button>
-                    </div>
-                </div>
 
-            </div>
 <div style="width:100%; margin-bottom: 15px;">
 
     <div class="mode-card" onclick="selectMode('learn')">
@@ -70,6 +59,9 @@
                 </div>
                 <div class="menu-btn" onclick="showQuizVocabSelection()">
                     <span> 單字試煉 </span> 
+                </div>
+                <div class="menu-btn" onclick="startQuizSetup('cloze')">
+                   <span> 填空試煉 </span>
                 </div>
                 <div class="menu-btn" onclick="startQuizSetup('grammar')">
                     <span> 文法試煉 </span>
@@ -249,6 +241,7 @@
     <script src="data/data-toefl-psychology.js"></script>
     <script src="data/data-toefl-history.js"></script>
     <script src="data/data-toefl-art.js"></script>
+    <script src="data/data-cloze.js"></script>
     <script src="data/data-toefl-geology.js"></script>
     <script src="data/data-toefl-business.js"></script>
     <script src="data/data-toefl-lifescience.js"></script>

@@ -467,6 +467,30 @@ function startQuizSetup(type) {
         currentList = [...grammarDB].sort(() => 0.5 - Math.random()).slice(0, 10);
         quizType = 'grammar';
         startGenericQuiz(true, "文法試煉", 10);
+    } 
+    // ==========================================
+    // ★★★ 填空模式 (Cloze) - 直接開始版 ★★★
+    // ==========================================
+    else if (type === 'cloze') {
+        // 1. 檢查資料庫是否存在
+        if (typeof clozeDB === 'undefined' || !Array.isArray(clozeDB)) {
+            alert("填空題庫 (data-cloze.js) 尚未載入或格式錯誤！");
+            return;
+        }
+
+        // 2. 設定模式
+        quizType = 'cloze';
+        
+        // 3. 載入並打亂所有題目
+        // 這裡直接把整個大題庫拿來亂數排序
+        currentList = [...clozeDB].sort(() => 0.5 - Math.random());
+
+        // 4. 設定題數 (例如一次考 10 題，如果不夠就考全部)
+        let quizSize = Math.min(10, currentList.length);
+        currentList = currentList.slice(0, quizSize);
+
+        // 5. 直接開始測驗 (跳過分類選單)
+        startGenericQuiz(false, "填空試煉 (綜合)", quizSize);
     }
 }
 
@@ -495,14 +519,42 @@ function startGenericQuiz(isGrammar = false, title = "測驗", totalCount = 10) 
 function getSmartDistractors(sourceList, correctItem, type) {
     let distractors = [];
 
-    // --- 步驟 A：先從當前的列表 (sourceList) 找 ---
-    let potential = sourceList.filter(item => item.en !== correctItem.en);
+    // 內部小幫手：取得值
+    const getVal = (item, type) => {
+        if (!item) return null;
+        
+        // ★★★ 新增過濾：如果是填空題 (有 options 且 q 很長)，就不要拿來當單字題的干擾項 ★★★
+        if (item.options && item.q && item.q.includes('______')) return null;
+
+        // 一般單字格式
+        if (item.en && item.details) {
+            return (type === 'en') ? item.en : item.details[0].cn;
+        }
+        // 地城/簡易格式
+        if (item.q && item.ans) {
+            // 如果 type 是 en，我們回傳含英文的那個欄位
+            const qIsEn = /[a-zA-Z]/.test(item.q);
+            if (type === 'en') return qIsEn ? item.q : item.ans;
+            else return qIsEn ? item.ans : item.q;
+        }
+        return null;
+    };
+
+    const correctVal = getVal(correctItem, type);
+
+    // 步驟 A：從來源清單找
+    let potential = sourceList.filter(item => {
+        const val = getVal(item, type);
+        // 過濾掉無效值、過長的句子(超過20字元通常不是單字)、以及正確答案
+        return val && val !== correctVal && val.length < 20; 
+    });
+    
     potential.sort(() => Math.random() - 0.5);
 
     for (let item of potential) {
         if (distractors.length >= 3) break;
-        let val = (type === 'en') ? item.en : item.details[0].cn;
-        if (!distractors.includes(val)) {
+        let val = getVal(item, type);
+        if (val && !distractors.includes(val)) {
             distractors.push(val);
         }
     }
@@ -511,13 +563,8 @@ function getSmartDistractors(sourceList, correctItem, type) {
     if (distractors.length < 3) {
         let backupPool = [];
 
-        // ★★★ 關鍵修正：從 vocabDB 抓取所有單字 ★★★
         if (typeof vocabDB !== 'undefined') {
-            // 1. 抓多益
-            if (vocabDB['TOEIC']) {
-                backupPool = backupPool.concat(vocabDB['TOEIC']);
-            }
-            // 2. 抓托福所有分類
+            if (vocabDB['TOEIC']) backupPool = backupPool.concat(vocabDB['TOEIC']);
             if (vocabDB['TOEFL']) {
                 Object.values(vocabDB['TOEFL']).forEach(list => {
                     backupPool = backupPool.concat(list);
@@ -526,20 +573,18 @@ function getSmartDistractors(sourceList, correctItem, type) {
         }
 
         if (backupPool.length > 0) {
-            // 隨機切一塊出來打亂
             let start = Math.floor(Math.random() * (backupPool.length - 50));
             let slice = backupPool.slice(Math.max(0, start), start + 50);
             slice.sort(() => Math.random() - 0.5);
 
             for (let item of slice) {
                 if (distractors.length >= 3) break;
-                if (!item.details || item.details.length === 0) continue; // 防呆
-                if (item.en === correctItem.en) continue; // 排除正確答案
+                // 這裡一定是標準格式
+                if (!item.details || item.details.length === 0) continue; 
+                if (item.en === (correctItem.en || correctVal)) continue; 
 
                 let val = (type === 'en') ? item.en : item.details[0].cn;
 
-                // 檢查重複
-                let correctVal = (type === 'en') ? correctItem.en : correctItem.details[0].cn;
                 if (!distractors.includes(val) && val !== correctVal) {
                     distractors.push(val);
                 }
@@ -551,8 +596,8 @@ function getSmartDistractors(sourceList, correctItem, type) {
 }
 
 
-
 function loadQuestion(isGrammar = false) {
+    // 1. 檢查結束
     if (currentIndex >= currentList.length) {
         document.getElementById('quiz-bar').style.width = '100%';
         alert(`測驗結束！得分: ${score}/${quizTotal}`);
@@ -560,67 +605,114 @@ function loadQuestion(isGrammar = false) {
         return;
     }
 
+    // 2. 介面重置
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
-
     document.getElementById('result-popup').classList.remove('show');
     document.getElementById('float-next-btn').classList.remove('show');
-
     document.getElementById('quiz-progress').innerText = `${currentIndex + 1}/${quizTotal}`;
     document.getElementById('quiz-bar').style.width = `${(currentIndex / quizTotal) * 100}%`;
 
+    const qTextElement = document.getElementById('q-text');
+    const qSub = document.getElementById('q-sub');
+    
+    // 預設隱藏副標題
+    if (qSub) { qSub.innerText = ""; qSub.style.display = 'none'; }
+
+    // 3. 取得當前題目資料
     const questionData = currentList[currentIndex];
+    
     let correctAnswer;
     let allOptions;
     let audioWord = "";
 
-    const qTextElement = document.getElementById('q-text');
+    // ============================================================
+    // ★★★ 核心修正：判斷題目類型，隔離處理 ★★★
+    // ============================================================
 
-    // ★★★ 關鍵修改：預設將 q-sub 隱藏並清空 ★★★
-    const qSub = document.getElementById('q-sub');
-    if (qSub) {
-        qSub.innerText = "";
-        qSub.style.display = 'none'; // 隱藏起來，就不會佔空間
-    }
-
-    // 判斷是否為文法題
-    const isGrammarMode = isGrammar || questionData.type === 'grammar' || (questionData.q && /_{2,}/.test(questionData.q));
-
-    if (isGrammarMode) {
-        // === 文法模式 ===
-        correctAnswer = questionData.ans;
-        allOptions = questionData.options.sort(() => 0.5 - Math.random());
-
-        qTextElement.innerText = questionData.q;
-        audioWord = "";
-
-        qTextElement.style.fontSize = "1.2rem";
-        qTextElement.style.lineHeight = "1.6";
-        qTextElement.style.textAlign = "left";
-        qTextElement.style.fontWeight = "bold";
-
-    } else {
-        // === 單字模式 ===
-        qTextElement.style.fontSize = "2.5rem";
-        qTextElement.style.lineHeight = "1.2";
-        qTextElement.style.textAlign = "center";
-
-        const isEngToChi = Math.random() > 0.5;
-        audioWord = questionData.en;
-
-        if (isEngToChi) {
-            qTextElement.innerText = questionData.en;
-            correctAnswer = questionData.details[0].cn;
-            const distractors = getSmartDistractors(currentList, questionData, 'cn');
-            allOptions = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+    // 【情況 A：題目自帶選項】 (適用於：填空題、文法題、或是已經存好選項的錯題)
+    if (questionData.options && Array.isArray(questionData.options) && questionData.options.length > 0) {
+        
+        // 設定題目顯示樣式 (依據長度判斷是否為長句子)
+        if (questionData.q && questionData.q.length > 30) {
+            // 長句子 (填空/文法)
+            qTextElement.innerText = questionData.q;
+            qTextElement.style.fontSize = "1.4rem";
+            qTextElement.style.textAlign = "left";
+            qTextElement.style.lineHeight = "1.6";
+            qTextElement.style.fontWeight = "normal";
         } else {
-            qTextElement.innerText = questionData.details[0].cn;
-            correctAnswer = questionData.en;
-            const distractors = getSmartDistractors(currentList, questionData, 'en');
-            allOptions = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+            // 短題目 (可能是某些特殊的單字題)
+            qTextElement.innerText = questionData.q || questionData.en;
+            qTextElement.style.fontSize = "2.5rem";
+            qTextElement.style.textAlign = "center";
+        }
+
+        correctAnswer = questionData.ans;
+        
+        // 直接使用題目自帶的選項 (不重新產生)
+        // 為了避免每次順序一樣，我們這裡做一次隨機打亂
+        allOptions = [...questionData.options].sort(() => 0.5 - Math.random());
+
+        // 顯示中文提示 (如果有)
+        if (questionData.cn && qSub) {
+            qSub.innerText = questionData.cn;
+            qSub.style.display = 'block'; 
+            qSub.style.color = '#7f8c8d';
+            qSub.style.fontSize = '1rem';
+            qSub.style.marginTop = '10px';
+        }
+
+        // 如果答案是單字，設定發音 (填空題通常答案是單字)
+        if (!/[^a-zA-Z]/.test(correctAnswer)) {
+            audioWord = correctAnswer;
+        }
+    } 
+    
+    // 【情況 B：一般單字題】 (沒有固定選項，需要動態產生)
+    else {
+        qTextElement.style.fontSize = "2.5rem";
+        qTextElement.style.textAlign = "center";
+        qTextElement.style.lineHeight = "1.2";
+        qTextElement.style.fontWeight = "normal";
+
+        // 1. 地城簡易格式 (沒有詳細資料，只有 q 和 ans)
+        if (!questionData.en && questionData.q) { 
+             qTextElement.innerText = questionData.q;
+             correctAnswer = questionData.ans;
+             
+             // 判斷答案是英文還是中文
+             const isAnsEnglish = /[a-zA-Z]/.test(correctAnswer);
+             const distType = isAnsEnglish ? 'en' : 'cn';
+             
+             // ★★★ 修正：產生選項時，傳入 safeFilter 過濾掉長句子 ★★★
+             const distractors = getSmartDistractors(currentList, questionData, distType);
+             allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
+        } 
+        // 2. 標準單字格式 (有 details, en)
+        else { 
+             const isEngToChi = Math.random() > 0.5;
+             audioWord = questionData.en;
+             
+             if (isEngToChi) {
+                // 英選中
+                qTextElement.innerText = questionData.en;
+                correctAnswer = questionData.details[0].cn;
+                // 抓中文干擾項
+                const distractors = getSmartDistractors(currentList, questionData, 'cn');
+                allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
+             } else {
+                // 中選英
+                qTextElement.innerText = questionData.details[0].cn;
+                correctAnswer = questionData.en;
+                // 抓英文干擾項
+                const distractors = getSmartDistractors(currentList, questionData, 'en');
+                allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
+             }
         }
     }
 
+    // 4. 儲存當前狀態
     currentQuizData = {
         correct: correctAnswer,
         options: allOptions,
@@ -629,6 +721,7 @@ function loadQuestion(isGrammar = false) {
 
     if (audioWord) preloadAudio(audioWord);
 
+    // 5. 產生按鈕
     allOptions.forEach((optionText, index) => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
@@ -637,10 +730,6 @@ function loadQuestion(isGrammar = false) {
         optionsContainer.appendChild(btn);
     });
 }
-
-
-
-
 function generateDistractors(wordList, excludeVal, count, type = 'en') {
     if (wordList.length < 4) return ["A", "B", "C"];
 
