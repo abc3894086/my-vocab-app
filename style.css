@@ -908,15 +908,18 @@ flex-direction: column;
     border: 2px solid #e0e0e0;
     color: #555;
     
-    /* === ★★★ 核心修改：靠左對齊設定 ★★★ === */
+    /* === ★★★ 核心修改：靠上對齊與自動換行 ★★★ === */
     display: flex;          
-    flex-direction: row;    
-    align-items: center;      /* 建議改用 center，讓單行文字也能垂直居中 */
-    justify-content: flex-start; /* ★ 關鍵：讓內容靠左排列 */
+    flex-direction: row;    /* 橫向排列 */
+    flex-wrap: wrap;        /* 空間不夠時自動折行 */
     
-    text-align: left;         /* ★ 關鍵：讓多行文字 (例如換行的 C 選項) 靠左 */
-    padding-left: 25px;       /* ★ 關鍵：左邊加寬，讓 A. B. C. 不要貼壁 */
-    padding-right: 15px;      /* 右邊留一點空隙 */
+    /* ★ 關鍵修改：改成靠上對齊！解決選項變高時歪掉的問題 */
+    align-items: flex-start;
+    
+    justify-content: flex-start;
+    
+    text-align: left;        
+    padding: 15px 20px; /* 統一內距，讓上下左右都有空間 */
     /* === ★★★ 核心修改結束 ★★★ === */
 
     height: auto;           
@@ -926,25 +929,32 @@ flex-direction: column;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    line-height: 1.4;       
+    line-height: 1.5; /* 行高稍微加大一點，閱讀更舒適 */      
     transition: all 0.2s;
     box-shadow: 0 4px 0 #eee;
     text-shadow: none !important;
-    word-break: break-word; 
-}
-.opt-cn {
-    font-size: 0.9rem;      /* 字體小一點 */
-    color: #e67e22;         /* 橘色字 */
-    font-weight: bold;      /* 加粗 */
-    margin-left: 8px;       /* 讓它跟英文之間有點距離 */
-    
-    /* 確保如果折行後，不會黏得太緊 */
-    margin-top: 2px;
-    
-    /* 稍微透明一點 */
-    opacity: 0.9;
 }
 
+/* 新增：英文部分的樣式 (確保它佔據主導地位) */
+.opt-en {
+    flex: 1 1 auto; /* 讓英文部分盡量佔滿空間 */
+    word-break: break-word; /* 防止超長單字撐破版面 */
+}
+
+/* 中文翻譯的樣式微調 */
+.opt-cn {
+    font-size: 0.95rem;     
+    color: #e67e22;         /* 橘色字 */
+    font-weight: normal;
+    opacity: 0.95;
+    
+    /* 讓中文與英文之間保持距離，且確保它自己太長也能換行 */
+    margin-left: 10px;      
+    word-break: break-word;
+    
+    /* 當它被擠到下一行時，上方增加一點距離 */
+    margin-top: 2px;
+}
 /* 按下時的效果 */
 .option-btn:active {
     transform: translateY(2px);
