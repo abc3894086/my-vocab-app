@@ -433,7 +433,6 @@ function getSmartDistractors(sourceList, correctItem, type) {
 }
 
 function loadQuestion(isGrammar = false) {
-    // --- 1. 結算與 UI 重置 (完全保留你的原始設定) ---
     if (currentIndex >= currentList.length) {
         document.getElementById('quiz-bar').style.width = '100%';
         alert(`測驗結束！得分: ${score}/${quizTotal}`);
@@ -456,8 +455,7 @@ function loadQuestion(isGrammar = false) {
     let correctAnswer, allOptions;
     let audioWord = "";
 
-    // --- 2. 邏輯分支：自帶選項 (文法/填空) ---
-    // (這部分完全保留你剛剛修改好的設定，包含文法不發音)
+    // 判斷是否為「自帶選項」的題目 (填空/文法/已存錯題)
     if (questionData.options && Array.isArray(questionData.options) && questionData.options.length > 0) {
         // 長句子判斷
         if (questionData.q && questionData.q.length > 30) {
@@ -472,65 +470,39 @@ function loadQuestion(isGrammar = false) {
             qTextElement.style.textAlign = "center";
         }
         correctAnswer = questionData.ans;
-        // ★ 這裡直接用題目自帶的 options，不做任何修改
         allOptions = [...questionData.options].sort(() => 0.5 - Math.random());
-        
-        if (!isGrammar && !/[^a-zA-Z]/.test(correctAnswer)) {
-            audioWord = correctAnswer;
-        }
-    } 
-    // --- 3. 邏輯分支：一般單字題 (這裡進行了邏輯重寫) ---
-    else {
+        if (!/[^a-zA-Z]/.test(correctAnswer)) audioWord = correctAnswer;
+    } else {
+        // 一般單字題
         qTextElement.style.fontSize = "2.5rem";
         qTextElement.style.textAlign = "center";
         qTextElement.style.fontWeight = "normal";
 
-        let targetType = 'cn'; // 我們要找什麼類型的選項? ('cn' 或 'en')
-
-        // 情況 A: 地城簡易格式 (有 q 和 ans)
-        if (!questionData.en && questionData.q) { 
+        if (!questionData.en && questionData.q) { // 地城簡易格式
              qTextElement.innerText = questionData.q;
              correctAnswer = questionData.ans;
-             
-             // 判斷：如果答案包含英文字母，代表這是「中翻英」題，選項要找 'en'
-             // 如果答案是中文，代表這是「英翻中」題，選項要找 'cn'
              const isAnsEnglish = /[a-zA-Z]/.test(correctAnswer);
-             targetType = isAnsEnglish ? 'en' : 'cn';
-             
-             // 如果題目本身是英文，就設定發音
-             if (/[a-zA-Z]/.test(questionData.q)) audioWord = questionData.q;
-             // 如果答案是英文(中翻英)，也可以念答案
-             else if (isAnsEnglish) audioWord = correctAnswer;
-
-        } 
-        // 情況 B: 標準單字格式 (有 en 和 details)
-        else { 
+             const distType = isAnsEnglish ? 'en' : 'cn';
+             const distractors = getSmartDistractors(currentList, questionData, distType);
+             allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
+        } else { // 標準格式
              const isEngToChi = Math.random() > 0.5;
-             
+             audioWord = questionData.en;
              if (isEngToChi) {
-                // 考：英翻中
                 qTextElement.innerText = questionData.en;
                 correctAnswer = questionData.details[0].cn;
-                targetType = 'cn'; // 答案是中文，所以干擾項也要找中文
-                audioWord = questionData.en;
+                const distractors = getSmartDistractors(currentList, questionData, 'cn');
+                allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
              } else {
-                // 考：中翻英
                 qTextElement.innerText = questionData.details[0].cn;
                 correctAnswer = questionData.en;
-                targetType = 'en'; // 答案是英文，所以干擾項也要找英文
-                audioWord = questionData.en;
+                const distractors = getSmartDistractors(currentList, questionData, 'en');
+                allOptions = [correctAnswer, ...distractors].sort(()=>0.5-Math.random());
              }
         }
-
-        // ★★★ 關鍵修改：呼叫新的 getSafeDistractors 去總題庫抓選項 ★★★
-        // 傳入 correctAnswer 是為了避免抓到跟答案一樣的字
-        // 傳入 targetType 確保抓到的詞性正確 (全中 或 全英)
-        const distractors = getSafeDistractors(correctAnswer, targetType);
-        allOptions = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
     }
 
-    // --- 4. 收尾 (完全保留) ---
-    currentQuizData = {
+   currentQuizData = {
         correct: correctAnswer,
         options: allOptions,
         audioWord: audioWord,
@@ -548,84 +520,118 @@ function loadQuestion(isGrammar = false) {
         optionsContainer.appendChild(btn);
     });
 }
+
 function checkAnswer(selectedButton, isCorrect) {
-    // 1. 鎖定所有按鈕
+    // 1. 鎖定按鈕
     document.querySelectorAll('.option-btn').forEach(btn => btn.onclick = null);
     
     const resultTitle = document.getElementById('res-title');
     const resultDetail = document.getElementById('res-detail');
     const qSubElement = document.getElementById('q-sub'); 
 
-    // 2. 顯示題目翻譯
-    if (currentQuizData.cn && qSubElement) { 
+    // A. 顯示題目中文
+    if (currentQuizData.cn && qSubElement) {
         qSubElement.innerText = currentQuizData.cn;
         qSubElement.style.display = 'block';
-        qSubElement.style.color = "#27ae60"; 
-        qSubElement.style.marginTop = "10px";
+        qSubElement.style.color = '#7f8c8d'; 
+        qSubElement.style.marginTop = '10px';
+        
+        qSubElement.style.opacity = '0';
+        qSubElement.style.transition = 'opacity 0.5s';
+        requestAnimationFrame(() => qSubElement.style.opacity = '1');
     }
 
-    // 3. ★★★ 顯示選項解釋 (結構調整版) ★★★
+    // B. 顯示選項中文
     document.querySelectorAll('.option-btn').forEach(btn => {
         const parts = btn.innerText.split('. ');
         if (parts.length > 1) {
-            const word = parts[1].trim();
-            let cnMeaning = null;
-
-            if (currentQuizData.meanings && currentQuizData.meanings[word]) {
-                cnMeaning = currentQuizData.meanings[word];
-            } else {
-                cnMeaning = findWordCN(word);
-            }
-            
+            const englishWord = parts[1].trim(); 
+            let cnMeaning = (currentQuizData.meanings && currentQuizData.meanings[englishWord]) 
+                            ? currentQuizData.meanings[englishWord] 
+                            : findWordCN(englishWord);
             if (cnMeaning) {
-                // ★ 修改點 1：將英文部分包入 <span class="opt-en">
-                // ★ 修改點 2：中文部分包入 <span class="opt-cn">
-                // 這樣 CSS 的 flex-wrap 就能正確運作：英文是第一塊，中文是第二塊
-                btn.innerHTML = `<span class="opt-en">${parts[0]}. ${word}</span><span class="opt-cn">${cnMeaning}</span>`;
-                
-                // ★ 修改點 3：移除所有 JS樣式設定，全權交給 CSS 的 align-items: flex-start 處理
+                btn.innerHTML += ` <small class="opt-cn">${cnMeaning}</small>`;
             }
         }
     });
 
-    // 4. 判斷對錯與音效 (需要配合新結構調整比對方式)
+    // 2. 判斷對錯
     if (isCorrect) {
         playSound('correct');
         selectedButton.classList.add('correct');
         score++;
+        
+        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 50);
+        
         resultTitle.innerText = "✅ 恭喜答對！";
         resultDetail.innerHTML = ""; 
-        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 600); 
 
+        // ★★★ 錯題地牢邏輯 (保留精通度顯示，移除按鈕) ★★★
+        if (quizType === 'mistake') {
+            try {
+                const currentQ = currentList[currentIndex];
+                const mistakeIndex = mistakeDB.findIndex(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
+                
+                if (mistakeIndex !== -1) {
+                    let newCount = (mistakeDB[mistakeIndex].correct_count || 0) + 1;
+                    mistakeDB[mistakeIndex].correct_count = newCount;
+
+                    const masteryText = newCount >= 3 ? "✨ 已精通！移出地牢 ✨" : `🔥 精通度: ${newCount} / 3`;
+                    const color = newCount >= 3 ? "#f1c40f" : "#27ae60";
+                    const masteryHTML = `<br><span style="color:${color}; font-weight:bold;">${masteryText}</span>`;
+
+                    // 顯示在題目下方
+                    if (qSubElement) {
+                        qSubElement.style.display = 'block'; 
+                        qSubElement.style.opacity = '1';     
+                        qSubElement.innerHTML += masteryHTML;
+                    }
+                    
+                    // 顯示在彈窗內
+                    if (resultDetail) {
+                        resultDetail.innerHTML = masteryHTML;
+                    }
+                    
+                    if (newCount >= 3) mistakeDB.splice(mistakeIndex, 1);
+                    saveGameData();
+                }
+            } catch (e) { console.error(e); }
+        }
     } else {
         playSound('wrong');
         selectedButton.classList.add('wrong');
-        
-        // 標示正確答案 (配合新結構抓取英文)
         document.querySelectorAll('.option-btn').forEach(btn => {
-            // 因為現在結構是 <span class="opt-en">A. word</span>...
-            // 我們抓取第一個 span 的文字內容
-            const enSpan = btn.querySelector('.opt-en');
-            if (enSpan) {
-                const parts = enSpan.innerText.split('. ');
-                if (parts.length > 1 && parts[1].trim() === currentQuizData.correct) {
-                    btn.classList.add('correct');
-                }
-            } else {
-                //如果沒有中文翻譯，結構還是舊的，用舊方法比對(保險起見)
-                const parts = btn.innerText.split('. ');
-                if (parts.length > 1 && parts[1].trim() === currentQuizData.correct) {
+            // 1. 先把按鈕文字依照 ". " 切開，取後面那一段 (去除 A. B. C. D.)
+            const parts = btn.innerText.split('. ');
+            
+            if (parts.length > 1) {
+                const optionText = parts[1].trim(); // 取得純單字部分
+                
+                // 2. 進行「完全相等」比對 (這樣 'be' 就不會等於 'being' 了)
+                if (optionText === currentQuizData.correct) {
                     btn.classList.add('correct');
                 }
             }
         });
 
+        // 錯題紀錄
+        try {
+            const currentQ = currentList[currentIndex];
+            const isAlreadyInDB = mistakeDB.some(m => (currentQ.en && m.en === currentQ.en) || (currentQ.q && m.q === currentQ.q));
+            if (!isAlreadyInDB) {
+                const newMistake = { ...currentQ, correct_count: 0 };
+                mistakeDB.push(newMistake);
+                saveGameData();
+            }
+        } catch(e) {}
+
         resultTitle.innerText = "❌ 答錯了！";
         resultDetail.innerHTML = `正確答案是：<b>${currentQuizData.correct}</b>`;
-        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 600); 
+        
+        if (currentQuizData.audioWord) setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 200);
     }
 
-    // 5. 更新進度
+    // 顯示結果視窗
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('result-popup').classList.add('show');
@@ -643,22 +649,9 @@ function hideResultPopup() {
 // 7. 音效與發音
 // ==========================================
 function playSound(type) {
-    // 1. 根據類型選擇音檔
-    const audio = (type === 'correct') ? audioCorrect : audioWrong;
-    
-    // 2. 重置音效狀態 (關鍵！解決手機上有時播不出來的問題)
-    audio.pause();           // 先暫停
-    audio.currentTime = 0;   // 倒帶回開頭
-    audio.volume = 0.5;      // 確保音量
-    
-    // 3. 嘗試播放 (使用 Promise 來捕捉手機瀏覽器的阻擋錯誤)
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.catch(error => {
-            console.log("音效播放被瀏覽器阻擋 (正常現象，需使用者互動):", error);
-        });
-    }
+    audioCorrect.volume = 0.5; audioWrong.volume = 0.3;
+    if (type === 'correct') { audioCorrect.currentTime = 0; audioCorrect.play().catch(()=>{}); }
+    else if (type === 'wrong') { audioWrong.currentTime = 0; audioWrong.play().catch(()=>{}); }
 }
 function preloadAudio(word) {}
 function speakWord() {
@@ -672,48 +665,15 @@ function speakWord() {
 }
 function useRobotVoice(word, callback) {
     if ('speechSynthesis' in window) {
-        // 1. 建立發音請求
         const utter = new SpeechSynthesisUtterance(word);
-        
-        // 2. 取得所有可用聲音
-        const voices = window.speechSynthesis.getVoices();
-
-        // 3. ★★★ 語音選秀大會 ★★★
-        // 嘗試按照優先順序找出最好聽的英文女聲
-        // 優先序：Google US (Android/Chrome) -> Microsoft Zira (Win) -> Samantha (iOS) -> 任何 en-US
-        const bestVoice = voices.find(v => v.name.includes("Google US English")) || 
-                          voices.find(v => v.name.includes("Microsoft Zira")) || 
-                          voices.find(v => v.name.includes("Samantha")) || 
-                          voices.find(v => v.lang === 'en-US');
-
-        // 如果有找到好聲音，就套用
-        if (bestVoice) {
-            utter.voice = bestVoice;
-        }
-
-        // 4. 設定參數
-        utter.lang = 'en-US'; // 強制美式英文
-        utter.rate = 0.8;     // ★ 語速：0.1 (超慢) ~ 10 (超快)，0.8 是適合學習的稍慢速度
-        utter.pitch = 1;      // ★ 音調：0 (低沈) ~ 2 (高尖)，1 是標準
-
-        // 5. 設定結束後的回呼函式
+        utter.lang = 'en-US';
+        utter.rate = 0.85;
         utter.onend = callback;
-        
-        // 6. 處理有的瀏覽器會卡住的問題 (防呆)
-        utter.onerror = (e) => {
-            console.error("語音播放錯誤:", e);
-            callback(); // 就算出錯也要執行 callback，不然程式會卡住
-        };
-
-        // 7. 播放
-        window.speechSynthesis.cancel(); // 先卡掉上一句，避免疊音
+        window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utter);
-
-        // (保險) 設置一個定時器，如果太久沒反應就強制結束，避免 callback 沒被呼叫
-        setTimeout(callback, 5000); 
-
+        setTimeout(callback, 2000);
     } else {
-        alert("你的瀏覽器不支援語音功能 😢");
+        alert("不支援語音");
         callback();
     }
 }
@@ -908,39 +868,22 @@ function loadDungeonQuestion() {
 
 function checkDungeonAnswer(btn, isCorrect) {
     document.querySelectorAll('.option-btn').forEach(b => b.onclick = null);
-    
     if (isCorrect) {
-        // --- 答對 ---
         btn.classList.add('correct');
-        playSound('correct'); 
+        playSound('correct');
         score++;
         document.getElementById('res-title').innerText = "✅ 正確！";
         document.getElementById('res-detail').innerHTML = "";
-        
-        // 延遲唸出單字 (這裡的 800 就是延遲時間，請跟一般測驗保持一致)
-        setTimeout(() => { 
-            playQuizAudio(currentQuizData.audioWord); 
-        }, 600);
-        
+        setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 50);
     } else {
-        // --- 答錯 ---
         btn.classList.add('wrong');
-        playSound('wrong'); 
-        
-        // 標示正確答案
+        playSound('wrong');
         document.querySelectorAll('.option-btn').forEach(b => {
             if (b.innerText.includes(currentQuizData.correct)) b.classList.add('correct');
         });
         document.getElementById('res-title').innerText = "❌ 錯誤！";
         document.getElementById('res-detail').innerHTML = `正確答案：<b>${currentQuizData.correct}</b>`;
-        
-        // ★★★ 補上這裡：答錯也要唸單字 ★★★
-        // (這裡的數字也要跟上面一樣，例如 800 或 1000)
-        setTimeout(() => { 
-            playQuizAudio(currentQuizData.audioWord); 
-        }, 600);
     }
-    
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
     document.getElementById('result-popup').classList.add('show');
@@ -1431,44 +1374,4 @@ function getStarHtml(count) {
         stars += '<span class="star-small">★</span>';
     }
     return stars;
-}
-function getSafeDistractors(correctAnswer, type) {
-    // 1. 確保有資料庫可以抓，否則回傳預設值
-    if (typeof vocabDB === 'undefined' || !vocabDB['TOEIC']) {
-        return ["---", "---", "---"];
-    }
-
-    const sourceList = vocabDB['TOEIC']; // 預設從 TOEIC 抓，量大且穩定
-    let distractors = [];
-    
-    // 2. 隨機嘗試抓取
-    // 為了效能，我們不對整個陣列 sort，而是隨機取樣
-    for (let i = 0; i < 20; i++) { // 嘗試 20 次
-        if (distractors.length >= 3) break;
-
-        const randomIdx = Math.floor(Math.random() * sourceList.length);
-        const item = sourceList[randomIdx];
-        
-        let val = null;
-        if (type === 'en') {
-            val = item.en; // 我們要找英文選項
-        } else {
-            // 我們要找中文選項
-            if (item.details && item.details[0]) {
-                val = item.details[0].cn;
-            }
-        }
-
-        // 3. 檢查有效性：不能是空的、不能跟正確答案一樣、不能重複抓
-        if (val && val !== correctAnswer && !distractors.includes(val)) {
-            distractors.push(val);
-        }
-    }
-
-    // 4. 如果運氣不好沒抓滿 3 個，補上預設值
-    while (distractors.length < 3) {
-        distractors.push("---");
-    }
-
-    return distractors;
 }
