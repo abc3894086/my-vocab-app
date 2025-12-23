@@ -540,16 +540,32 @@ flex-direction: column;
 }
 
 .card-back {
+    /* --- 1. 翻轉特效 (保留) --- */
     transform: rotateY(180deg);
+    
+    /* --- 2. 排版設定 (保留) --- */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    
+    /* ❌ 原本是 center (導致長文上方被切掉) */
+    /* justify-content: center; */
+
+    /* ✅ 改成 flex-start (靠上對齊) */
+    /* 這樣內容變多時，會往下延伸，捲軸就能正常滑動了 */
+    justify-content: flex-start; 
+
     align-items: stretch;
     text-align: left;
+    
+    /* --- 3. 內距設定 (保留) --- */
+    /* 即使靠上對齊，因為這裡有 padding-top: 50px */
+    /* 所以內容不會貼著邊緣，視覺上還是很舒適 */
     padding-top: 50px;
     padding-bottom: 20px;
     padding-left: 20px;
     padding-right: 20px;
+    
+    /* --- 4. 字體設定 (保留) --- */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
     -webkit-font-smoothing: antialiased;
 }

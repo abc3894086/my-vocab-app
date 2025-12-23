@@ -597,17 +597,30 @@ function checkAnswer(selectedButton, isCorrect) {
                 }
             } catch (e) { console.error(e); }
         }
-    } else {
+} else {
         playSound('wrong');
         selectedButton.classList.add('wrong');
+        
+        // ▼▼▼ 修改這裡 ▼▼▼
         document.querySelectorAll('.option-btn').forEach(btn => {
-            // 1. 先把按鈕文字依照 ". " 切開，取後面那一段 (去除 A. B. C. D.)
-            const parts = btn.innerText.split('. ');
+            // 1. 取得按鈕上的完整文字
+            let fullText = btn.innerText;
+            
+            // ★ 關鍵修正：如果按鈕裡已經有中文解釋 (.opt-cn)，要先把它扣掉
+            // 這樣才不會因為多了中文字導致比對失敗
+            const cnSpan = btn.querySelector('.opt-cn');
+            if (cnSpan) {
+                // 把中文部分替換成空字串，只留下英文
+                fullText = fullText.replace(cnSpan.innerText, '');
+            }
+
+            // 2. 依照 ". " 切割 (跟原本邏輯一樣)
+            const parts = fullText.split('. ');
             
             if (parts.length > 1) {
-                const optionText = parts[1].trim(); // 取得純單字部分
+                const optionText = parts[1].trim(); // 現在這裡就只會剩下純英文了
                 
-                // 2. 進行「完全相等」比對 (這樣 'be' 就不會等於 'being' 了)
+                // 3. 進行比對
                 if (optionText === currentQuizData.correct) {
                     btn.classList.add('correct');
                 }

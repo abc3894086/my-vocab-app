@@ -21170,7 +21170,7 @@ window.vocabDB["TOEIC"] = [
         details: [
             { 
                 pos: "n.", 
-                cn: "統計數值 (常用複數 statistics 統計學/數據)", 
+                cn: "統計數值", 
                 examples: [
                     "Statistics show that crime is down.",
                     "This statistic is misleading."
