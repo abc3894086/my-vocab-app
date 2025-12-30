@@ -561,7 +561,7 @@ function checkAnswer(selectedButton, isCorrect) {
         selectedButton.classList.add('correct');
         score++;
         
-        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 50);
+        if (currentQuizData.audioWord) setTimeout(() => playQuizAudio(currentQuizData.audioWord), 80);
         
         resultTitle.innerText = "✅ 恭喜答對！";
         resultDetail.innerHTML = ""; 
@@ -887,7 +887,7 @@ function checkDungeonAnswer(btn, isCorrect) {
         score++;
         document.getElementById('res-title').innerText = "✅ 正確！";
         document.getElementById('res-detail').innerHTML = "";
-        setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 50);
+        setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 300);
     } else {
         btn.classList.add('wrong');
         playSound('wrong');
@@ -896,6 +896,7 @@ function checkDungeonAnswer(btn, isCorrect) {
         });
         document.getElementById('res-title').innerText = "❌ 錯誤！";
         document.getElementById('res-detail').innerHTML = `正確答案：<b>${currentQuizData.correct}</b>`;
+        setTimeout(() => { playQuizAudio(currentQuizData.audioWord); }, 500);
     }
     document.getElementById('quiz-score').innerText = score;
     document.getElementById('quiz-bar').style.width = `${((currentIndex + 1) / quizTotal) * 100}%`;
