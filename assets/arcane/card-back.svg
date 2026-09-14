@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1080" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1e5b4"/><stop offset=".25" stop-color="#92a0bd"/><stop offset=".52" stop-color="#d5b56e"/><stop offset=".78" stop-color="#65738c"/><stop offset="1" stop-color="#efcf7d"/></linearGradient>
+    <radialGradient id="night" cx="50%" cy="42%" r="75%"><stop offset="0" stop-color="#1b2850"/><stop offset=".48" stop-color="#10182f"/><stop offset="1" stop-color="#070b16"/></radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="24" y="24" width="672" height="1032" rx="56" fill="url(#night)" stroke="#090d17" stroke-width="30"/>
+  <rect x="37" y="37" width="646" height="1006" rx="46" fill="none" stroke="url(#metal)" stroke-width="10"/>
+  <rect x="56" y="56" width="608" height="968" rx="34" fill="none" stroke="#91a2c2" stroke-width="2" opacity=".7"/>
+  <g opacity=".38" stroke="#7e8eb3" fill="none"><circle cx="360" cy="540" r="250"/><circle cx="360" cy="540" r="201"/><circle cx="360" cy="540" r="151"/><circle cx="360" cy="540" r="101"/><ellipse cx="360" cy="540" rx="270" ry="92" transform="rotate(-15 360 540)"/><ellipse cx="360" cy="540" rx="230" ry="74" transform="rotate(49 360 540)"/></g>
+  <g fill="#c5d1e8" opacity=".72"><circle cx="141" cy="300" r="4"/><circle cx="566" cy="329" r="3"/><circle cx="524" cy="709" r="4"/><circle cx="199" cy="759" r="3"/><circle cx="448" cy="220" r="2.5"/><circle cx="273" cy="870" r="2.5"/></g>
+  <g transform="translate(360 387)" filter="url(#glow)"><path d="M0-62 L14-14 L62 0 L14 14 L0 62 L-14 14 L-62 0 L-14-14 Z" fill="#d5b56e"/><path d="M0-28 L6-6 L28 0 L6 6 L0 28 L-6 6 L-28 0 L-6-6 Z" fill="#fff2bd"/></g>
+  <g transform="translate(360 615)">
+    <path d="M-126-35 Q-65-58 0-9 Q65-58 126-35 L126 81 Q63 54 0 102 Q-63 54-126 81 Z" fill="#0e1730" stroke="url(#metal)" stroke-width="7"/>
+    <path d="M0-9 V102" stroke="#d5b56e" stroke-width="5"/>
+    <path d="M-108-18 Q-59-33-17-2 V73 Q-60 42-108 54 Z M108-18 Q59-33 17-2 V73 Q60 42 108 54 Z" fill="none" stroke="#a9b9d8" stroke-width="3"/>
+  </g>
+  <g stroke="#d5b56e" fill="none" opacity=".7"><path d="M96 206 A280 280 0 0 1 624 206"/><path d="M96 874 A280 280 0 0 0 624 874"/></g>
+  <text x="360" y="815" text-anchor="middle" fill="#d9c280" font-family="Georgia, serif" font-size="22" letter-spacing="7">ARCANE LIBRARY</text>
+</svg>
