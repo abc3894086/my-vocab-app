@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1080" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9aa7bc" stop-opacity=".08"/><stop offset=".52" stop-color="#35425a" stop-opacity=".2"/><stop offset="1" stop-color="#0c1322" stop-opacity=".34"/></linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="52" y="52" width="616" height="976" rx="39" fill="url(#veil)"/>
+  <g transform="translate(360 528)" opacity=".72">
+    <circle r="105" fill="#0c1427" stroke="#71819d" stroke-width="4"/>
+    <circle r="84" fill="none" stroke="#97a7c0" stroke-width="1.5" stroke-dasharray="3 8"/>
+    <circle r="58" fill="none" stroke="#b79c60" stroke-width="1.4" opacity=".6"/>
+    <path d="M0-79L7-22L22-7L79 0L22 7L7 22L0 79L-7 22L-22 7L-79 0L-22-7L-7-22Z" fill="none" stroke="#a8b5ca" stroke-width="2" opacity=".55"/>
+    <rect x="-31" y="-4" width="62" height="54" rx="8" fill="#151d2d" stroke="#b9a36a" stroke-width="3"/>
+    <path d="M-19-4v-17c0-22 38-22 38 0v17" fill="none" stroke="#b9a36a" stroke-width="4"/>
+    <circle cy="21" r="5" fill="#d7c589"/>
+  </g>
+  <path d="M171 746H549" stroke="#8390a8" stroke-width="1.5" opacity=".35"/>
+  <text x="360" y="790" text-anchor="middle" fill="#b7c0cf" font-family="Georgia,serif" font-size="20" letter-spacing="8" opacity=".68">SEALED</text>
+</svg>
