@@ -277,7 +277,6 @@ function loadCard() {
             <div class="word-phonetic" id="fc-phonetic">${data.phonetic || ""}</div>
             <div class="front-info-box" id="fc-front-info"></div>
             <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
-            <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">(點擊翻面)</p>
         </div>
     `;
     const backHTML = `<div class="card-face card-back" id="fc-back-content"></div>`;

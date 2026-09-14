@@ -351,7 +351,7 @@
     if (star) { star.innerHTML = icon('favorite'); star.setAttribute('aria-label', '加入珍藏'); }
     if (speaker) { speaker.innerHTML = icon('speaker'); speaker.setAttribute('aria-label', '播放發音'); }
     const hint = $('.card-front > p');
-    if (hint) hint.textContent = '點擊卡牌展開知識頁';
+    if (hint) hint.remove();
     const title = $('#fc-title');
     if (title && !title.dataset.arcaneTitle) {
       title.textContent = '奧術卡牌';

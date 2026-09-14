@@ -75,19 +75,29 @@
   line-height: 1 !important;
 }
 #page-flashcard .star-btn.active {
-  color: #fff2b8 !important;
-  background: radial-gradient(circle at 38% 32%, #e7c96e, #9f741d 78%) !important;
-  border: 2px solid #ffe6a0 !important;
+  color: #e8cf86 !important;
+  background:
+    radial-gradient(circle at 38% 30%, rgba(44,52,72,.96), rgba(5,11,24,.96) 72%) !important;
+  border: 1px solid rgba(232,207,134,.82) !important;
   box-shadow:
-    0 0 0 3px rgba(225,190,94,.18),
-    0 0 24px rgba(239,202,99,.72),
-    inset 0 1px 2px rgba(255,255,255,.65) !important;
+    0 7px 18px rgba(0,0,0,.38),
+    0 0 0 2px rgba(218,187,105,.10),
+    0 0 12px rgba(218,187,105,.24),
+    inset 0 1px 0 rgba(255,244,207,.14) !important;
   opacity: 1;
-  transform: scale(1.12);
+  transform: none;
 }
 #page-flashcard .star-btn.active i {
-  color: #fff8d7 !important;
-  filter: drop-shadow(0 1px 3px rgba(72,43,0,.72));
+  color: #e8cf86 !important;
+  filter: drop-shadow(0 0 5px rgba(232,207,134,.34));
+}
+#page-flashcard .star-btn .arcane-icon path {
+  fill: none !important;
+}
+#page-flashcard .star-btn.active .arcane-icon path {
+  fill: currentColor !important;
+  stroke-width: 1.8 !important;
+  filter: drop-shadow(0 0 4px rgba(232,207,134,.28));
 }
 #page-flashcard .speak-btn-large { left:40px !important; bottom:43px !important; background:rgba(4,10,22,.72) !important; border-color:rgba(231,211,153,.31) !important; }
 #page-flashcard .card-front > p { bottom:79px !important; color:rgba(199,208,224,.72) !important; }
