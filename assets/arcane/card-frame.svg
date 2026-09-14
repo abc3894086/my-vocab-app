@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1080" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1e5b4"/><stop offset=".22" stop-color="#9aa8c4"/><stop offset=".48" stop-color="#d5b56e"/><stop offset=".75" stop-color="#66738b"/><stop offset="1" stop-color="#f0d58b"/>
+    </linearGradient>
+    <radialGradient id="gem" cx="50%" cy="38%" r="64%"><stop offset="0" stop-color="#9e91ff"/><stop offset=".38" stop-color="#566fd4"/><stop offset="1" stop-color="#151b31"/></radialGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="21" y="21" width="678" height="1038" rx="58" fill="none" stroke="#0c1020" stroke-width="30" opacity=".92"/>
+  <rect x="34" y="34" width="652" height="1012" rx="49" fill="none" stroke="url(#metal)" stroke-width="11"/>
+  <rect x="51" y="51" width="618" height="978" rx="38" fill="none" stroke="#8998b9" stroke-width="2" opacity=".82"/>
+  <rect x="63" y="63" width="594" height="954" rx="31" fill="none" stroke="#d5b56e" stroke-width="2" opacity=".42" stroke-dasharray="4 8"/>
+  <g fill="none" stroke="url(#metal)" stroke-width="4" opacity=".95">
+    <path d="M51 178 Q118 177 155 130 Q177 101 178 51"/><path d="M669 178 Q602 177 565 130 Q543 101 542 51"/>
+    <path d="M51 902 Q118 903 155 950 Q177 979 178 1029"/><path d="M669 902 Q602 903 565 950 Q543 979 542 1029"/>
+  </g>
+  <g fill="none" stroke="#8ca0c8" stroke-width="2" opacity=".56">
+    <circle cx="107" cy="108" r="35"/><circle cx="613" cy="108" r="35"/><circle cx="107" cy="972" r="35"/><circle cx="613" cy="972" r="35"/>
+    <path d="M72 108h70M107 73v70M578 108h70M613 73v70M72 972h70M107 937v70M578 972h70M613 937v70"/>
+  </g>
+  <g transform="translate(360 72)" filter="url(#softGlow)">
+    <circle r="59" fill="#0f1730" stroke="url(#metal)" stroke-width="7"/>
+    <circle r="44" fill="url(#gem)" stroke="#96a8d0" stroke-width="2"/>
+    <path d="M0-35 L8-8 L35 0 L8 8 L0 35 L-8 8 L-35 0 L-8-8 Z" fill="#f5dda0"/>
+    <path d="M0-18 L4-4 L18 0 L4 4 L0 18 L-4 4 L-18 0 L-4-4 Z" fill="#fff7d6"/>
+  </g>
+  <g transform="translate(360 1005)" opacity=".9"><circle r="17" fill="#11182c" stroke="url(#metal)" stroke-width="4"/><circle r="4" fill="#e0c37a"/></g>
+  <path d="M94 210 C180 170 540 170 626 210" fill="none" stroke="#7184ad" stroke-width="1.6" opacity=".35"/>
+  <path d="M94 870 C180 910 540 910 626 870" fill="none" stroke="#7184ad" stroke-width="1.6" opacity=".35"/>
+  <g fill="#d5b56e" opacity=".7"><circle cx="83" cy="263" r="3"/><circle cx="637" cy="263" r="3"/><circle cx="83" cy="817" r="3"/><circle cx="637" cy="817" r="3"/></g>
+</svg>
