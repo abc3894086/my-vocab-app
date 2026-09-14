@@ -1,7 +1,7 @@
 /* Arcane Library — premium generated card integration (fixed) */
 
 :root {
-  --premium-card-art: url('assets/arcane/card-front-premium-embedded.svg');
+  --premium-card-art: url('assets/arcane/card-front-premium-transparent.webp');
 }
 
 #page-flashcard .card-front {
@@ -54,7 +54,26 @@
   border-color:rgba(224,200,132,.28) !important;
   background:rgba(4,10,23,.7) !important;
 }
-#page-flashcard .star-btn { top:44px !important; right:39px !important; background:rgba(4,10,22,.72) !important; border-color:rgba(231,211,153,.36) !important; }
+#page-flashcard .star-btn {
+  position: absolute !important;
+  top: 18.5% !important;
+  right: 13.5% !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  background: rgba(4,10,22,.78) !important;
+  border-color: rgba(231,211,153,.42) !important;
+  touch-action: manipulation;
+}
+#page-flashcard .star-btn i {
+  display: block;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
 #page-flashcard .speak-btn-large { left:40px !important; bottom:43px !important; background:rgba(4,10,22,.72) !important; border-color:rgba(231,211,153,.31) !important; }
 #page-flashcard .card-front > p { bottom:79px !important; color:rgba(199,208,224,.72) !important; }
 #page-flashcard .flip-card { width:min(100%,350px) !important; filter:drop-shadow(0 30px 32px rgba(0,0,0,.48)) !important; }
@@ -86,7 +105,7 @@
 @media (max-height:730px) {
   #page-flashcard .card-front { padding-top:128px !important; padding-bottom:94px !important; }
   #page-flashcard .arcane-card-state-badge { top:94px !important; }
-  #page-flashcard .star-btn { top:35px !important; right:34px !important; }
+  #page-flashcard .star-btn { top:18.5% !important; right:13.5% !important; }
   #page-flashcard .speak-btn-large { left:34px !important; bottom:37px !important; }
   #page-flashcard .card-front > p { bottom:70px !important; }
 }
