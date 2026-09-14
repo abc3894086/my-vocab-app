@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050914"/><stop offset=".32" stop-color="#0b1325"/><stop offset=".7" stop-color="#080e1b"/><stop offset="1" stop-color="#03070e"/></linearGradient>
+  <radialGradient id="dome" cx="50%" cy="9%" r="58%"><stop offset="0" stop-color="#253b79" stop-opacity=".48"/><stop offset=".38" stop-color="#16254f" stop-opacity=".18"/><stop offset="1" stop-color="#06101f" stop-opacity="0"/></radialGradient>
+  <linearGradient id="stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#060811"/><stop offset=".5" stop-color="#17172a"/><stop offset="1" stop-color="#060811"/></linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211727"/><stop offset=".5" stop-color="#110d17"/><stop offset="1" stop-color="#08070c"/></linearGradient>
+  <radialGradient id="lamp" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff0b0"/><stop offset=".15" stop-color="#f6c665" stop-opacity=".95"/><stop offset=".45" stop-color="#d28a35" stop-opacity=".34"/><stop offset="1" stop-color="#d28a35" stop-opacity="0"/></radialGradient>
+  <radialGradient id="orb" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff7c8"/><stop offset=".08" stop-color="#f7d784"/><stop offset=".26" stop-color="#9e79da" stop-opacity=".56"/><stop offset="1" stop-color="#6d5fc9" stop-opacity="0"/></radialGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1425"/><stop offset="1" stop-color="#02050b"/></linearGradient>
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="12"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+  <pattern id="stars" width="120" height="100" patternUnits="userSpaceOnUse"><circle cx="18" cy="17" r="1.4" fill="#dce7ff" opacity=".55"/><circle cx="87" cy="31" r="1" fill="#f3d893" opacity=".42"/><circle cx="57" cy="82" r="1.2" fill="#a8b9dc" opacity=".46"/></pattern>
+</defs>
+
+<rect width="1080" height="1920" fill="url(#night)"/>
+<rect width="1080" height="1920" fill="url(#dome)"/>
+
+<!-- celestial ceiling -->
+<g opacity=".52"><rect x="154" y="0" width="772" height="470" fill="url(#stars)"/>
+<g fill="none" stroke="#7d91bd" opacity=".34"><circle cx="540" cy="160" r="235"/><circle cx="540" cy="160" r="180"/><circle cx="540" cy="160" r="126"/><ellipse cx="540" cy="160" rx="292" ry="82" transform="rotate(-12 540 160)"/><path d="M315 194L394 91L496 145L601 71L740 179L665 298L538 252L452 318Z"/></g>
+<g fill="#f1d98d"><circle cx="540" cy="72" r="3"/><circle cx="397" cy="126" r="2"/><circle cx="663" cy="112" r="2.2"/><circle cx="747" cy="193" r="1.8"/><circle cx="470" cy="260" r="1.8"/></g></g>
+
+<!-- cathedral outer structure -->
+<path d="M0 0H215V1920H0Z" fill="url(#stone)"/>
+<path d="M865 0H1080V1920H865Z" fill="url(#stone)"/>
+<path d="M215 1920V650Q215 365 540 265Q865 365 865 650V1920Z" fill="#080d18" opacity=".9"/>
+<path d="M280 1920V704Q280 471 540 388Q800 471 800 704V1920Z" fill="#0d172c" opacity=".77" stroke="#6b5b40" stroke-width="4" stroke-opacity=".43"/>
+
+<!-- tall stained windows -->
+<g opacity=".82">
+  <path d="M335 762V513Q335 410 420 352Q505 410 505 513V762Z" fill="#142853" stroke="#574f5a" stroke-width="6"/>
+  <path d="M575 762V513Q575 410 660 352Q745 410 745 513V762Z" fill="#142853" stroke="#574f5a" stroke-width="6"/>
+  <g stroke="#5570aa" stroke-width="3" opacity=".65"><path d="M420 363V751M335 532H505M378 398L462 480M462 398L378 480"/><path d="M660 363V751M575 532H745M618 398L702 480M702 398L618 480"/></g>
+  <g fill="url(#stars)" opacity=".55"><path d="M345 752V520Q345 427 420 375Q495 427 495 520V752Z"/><path d="M585 752V520Q585 427 660 375Q735 427 735 520V752Z"/></g>
+</g>
+
+<!-- side bookshelves -->
+<g fill="url(#wood)" stroke="#4f3c31" stroke-width="5">
+  <rect x="28" y="235" width="155" height="1125" rx="8"/><rect x="897" y="235" width="155" height="1125" rx="8"/>
+</g>
+<g stroke="#81613c" stroke-width="6" opacity=".72"><path d="M38 383H173M38 540H173M38 697H173M38 854H173M38 1011H173M38 1168H173M907 383H1042M907 540H1042M907 697H1042M907 854H1042M907 1011H1042M907 1168H1042"/></g>
+<g opacity=".58" fill="#8e6840">
+  <g transform="translate(49 274)"><rect width="15" height="91"/><rect x="22" width="25" height="91"/><rect x="55" width="13" height="91"/><rect x="75" width="27" height="91"/><rect x="109" width="18" height="91"/></g>
+  <g transform="translate(49 590)"><rect width="24" height="91"/><rect x="31" width="14" height="91"/><rect x="52" width="31" height="91"/><rect x="90" width="14" height="91"/><rect x="111" width="17" height="91"/></g>
+  <g transform="translate(918 274)"><rect width="17" height="91"/><rect x="24" width="31" height="91"/><rect x="62" width="14" height="91"/><rect x="83" width="22" height="91"/><rect x="112" width="16" height="91"/></g>
+  <g transform="translate(918 747)"><rect width="26" height="91"/><rect x="33" width="13" height="91"/><rect x="53" width="20" height="91"/><rect x="80" width="30" height="91"/><rect x="117" width="12" height="91"/></g>
+</g>
+
+<!-- balconies and stairs -->
+<g fill="none" stroke="#3c3132" stroke-width="14"><path d="M175 600Q310 585 393 548"/><path d="M905 600Q770 585 687 548"/><path d="M185 1055Q323 1010 401 920"/><path d="M895 1055Q757 1010 679 920"/></g>
+<g stroke="#8d724c" stroke-width="2" opacity=".52"><path d="M180 573Q315 558 395 522"/><path d="M900 573Q765 558 685 522"/></g>
+
+<!-- right hanging banner -->
+<g transform="translate(785 245)"><path d="M0 0H180V438L90 502L0 438Z" fill="#0d1830" stroke="#9c7e49" stroke-width="5"/><path d="M14 15H166V423L90 475L14 423Z" fill="none" stroke="#51668e" stroke-width="2" opacity=".65"/><g transform="translate(90 70)" stroke="#d7b96f" fill="none" opacity=".75"><circle r="30"/><path d="M0-45V45M-45 0H45M-25-25L25 25M25-25L-25 25"/></g><text x="90" y="162" text-anchor="middle" fill="#c4a96a" font-family="Georgia,serif" font-size="22" letter-spacing="4">READ</text><text x="90" y="214" text-anchor="middle" fill="#c4a96a" font-family="Georgia,serif" font-size="22" letter-spacing="4">LEARN</text><text x="90" y="266" text-anchor="middle" fill="#c4a96a" font-family="Georgia,serif" font-size="22" letter-spacing="4">EXPLORE</text><text x="90" y="318" text-anchor="middle" fill="#c4a96a" font-family="Georgia,serif" font-size="22" letter-spacing="4">BECOME</text></g>
+
+<!-- central astrolabe -->
+<g transform="translate(540 985)">
+  <circle r="258" fill="url(#orb)" opacity=".24" filter="url(#glow)"/>
+  <g fill="none" stroke-linecap="round">
+    <circle r="214" stroke="#181619" stroke-width="36"/><circle r="214" stroke="#8d6c3e" stroke-width="7"/><circle r="176" stroke="#80653f" stroke-width="10"/><circle r="176" stroke="#c1a266" stroke-width="2.5"/>
+    <ellipse rx="240" ry="73" transform="rotate(-13)" stroke="#c3a66d" stroke-width="9"/><ellipse rx="240" ry="73" transform="rotate(-13)" stroke="#27324e" stroke-width="3"/>
+    <ellipse rx="202" ry="63" transform="rotate(46)" stroke="#927342" stroke-width="7"/><ellipse rx="164" ry="52" transform="rotate(78)" stroke="#7d6748" stroke-width="6"/>
+    <circle r="122" stroke="#7f91bb" stroke-width="2" opacity=".58"/><circle r="78" stroke="#c9aa68" stroke-width="2" opacity=".72"/>
+  </g>
+  <g stroke="#6c5a3e" stroke-width="5"><path d="M0-214V214M-214 0H214"/></g>
+  <circle r="23" fill="#f1ca6d" opacity=".28" filter="url(#glow)"/><circle r="11" fill="#fff0af"/>
+  <path d="M0-67L14-15L67 0L14 15L0 67L-14 15L-67 0L-14-15Z" fill="#f2d17b" filter="url(#glow)"/>
+</g>
+
+<!-- astrolabe pedestal -->
+<g fill="#171119" stroke="#6d5537" stroke-width="5"><path d="M476 1218H604L635 1395H445Z"/><path d="M418 1395H662L696 1456H384Z"/><path d="M360 1456H720L746 1516H334Z"/></g>
+
+<!-- warm lamps -->
+<g>
+  <g transform="translate(174 765)"><circle r="52" fill="url(#lamp)" filter="url(#glow)"/><circle r="8" fill="#ffe9a8"/><path d="M0-34V-11M-17 12H17" stroke="#967044" stroke-width="4"/></g>
+  <g transform="translate(850 760)"><circle r="52" fill="url(#lamp)" filter="url(#glow)"/><circle r="8" fill="#ffe9a8"/><path d="M0-34V-11M-17 12H17" stroke="#967044" stroke-width="4"/></g>
+  <g transform="translate(210 1278)"><circle r="44" fill="url(#lamp)" filter="url(#glow)"/><circle r="7" fill="#ffe9a8"/></g>
+  <g transform="translate(870 1240)"><circle r="44" fill="url(#lamp)" filter="url(#glow)"/><circle r="7" fill="#ffe9a8"/></g>
+</g>
+
+<!-- reflective floor -->
+<path d="M0 1490H1080V1920H0Z" fill="url(#floor)"/>
+<g fill="none" stroke="#33446d" opacity=".3"><ellipse cx="540" cy="1690" rx="390" ry="140"/><ellipse cx="540" cy="1690" rx="285" ry="101"/><circle cx="540" cy="1690" r="165"/><path d="M540 1520V1860M370 1690H710"/></g>
+<path d="M535 1480L558 1480L618 1910H452Z" fill="#d59b48" opacity=".09" filter="url(#soft)"/>
+<path d="M0 1920V1550Q240 1460 540 1490Q840 1460 1080 1550V1920Z" fill="#02050b" opacity=".18"/>
+
+<!-- soft vignette -->
+<rect width="1080" height="1920" fill="none" stroke="#000" stroke-width="120" opacity=".36"/>
+</svg>
