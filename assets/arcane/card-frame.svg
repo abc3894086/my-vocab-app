@@ -1,31 +1,119 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1080" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f1e5b4"/><stop offset=".22" stop-color="#9aa8c4"/><stop offset=".48" stop-color="#d5b56e"/><stop offset=".75" stop-color="#66738b"/><stop offset="1" stop-color="#f0d58b"/>
+    <linearGradient id="silverGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef4ff"/>
+      <stop offset=".13" stop-color="#8292b3"/>
+      <stop offset=".28" stop-color="#f0d99a"/>
+      <stop offset=".44" stop-color="#7688ab"/>
+      <stop offset=".61" stop-color="#c8a964"/>
+      <stop offset=".78" stop-color="#70809e"/>
+      <stop offset="1" stop-color="#f4e4b0"/>
     </linearGradient>
-    <radialGradient id="gem" cx="50%" cy="38%" r="64%"><stop offset="0" stop-color="#9e91ff"/><stop offset=".38" stop-color="#566fd4"/><stop offset="1" stop-color="#151b31"/></radialGradient>
-    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#253557"/>
+      <stop offset=".48" stop-color="#0b1326"/>
+      <stop offset="1" stop-color="#223253"/>
+    </linearGradient>
+    <radialGradient id="crestGem" cx="42%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#d9e7ff"/>
+      <stop offset=".18" stop-color="#8da9ff"/>
+      <stop offset=".48" stop-color="#6d5ed2"/>
+      <stop offset="1" stop-color="#11182d"/>
+    </radialGradient>
+    <radialGradient id="cornerNight" cx="50%" cy="45%" r="60%">
+      <stop offset="0" stop-color="#1d2b52"/>
+      <stop offset="1" stop-color="#0a1020"/>
+    </radialGradient>
+    <filter id="metalGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#00030a" flood-opacity=".72"/>
+    </filter>
+    <pattern id="ticks" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M15 2V10" stroke="#d5b56e" stroke-width="1" opacity=".35"/>
+      <circle cx="15" cy="15" r="1.3" fill="#a9bad8" opacity=".35"/>
+    </pattern>
   </defs>
-  <rect x="21" y="21" width="678" height="1038" rx="58" fill="none" stroke="#0c1020" stroke-width="30" opacity=".92"/>
-  <rect x="34" y="34" width="652" height="1012" rx="49" fill="none" stroke="url(#metal)" stroke-width="11"/>
-  <rect x="51" y="51" width="618" height="978" rx="38" fill="none" stroke="#8998b9" stroke-width="2" opacity=".82"/>
-  <rect x="63" y="63" width="594" height="954" rx="31" fill="none" stroke="#d5b56e" stroke-width="2" opacity=".42" stroke-dasharray="4 8"/>
-  <g fill="none" stroke="url(#metal)" stroke-width="4" opacity=".95">
-    <path d="M51 178 Q118 177 155 130 Q177 101 178 51"/><path d="M669 178 Q602 177 565 130 Q543 101 542 51"/>
-    <path d="M51 902 Q118 903 155 950 Q177 979 178 1029"/><path d="M669 902 Q602 903 565 950 Q543 979 542 1029"/>
+
+  <!-- outer body -->
+  <rect x="18" y="18" width="684" height="1044" rx="62" fill="none" stroke="#02050d" stroke-width="30" opacity=".96" filter="url(#softShadow)"/>
+  <rect x="31" y="31" width="658" height="1018" rx="51" fill="none" stroke="url(#edge)" stroke-width="18"/>
+  <rect x="39" y="39" width="642" height="1002" rx="46" fill="none" stroke="url(#silverGold)" stroke-width="9"/>
+  <rect x="52" y="52" width="616" height="976" rx="37" fill="none" stroke="#ced9ec" stroke-width="2" opacity=".72"/>
+  <rect x="63" y="63" width="594" height="954" rx="31" fill="none" stroke="#b9914e" stroke-width="1.6" opacity=".58"/>
+  <rect x="73" y="73" width="574" height="934" rx="26" fill="none" stroke="url(#ticks)" stroke-width="2" opacity=".6"/>
+
+  <!-- side engraving rails -->
+  <g fill="none" stroke="#91a4ca" stroke-width="1.4" opacity=".48">
+    <path d="M82 244 C94 330 94 750 82 836"/>
+    <path d="M638 244 C626 330 626 750 638 836"/>
+    <path d="M91 288 C116 312 116 356 91 380 M91 438 C116 462 116 506 91 530 M91 588 C116 612 116 656 91 680 M91 738 C116 762 116 806 91 830"/>
+    <path d="M629 288 C604 312 604 356 629 380 M629 438 C604 462 604 506 629 530 M629 588 C604 612 604 656 629 680 M629 738 C604 762 604 806 629 830"/>
   </g>
-  <g fill="none" stroke="#8ca0c8" stroke-width="2" opacity=".56">
-    <circle cx="107" cy="108" r="35"/><circle cx="613" cy="108" r="35"/><circle cx="107" cy="972" r="35"/><circle cx="613" cy="972" r="35"/>
-    <path d="M72 108h70M107 73v70M578 108h70M613 73v70M72 972h70M107 937v70M578 972h70M613 937v70"/>
+  <g fill="#d5b56e" opacity=".68">
+    <circle cx="84" cy="262" r="2.6"/><circle cx="84" cy="412" r="2.6"/><circle cx="84" cy="562" r="2.6"/><circle cx="84" cy="712" r="2.6"/><circle cx="84" cy="862" r="2.6"/>
+    <circle cx="636" cy="262" r="2.6"/><circle cx="636" cy="412" r="2.6"/><circle cx="636" cy="562" r="2.6"/><circle cx="636" cy="712" r="2.6"/><circle cx="636" cy="862" r="2.6"/>
   </g>
-  <g transform="translate(360 72)" filter="url(#softGlow)">
-    <circle r="59" fill="#0f1730" stroke="url(#metal)" stroke-width="7"/>
-    <circle r="44" fill="url(#gem)" stroke="#96a8d0" stroke-width="2"/>
-    <path d="M0-35 L8-8 L35 0 L8 8 L0 35 L-8 8 L-35 0 L-8-8 Z" fill="#f5dda0"/>
-    <path d="M0-18 L4-4 L18 0 L4 4 L0 18 L-4 4 L-18 0 L-4-4 Z" fill="#fff7d6"/>
+
+  <!-- corner celestial medallions -->
+  <g stroke="url(#silverGold)" fill="url(#cornerNight)" stroke-width="4.5">
+    <circle cx="108" cy="116" r="43"/><circle cx="612" cy="116" r="43"/>
+    <circle cx="108" cy="964" r="43"/><circle cx="612" cy="964" r="43"/>
   </g>
-  <g transform="translate(360 1005)" opacity=".9"><circle r="17" fill="#11182c" stroke="url(#metal)" stroke-width="4"/><circle r="4" fill="#e0c37a"/></g>
-  <path d="M94 210 C180 170 540 170 626 210" fill="none" stroke="#7184ad" stroke-width="1.6" opacity=".35"/>
-  <path d="M94 870 C180 910 540 910 626 870" fill="none" stroke="#7184ad" stroke-width="1.6" opacity=".35"/>
-  <g fill="#d5b56e" opacity=".7"><circle cx="83" cy="263" r="3"/><circle cx="637" cy="263" r="3"/><circle cx="83" cy="817" r="3"/><circle cx="637" cy="817" r="3"/></g>
+  <g fill="none" stroke="#899bc1" stroke-width="1.5" opacity=".68">
+    <circle cx="108" cy="116" r="31"/><circle cx="612" cy="116" r="31"/><circle cx="108" cy="964" r="31"/><circle cx="612" cy="964" r="31"/>
+    <path d="M108 83v66M75 116h66 M612 83v66M579 116h66 M108 931v66M75 964h66 M612 931v66M579 964h66"/>
+  </g>
+  <g fill="#f2d993" filter="url(#metalGlow)">
+    <path d="M108 91l7 18 18 7-18 7-7 18-7-18-18-7 18-7z"/>
+    <path d="M108 939l7 18 18 7-18 7-7 18-7-18-18-7 18-7z"/>
+    <path d="M612 939l7 18 18 7-18 7-7 18-7-18-18-7 18-7z"/>
+  </g>
+  <!-- moon phase corner -->
+  <circle cx="612" cy="116" r="18" fill="#dce5f3" opacity=".9"/>
+  <circle cx="622" cy="110" r="20" fill="#0b1224"/>
+
+  <!-- ornate corner bridges -->
+  <g fill="none" stroke="url(#silverGold)" stroke-width="4.2" opacity=".95">
+    <path d="M57 204 C91 200 117 190 139 166 C157 145 166 118 169 57"/>
+    <path d="M663 204 C629 200 603 190 581 166 C563 145 554 118 551 57"/>
+    <path d="M57 876 C91 880 117 890 139 914 C157 935 166 962 169 1023"/>
+    <path d="M663 876 C629 880 603 890 581 914 C563 935 554 962 551 1023"/>
+  </g>
+  <g fill="none" stroke="#b5c2db" stroke-width="1.3" opacity=".48">
+    <path d="M69 216 C118 214 153 196 184 158"/><path d="M651 216 C602 214 567 196 536 158"/>
+    <path d="M69 864 C118 866 153 884 184 922"/><path d="M651 864 C602 866 567 884 536 922"/>
+  </g>
+
+  <!-- crown crest -->
+  <g transform="translate(360 78)" filter="url(#metalGlow)">
+    <path d="M-88 13 C-62 9-45-2-31-24 C-18-45-10-51 0-51 C10-51 18-45 31-24 C45-2 62 9 88 13" fill="none" stroke="url(#silverGold)" stroke-width="7"/>
+    <circle r="62" fill="#091126" stroke="#02050d" stroke-width="11"/>
+    <circle r="53" fill="url(#crestGem)" stroke="url(#silverGold)" stroke-width="6"/>
+    <circle r="42" fill="none" stroke="#c5d1e6" stroke-width="1.4" opacity=".62"/>
+    <circle r="31" fill="none" stroke="#d5b56e" stroke-width="1.3" opacity=".45" stroke-dasharray="3 7"/>
+    <path d="M0-37L8-9L37 0L8 9L0 37L-8 9L-37 0L-8-9Z" fill="#f5dda0"/>
+    <path d="M0-19L4-4L19 0L4 4L0 19L-4 4L-19 0L-4-4Z" fill="#fff8d6"/>
+    <circle cx="0" cy="0" r="4" fill="#ffffff"/>
+    <path d="M0 62v27" stroke="url(#silverGold)" stroke-width="5"/>
+    <circle cy="96" r="9" fill="#7f90b5" stroke="#d5b56e" stroke-width="3"/>
+  </g>
+
+  <!-- top/bottom arc engraving -->
+  <g fill="none" opacity=".48">
+    <path d="M180 140 C260 106 460 106 540 140" stroke="#7f93bd" stroke-width="1.7"/>
+    <path d="M194 151 C274 126 446 126 526 151" stroke="#d5b56e" stroke-width="1.2" stroke-dasharray="2 9"/>
+    <path d="M180 940 C260 974 460 974 540 940" stroke="#7f93bd" stroke-width="1.7"/>
+    <path d="M194 929 C274 954 446 954 526 929" stroke="#d5b56e" stroke-width="1.2" stroke-dasharray="2 9"/>
+  </g>
+
+  <!-- bottom seal -->
+  <g transform="translate(360 1000)">
+    <path d="M-54 0h35M19 0h35" stroke="#8ea1c8" stroke-width="2" opacity=".55"/>
+    <circle r="20" fill="#0a1122" stroke="url(#silverGold)" stroke-width="4"/>
+    <circle r="9" fill="none" stroke="#8fa2c7" stroke-width="1.5"/>
+    <path d="M0-7l2.3 4.7L7 0 2.3 2.3 0 7-2.3 2.3-7 0-2.3-2.3z" fill="#e8cf88"/>
+  </g>
 </svg>
