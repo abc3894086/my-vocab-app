@@ -49,15 +49,12 @@
 #page-flashcard .pos-badge { color:#ead393 !important; border-color:rgba(234,211,147,.3) !important; background:rgba(5,12,26,.52) !important; }
 
 #page-flashcard .arcane-card-state-badge {
-  top:112px !important;
-  color:#e5ce8e !important;
-  border-color:rgba(224,200,132,.28) !important;
-  background:rgba(4,10,23,.7) !important;
+  display: none !important;
 }
 #page-flashcard .star-btn {
   position: absolute !important;
-  top: 18.5% !important;
-  right: 13.5% !important;
+  top: 43px !important;
+  right: 40px !important;
   width: 40px !important;
   height: 40px !important;
   padding: 0 !important;
@@ -104,8 +101,7 @@
 
 @media (max-height:730px) {
   #page-flashcard .card-front { padding-top:128px !important; padding-bottom:94px !important; }
-  #page-flashcard .arcane-card-state-badge { top:94px !important; }
-  #page-flashcard .star-btn { top:18.5% !important; right:13.5% !important; }
+  #page-flashcard .star-btn { top:37px !important; right:34px !important; }
   #page-flashcard .speak-btn-large { left:34px !important; bottom:37px !important; }
   #page-flashcard .card-front > p { bottom:70px !important; }
 }

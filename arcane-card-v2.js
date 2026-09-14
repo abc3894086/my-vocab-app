@@ -59,8 +59,7 @@
 
     ensureLabel(face, 'arcane-card-edition', 'ARCANE LIBRARY');
     ensureLabel(face, 'arcane-card-crest-label', 'CELESTIAL CODEX');
-    const badge = ensureLabel(face, 'arcane-card-state-badge', isCorrupted(item) ? 'CORRUPTED' : (isFavorite(item) ? 'FAVORITE' : 'DISCOVERED'));
-    badge.dataset.state = isCorrupted(item) ? 'corrupted' : (isFavorite(item) ? 'favorite' : 'discovered');
+    $('.arcane-card-state-badge', face)?.remove();
   }
 
   function meaningOf(word) {
