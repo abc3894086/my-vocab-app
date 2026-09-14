@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="arcane-theme.css">
     <link rel="stylesheet" href="arcane-card-v2.css">
-    <link rel="stylesheet" href="arcane-card-premium.css?v=20260914-3">
+    <link rel="stylesheet" href="arcane-card-premium.css?v=20260914-4">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#080d19">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -142,8 +142,8 @@
                 <div class="flip-card" id="flashcard" onclick="flipCard()">
                     <div class="flip-card-inner">
                         <div class="card-face card-front">
-                            <button class="star-btn" id="star-btn" type="button" aria-label="加入我的最愛" title="加入我的最愛"
-                                onclick="event.stopPropagation(); toggleFavorite()"><i class="fas fa-star"></i></button>
+                            <button class="star-btn" id="star-btn" type="button" aria-label="加入我的最愛" aria-pressed="false" title="加入我的最愛"
+                                onclick="event.stopPropagation(); toggleFavorite()"><i class="far fa-star"></i></button>
                             <div class="q-tag" id="fc-tag">Tag</div>
                             <div class="word-en" id="fc-en">Word</div>
                             <div class="word-phonetic" id="fc-phonetic">[]</div>
@@ -281,7 +281,7 @@
 
         console.log("Firebase connected");
     </script>
-    <script src="script.js"></script>
+    <script src="script.js?v=20260914-4"></script>
     <script src="bugfixes.js"></script>
     <script src="arcane-ui.js"></script>
     <script src="arcane-polish.js"></script>

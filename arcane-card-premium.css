@@ -53,8 +53,8 @@
 }
 #page-flashcard .star-btn {
   position: absolute !important;
-  top: 43px !important;
-  right: 40px !important;
+  top: 22px !important;
+  right: 22px !important;
   width: 40px !important;
   height: 40px !important;
   padding: 0 !important;
@@ -63,13 +63,31 @@
   font-size: 1rem !important;
   line-height: 1 !important;
   background: rgba(4,10,22,.78) !important;
-  border-color: rgba(231,211,153,.42) !important;
+  color: #aebbd0 !important;
+  border-color: rgba(185,199,223,.34) !important;
+  opacity: .84;
+  transition: transform .18s ease, color .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .18s ease;
   touch-action: manipulation;
 }
 #page-flashcard .star-btn i {
   display: block;
-  font-size: 16px !important;
+  font-size: 17px !important;
   line-height: 1 !important;
+}
+#page-flashcard .star-btn.active {
+  color: #fff2b8 !important;
+  background: radial-gradient(circle at 38% 32%, #e7c96e, #9f741d 78%) !important;
+  border: 2px solid #ffe6a0 !important;
+  box-shadow:
+    0 0 0 3px rgba(225,190,94,.18),
+    0 0 24px rgba(239,202,99,.72),
+    inset 0 1px 2px rgba(255,255,255,.65) !important;
+  opacity: 1;
+  transform: scale(1.12);
+}
+#page-flashcard .star-btn.active i {
+  color: #fff8d7 !important;
+  filter: drop-shadow(0 1px 3px rgba(72,43,0,.72));
 }
 #page-flashcard .speak-btn-large { left:40px !important; bottom:43px !important; background:rgba(4,10,22,.72) !important; border-color:rgba(231,211,153,.31) !important; }
 #page-flashcard .card-front > p { bottom:79px !important; color:rgba(199,208,224,.72) !important; }
@@ -101,7 +119,7 @@
 
 @media (max-height:730px) {
   #page-flashcard .card-front { padding-top:128px !important; padding-bottom:94px !important; }
-  #page-flashcard .star-btn { top:37px !important; right:34px !important; }
+  #page-flashcard .star-btn { top:18px !important; right:18px !important; }
   #page-flashcard .speak-btn-large { left:34px !important; bottom:37px !important; }
   #page-flashcard .card-front > p { bottom:70px !important; }
 }

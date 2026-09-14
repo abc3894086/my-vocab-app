@@ -178,8 +178,12 @@ function updateStarStatus() {
     const isFav = favList.some(item => item.en === currentWord.en);
     const btn = document.getElementById('star-btn');
     if (btn) {
-        if (isFav) btn.classList.add('active');
-        else btn.classList.remove('active');
+        btn.classList.toggle('active', isFav);
+        btn.setAttribute('aria-pressed', String(isFav));
+        btn.setAttribute('aria-label', isFav ? '取消我的最愛' : '加入我的最愛');
+        btn.title = isFav ? '取消我的最愛' : '加入我的最愛';
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = isFav ? 'fas fa-star' : 'far fa-star';
     }
 }
 
