@@ -1,6 +1,13 @@
 (() => {
   'use strict';
 
+  if (!document.querySelector('link[href="arcane-art-v3.css"]')) {
+    const artLink = document.createElement('link');
+    artLink.rel = 'stylesheet';
+    artLink.href = 'arcane-art-v3.css';
+    document.head.appendChild(artLink);
+  }
+
   function findWord(word) {
     if (!word || typeof vocabDB === 'undefined') return null;
     const toeic = Array.isArray(vocabDB.TOEIC) ? vocabDB.TOEIC : [];
