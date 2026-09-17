@@ -1,0 +1,238 @@
+/* Arcane Library — Premium Card System v2 */
+
+:root {
+  --card-gold: #d8b968;
+  --card-gold-hi: #f4e5ae;
+  --card-silver: #aabbd8;
+  --card-violet: #7d6ee8;
+  --card-corrupt: #ba5ca8;
+}
+
+/* Keep the home calm so the collectible cards become the visual focus. */
+.arcane-home { gap: 12px; }
+.arcane-hero {
+  min-height: 238px;
+  background: linear-gradient(150deg, rgba(17,25,48,.82), rgba(7,12,25,.88)) !important;
+  border-color: rgba(185,199,223,.15) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 16px 38px rgba(0,0,0,.2) !important;
+}
+.arcane-hero::before { opacity: .42; transform: scale(.88); }
+.arcane-hero::after { opacity: .62; font-size: 1.45rem; }
+
+/* Full-size collectible card */
+.flip-card {
+  width: min(100%, 342px) !important;
+  aspect-ratio: 2 / 3 !important;
+  filter: drop-shadow(0 28px 42px rgba(0,0,0,.35));
+}
+.card-face {
+  border-radius: 30px !important;
+  box-shadow:
+    0 30px 75px rgba(0,0,0,.54),
+    0 0 0 1px rgba(226,235,249,.04),
+    inset 0 0 54px rgba(111,91,210,.08) !important;
+}
+.card-front {
+  padding: 100px 48px 78px !important;
+  background:
+    radial-gradient(circle at 50% 31%, rgba(86,113,190,.28), transparent 30%),
+    radial-gradient(circle at 50% 82%, rgba(117,104,223,.11), transparent 34%),
+    linear-gradient(165deg, #111d3b 0%, #0a1228 48%, #070c1a 100%) !important;
+}
+.card-front::before {
+  background: url('assets/arcane/card-frame.svg') center / 100% 100% no-repeat !important;
+  z-index: 12 !important;
+  filter: drop-shadow(0 6px 9px rgba(0,0,0,.32));
+}
+.card-front::after {
+  content: '' !important;
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(218,228,255,.08), transparent 20%),
+    linear-gradient(100deg, transparent 18%, rgba(255,255,255,.025) 48%, transparent 70%);
+}
+
+.arcane-card-edition {
+  position: absolute;
+  z-index: 16;
+  left: 50%;
+  bottom: 31px;
+  transform: translateX(-50%);
+  color: rgba(222,201,136,.72);
+  font: 600 .52rem var(--arc-serif);
+  letter-spacing: .34em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.arcane-card-crest-label {
+  position: absolute;
+  z-index: 16;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(236,226,189,.78);
+  font: 600 .48rem var(--arc-serif);
+  letter-spacing: .26em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.arcane-card-state-badge {
+  position: absolute;
+  z-index: 17;
+  top: 91px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(185,199,223,.18);
+  background: rgba(6,11,24,.52);
+  color: #99a9c5;
+  font: 600 .5rem var(--arc-sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .88;
+  pointer-events: none;
+}
+
+.word-en {
+  margin-top: 12px !important;
+  color: #f7f5ef !important;
+  font-size: clamp(2.1rem, 10vw, 2.9rem) !important;
+  text-shadow: 0 0 25px rgba(124,168,255,.16), 0 2px 12px rgba(0,0,0,.34) !important;
+}
+.word-phonetic { color: #aebcda !important; margin-bottom: 23px !important; }
+.front-info-box { gap: 9px; }
+.pos-badge {
+  color: #dbc27e !important;
+  background: rgba(213,181,110,.055) !important;
+  border-color: rgba(213,181,110,.17) !important;
+}
+.cn-text { font-size: .94rem !important; color: #e8edf6 !important; }
+
+.star-btn,.speak-btn-large {
+  width: 39px !important;
+  height: 39px !important;
+  background: rgba(6,12,27,.7) !important;
+  border-color: rgba(173,190,220,.2) !important;
+  backdrop-filter: blur(8px);
+}
+.star-btn { top: 31px !important; right: 31px !important; }
+.speak-btn-large { left: 31px !important; bottom: 29px !important; }
+.card-front > p { bottom: 75px !important; color: #73829f !important; }
+
+/* Corrupted cards: preserve the base card, then layer the corruption over it. */
+.card-front.arcane-corrupted-state::after {
+  background:
+    url('assets/arcane/corrupted-overlay.svg') center / 100% 100% no-repeat,
+    radial-gradient(circle at 50% 18%, rgba(218,228,255,.06), transparent 20%) !important;
+}
+.card-front.arcane-corrupted-state {
+  box-shadow: 0 30px 75px rgba(0,0,0,.54), 0 0 35px rgba(186,92,168,.13) inset !important;
+}
+.card-front.arcane-corrupted-state .arcane-card-state-badge {
+  color: #e1a4d1;
+  border-color: rgba(186,92,168,.38);
+  background: rgba(72,23,68,.42);
+}
+
+/* Mastered state is ready for future word-level mastery tracking. */
+.card-front.arcane-mastered-state::after {
+  background:
+    url('assets/arcane/mastered-overlay.svg') center / 100% 100% no-repeat,
+    radial-gradient(circle at 50% 18%, rgba(255,241,190,.1), transparent 22%) !important;
+}
+.card-front.arcane-mastered-state .arcane-card-state-badge {
+  color: #f5dda0;
+  border-color: rgba(213,181,110,.44);
+  background: rgba(84,65,24,.32);
+}
+
+/* Mini collectible cards on Home/Codex */
+.arcane-mini-card,
+.arcane-codex-card {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(68,88,151,.24), transparent 35%),
+    linear-gradient(165deg, #142344, #080f21 68%, #060b18) !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  box-shadow: 0 15px 28px rgba(0,0,0,.34), inset 0 0 20px rgba(117,104,223,.04) !important;
+}
+.arcane-mini-card::before,
+.arcane-codex-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  background: url('assets/arcane/card-frame.svg') center / 100% 100% no-repeat !important;
+  opacity: .92;
+  pointer-events: none;
+  z-index: 3;
+}
+.arcane-mini-card > *, .arcane-codex-card > * { position: relative; z-index: 5; }
+.arcane-mini-card strong { font-size: .81rem; max-width: 70%; }
+.arcane-mini-card span:not(.mini-star) { max-width: 72%; }
+.arcane-mini-card .mini-star { color: #e1c77c; }
+.arcane-mini-card.arcane-corrupted-mini::after,
+.arcane-codex-card.arcane-corrupted-mini::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: url('assets/arcane/corrupted-overlay.svg') center / 100% 100% no-repeat;
+  pointer-events: none;
+  opacity: .8;
+}
+
+/* Codex collectible preview */
+.arcane-collection-preview { margin-top: 4px; }
+.arcane-collection-preview-head { display:flex; align-items:flex-end; justify-content:space-between; margin: 3px 2px 10px; }
+.arcane-collection-preview-head h2 { margin:0; font:600 1.22rem var(--arc-serif); }
+.arcane-collection-preview-head span { color:var(--arc-muted); font-size:.64rem; }
+.arcane-codex-card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+.arcane-codex-card {
+  aspect-ratio: 2 / 3;
+  position: relative;
+  overflow: hidden;
+  color: var(--arc-ivory);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:18px 10px;
+}
+.arcane-codex-card strong { font:600 .78rem var(--arc-serif); max-width:72%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.arcane-codex-card small { color:#8f9ebb; font-size:.53rem; max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.arcane-codex-card .codex-mark { color:#dcc47d; font:600 .5rem var(--arc-serif); letter-spacing:.12em; }
+.arcane-codex-card.sealed {
+  background: linear-gradient(165deg,#10192d,#080d18) !important;
+}
+.arcane-codex-card.sealed::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:4;
+  background:
+    url('assets/arcane/card-back.svg') center / 100% 100% no-repeat,
+    url('assets/arcane/sealed-overlay.svg') center / 100% 100% no-repeat;
+  opacity:.92;
+}
+.arcane-codex-card.sealed > * { opacity:0; }
+
+/* Make the card swipe feel like a physical object, but keep it fast. */
+.flip-card-inner { transition: transform .19s cubic-bezier(.2,.8,.3,1), opacity .15s ease !important; }
+.arcane-card-out-left { transform: translateX(-38px) rotate(-1.1deg) scale(.988) !important; }
+.arcane-card-out-right { transform: translateX(38px) rotate(1.1deg) scale(.988) !important; }
+@keyframes arcCardInLeft { from{opacity:0;transform:translateX(-34px) rotate(-.8deg) scale(.988)} to{opacity:1;transform:none} }
+@keyframes arcCardInRight { from{opacity:0;transform:translateX(34px) rotate(.8deg) scale(.988)} to{opacity:1;transform:none} }
+
+@media (max-height: 720px) {
+  .card-front { padding-top: 83px !important; padding-bottom: 67px !important; }
+  .arcane-card-state-badge { top: 79px; }
+  .word-en { font-size: clamp(1.85rem, 9vw, 2.55rem) !important; }
+}

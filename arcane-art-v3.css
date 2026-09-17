@@ -1,0 +1,191 @@
+/* Arcane Library — Art Direction v3
+   Focus: richer collectible cards + higher-quality home scene, while keeping UI calm. */
+
+/* Let the illustrated library carry the atmosphere; UI stays restrained. */
+.app-container.arcane-ready {
+  background-image:
+    linear-gradient(180deg, rgba(3,6,13,.10) 0%, rgba(3,6,13,.20) 32%, rgba(3,6,13,.56) 72%, rgba(3,6,13,.88) 100%),
+    url('assets/arcane/library-bg.svg') !important;
+  background-position: center top !important;
+  background-size: cover !important;
+}
+.app-container.arcane-ready::before {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.16), transparent 25%, transparent 75%, rgba(0,0,0,.18)),
+    radial-gradient(circle at 50% 12%, rgba(105,120,218,.09), transparent 34%) !important;
+}
+
+/* Cleaner home: more of the library is visible, fewer decorative UI flourishes. */
+.arcane-home { gap: 12px !important; }
+.arcane-brand-row {
+  padding: 4px 2px 2px;
+  text-shadow: 0 2px 16px rgba(0,0,0,.65);
+}
+.arcane-brand img { filter: drop-shadow(0 2px 12px rgba(0,0,0,.5)) drop-shadow(0 0 16px rgba(117,104,223,.16)) !important; }
+.arcane-hero {
+  min-height: 228px !important;
+  padding: 24px 22px 21px !important;
+  background:
+    linear-gradient(105deg, rgba(8,13,27,.83) 0%, rgba(10,16,33,.69) 58%, rgba(9,14,28,.50) 100%) !important;
+  border-color: rgba(209,220,239,.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 20px 52px rgba(0,0,0,.24) !important;
+  backdrop-filter: blur(13px) saturate(108%) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(108%) !important;
+}
+.arcane-hero::before,
+.arcane-hero::after { display:none !important; }
+.arcane-hero .arcane-display {
+  width: 79% !important;
+  text-shadow: 0 2px 22px rgba(0,0,0,.6), 0 0 22px rgba(124,168,255,.09) !important;
+}
+.arcane-hero p { width:82% !important; color:#bdc7d9 !important; text-shadow:0 2px 10px rgba(0,0,0,.5); }
+.arcane-stat-card,
+.arcane-panel:not(.arcane-hero) {
+  background: linear-gradient(145deg, rgba(14,22,43,.71), rgba(7,12,25,.73)) !important;
+}
+
+/* Full card becomes a complete illustrated object, not a UI rectangle with a border. */
+.flip-card {
+  width:min(100%, 348px) !important;
+  filter: drop-shadow(0 34px 48px rgba(0,0,0,.44)) drop-shadow(0 0 22px rgba(100,111,186,.08));
+}
+.card-face {
+  border-radius: 30px !important;
+  overflow:hidden !important;
+  background:#070d19 !important;
+  box-shadow:
+    0 34px 82px rgba(0,0,0,.58),
+    0 0 0 1px rgba(230,237,248,.045),
+    inset 0 0 44px rgba(73,88,148,.05) !important;
+}
+.card-front {
+  padding: 132px 54px 103px !important;
+  isolation:isolate;
+}
+.card-front::before {
+  z-index:1 !important;
+  inset:0 !important;
+  background:url('assets/arcane/card-frame.svg') center / 100% 100% no-repeat !important;
+  filter:none !important;
+}
+.card-front::after {
+  z-index:2 !important;
+  content:'' !important;
+  inset:0 !important;
+  pointer-events:none;
+  background:
+    linear-gradient(112deg, transparent 15%, rgba(255,255,255,.026) 38%, transparent 58%),
+    radial-gradient(circle at 50% 14%, rgba(255,241,190,.05), transparent 20%) !important;
+  mix-blend-mode:screen;
+}
+.card-front > * { position:relative; z-index:7; }
+
+/* The illustrated crest is now the hero; remove redundant text sitting on top of it. */
+.arcane-card-crest-label { display:none !important; }
+.arcane-card-edition {
+  bottom:36px !important;
+  color:rgba(224,204,143,.66) !important;
+  letter-spacing:.31em !important;
+  text-shadow:0 1px 8px rgba(0,0,0,.75);
+}
+.arcane-card-state-badge {
+  top:118px !important;
+  border-color:rgba(196,209,231,.15) !important;
+  background:rgba(4,9,20,.48) !important;
+  backdrop-filter:blur(7px);
+}
+.word-en {
+  margin-top:8px !important;
+  color:#f8f5ec !important;
+  font-size:clamp(2.08rem, 9.8vw, 2.9rem) !important;
+  text-shadow:0 2px 15px rgba(0,0,0,.72), 0 0 28px rgba(117,145,220,.16) !important;
+}
+.word-phonetic {
+  color:#aab9d7 !important;
+  margin:8px 0 24px !important;
+  text-shadow:0 1px 8px rgba(0,0,0,.65);
+}
+.cn-text {
+  color:#edf0f6 !important;
+  font-size:.96rem !important;
+  text-shadow:0 1px 9px rgba(0,0,0,.55);
+}
+.pos-badge {
+  background:rgba(6,11,23,.42) !important;
+  border-color:rgba(213,181,110,.24) !important;
+  color:#e2c982 !important;
+}
+
+/* Controls sit inside quieter zones so they no longer obscure the crest/moon ornaments. */
+.star-btn,
+.speak-btn-large {
+  width:38px !important;
+  height:38px !important;
+  background:rgba(3,8,19,.62) !important;
+  border:1px solid rgba(190,205,229,.17) !important;
+  box-shadow:0 8px 20px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.03) !important;
+  backdrop-filter:blur(9px);
+}
+.star-btn { top:151px !important; right:40px !important; }
+.speak-btn-large { left:40px !important; bottom:83px !important; }
+.card-front > p { bottom:80px !important; color:#75839d !important; }
+
+/* Mini cards inherit the same complete artwork so Home/Codex feel like a real collection. */
+.arcane-mini-card,
+.arcane-codex-card {
+  background:#070d19 !important;
+  border-radius:14px !important;
+  overflow:hidden;
+  box-shadow:0 15px 30px rgba(0,0,0,.36), 0 0 0 1px rgba(234,239,248,.025) !important;
+}
+.arcane-mini-card::before,
+.arcane-codex-card::before {
+  inset:0 !important;
+  opacity:1 !important;
+  background:url('assets/arcane/card-frame.svg') center / 100% 100% no-repeat !important;
+  border:0 !important;
+  z-index:2 !important;
+}
+.arcane-mini-card::after,
+.arcane-codex-card:not(.sealed)::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:3;
+  background:linear-gradient(112deg,transparent 20%,rgba(255,255,255,.018) 46%,transparent 68%);
+}
+.arcane-mini-card > *, .arcane-codex-card > * { z-index:5 !important; }
+.arcane-mini-card strong { color:#f2efe8 !important; text-shadow:0 1px 7px rgba(0,0,0,.7); }
+.arcane-mini-card span:not(.mini-star) { color:#9eacc5 !important; }
+.arcane-codex-card strong { color:#f2efe8 !important; text-shadow:0 1px 7px rgba(0,0,0,.7); }
+
+/* Sealed cards show the fully illustrated back rather than a generic dark tile. */
+.arcane-codex-card.sealed::after {
+  content:'' !important;
+  position:absolute;
+  inset:0;
+  z-index:4;
+  background:url('assets/arcane/card-back.svg') center / 100% 100% no-repeat !important;
+  opacity:1 !important;
+}
+
+/* A slightly slower light sweep gives the card physicality without making navigation feel sluggish. */
+@keyframes arcaneCardSheen {
+  0%,78% { transform:translateX(-130%); opacity:0; }
+  82% { opacity:.12; }
+  96% { transform:translateX(130%); opacity:0; }
+  100% { opacity:0; }
+}
+.card-front .arcane-card-edition::before {
+  content:'';
+  position:fixed;
+  pointer-events:none;
+}
+
+@media (max-height:720px) {
+  .card-front { padding:112px 48px 86px !important; }
+  .arcane-card-state-badge { top:102px !important; }
+  .star-btn { top:132px !important; right:36px !important; }
+  .speak-btn-large { left:36px !important; bottom:72px !important; }
+}

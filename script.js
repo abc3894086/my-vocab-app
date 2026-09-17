@@ -178,8 +178,12 @@ function updateStarStatus() {
     const isFav = favList.some(item => item.en === currentWord.en);
     const btn = document.getElementById('star-btn');
     if (btn) {
-        if (isFav) btn.classList.add('active');
-        else btn.classList.remove('active');
+        btn.classList.toggle('active', isFav);
+        btn.setAttribute('aria-pressed', String(isFav));
+        btn.setAttribute('aria-label', isFav ? '取消我的最愛' : '加入我的最愛');
+        btn.title = isFav ? '取消我的最愛' : '加入我的最愛';
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = isFav ? 'fas fa-star' : 'far fa-star';
     }
 }
 
@@ -273,7 +277,6 @@ function loadCard() {
             <div class="word-phonetic" id="fc-phonetic">${data.phonetic || ""}</div>
             <div class="front-info-box" id="fc-front-info"></div>
             <button class="speak-btn-large" onclick="event.stopPropagation(); speakWord()"><i class="fas fa-volume-up"></i></button>
-            <p style="color:#aaa; font-size:0.8rem; margin-top:10px;">(點擊翻面)</p>
         </div>
     `;
     const backHTML = `<div class="card-face card-back" id="fc-back-content"></div>`;

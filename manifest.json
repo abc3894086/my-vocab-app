@@ -1,20 +1,17 @@
 {
-  "name": "Vocab RPG",
-  "short_name": "VocabRPG",
+  "name": "Arcane Library",
+  "short_name": "Arcane",
+  "description": "星象魔法卡牌式英語單字學習工具",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#2c3e50",
-  "theme_color": "#2c3e50",
+  "background_color": "#080d19",
+  "theme_color": "#080d19",
   "icons": [
     {
-      "src": "images/logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "images/logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "assets/arcane/emblem.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
